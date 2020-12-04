@@ -1,11 +1,13 @@
 package com.epam.esm.dao.exception;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(value = {"stackTrace", "cause", "suppressed", "localizedMessage"}, allowSetters = true)
 public class PersistenceException extends Exception {
 
     private final ErrorCodeEnum errorCode;
 
     public PersistenceException(ErrorCodeEnum errorCode) {
-        super();
         this.errorCode = errorCode;
     }
 

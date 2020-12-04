@@ -2,18 +2,16 @@ package com.epam.esm.service;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.exception.PersistenceException;
 import com.epam.esm.dao.impl.SQLGiftCertificateDaoImpl;
 import com.epam.esm.dao.impl.SQLTagDaoImpl;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
-import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.dao.exception.PersistenceException;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import com.epam.esm.service.request.CertificateRequestBody;
 import com.epam.esm.service.request.SortParameter;
 import com.epam.esm.service.request.SortType;
 import com.epam.esm.service.util.impl.CertificateValidatorImpl;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +65,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void whenGetCertificate_thenCorrectlyReturnsItById() throws ServiceException {
+    void whenGetCertificate_thenCorrectlyReturnsItById() throws PersistenceException {
         GiftCertificate given = new GiftCertificate();
         given.setId(1);
         given.setName("Tourism");
@@ -80,7 +78,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void whenGetCertificate_thenCorrectlyReturnsItByName() throws ServiceException {
+    void whenGetCertificate_thenCorrectlyReturnsItByName() throws PersistenceException {
         GiftCertificate given = new GiftCertificate();
         given.setId(1);
         given.setName("Tourism");
@@ -93,7 +91,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void whenAddGiftCertificates_thenCorrectlyReturnThem() throws ServiceException {
+    void whenAddGiftCertificates_thenCorrectlyReturnThem() throws PersistenceException {
         List<GiftCertificate> given = new ArrayList<>();
         for (int i = 1; i < 10; i++) {
             GiftCertificate certificate = new GiftCertificate();
@@ -110,7 +108,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void whenAddCertificate_thenReturnItId() throws PersistenceException, ServiceException {
+    void whenAddCertificate_thenReturnItId() throws PersistenceException {
         GiftCertificate givenCertificate = initCertificate();
         Tag givenTag = new Tag(1,"spa");
         int expectedId = 1;
@@ -134,7 +132,7 @@ class GiftCertificateServiceImplTest {
 
         try {
             giftCertificateService.addGiftCertificate(giftCertificate);
-        } catch (ServiceException e) {
+        } catch (PersistenceException e) {
             Assertions.assertEquals("Failed to validate: certificate name is empty", e.getMessage());
         }
     }
@@ -145,13 +143,13 @@ class GiftCertificateServiceImplTest {
 
         try {
             giftCertificateService.deleteGiftCertificate(givenCertificate.getId());
-        } catch (ServiceException e) {
+        } catch (PersistenceException e) {
             Assertions.assertEquals("Failed to delete certificate: certificate not found", e.getMessage());
         }
     }
 
     @Test
-    void whenAddCertificate_thenReturnThemSortedByDateAsc() throws ServiceException {
+    void whenAddCertificate_thenReturnThemSortedByDateAsc() throws PersistenceException {
         CertificateRequestBody givenRequestBody = new CertificateRequestBody();
         givenRequestBody.setSortType(SortType.ASC);
         givenRequestBody.setSortBy(SortParameter.DATE);
@@ -166,7 +164,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void whenAddCertificate_thenReturnThemSortedByDateDesc() throws ServiceException {
+    void whenAddCertificate_thenReturnThemSortedByDateDesc() throws PersistenceException {
         CertificateRequestBody givenRequestBody = new CertificateRequestBody();
         givenRequestBody.setSortType(SortType.DESC);
         givenRequestBody.setSortBy(SortParameter.DATE);

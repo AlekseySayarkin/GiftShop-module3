@@ -3,7 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.impl.SQLTagDaoImpl;
 import com.epam.esm.model.Tag;
-import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.dao.exception.PersistenceException;
 import com.epam.esm.service.impl.TagServiceImp;
 import com.epam.esm.service.util.impl.TagValidatorImpl;
 import org.junit.jupiter.api.Assertions;
@@ -26,7 +26,7 @@ class TagServiceImpTest {
     }
 
     @Test
-    void whenGetTag_thenCorrectlyReturnItById() throws ServiceException {
+    void whenGetTag_thenCorrectlyReturnItById() throws PersistenceException {
         Tag given = new Tag(1, "spa");
 
         Mockito.when(tagDao.getTag(given.getId())).thenReturn(given);
@@ -37,7 +37,7 @@ class TagServiceImpTest {
     }
 
     @Test
-    void whenGetTag_thenCorrectlyReturnItByName() throws ServiceException {
+    void whenGetTag_thenCorrectlyReturnItByName() throws PersistenceException {
         Tag given = new Tag(1, "spa");
 
         Mockito.when(tagDao.getTag(given.getName())).thenReturn(given);
@@ -49,7 +49,7 @@ class TagServiceImpTest {
 
 
     @Test
-    void whenAddTags_thenCorrectlyReturnThem() throws ServiceException {
+    void whenAddTags_thenCorrectlyReturnThem() throws PersistenceException {
         List<Tag> expected = new ArrayList<>();
         for (int i = 1; i < 10; i++) {
             expected.add(new Tag(i, "Tag " + i));
@@ -68,7 +68,7 @@ class TagServiceImpTest {
 
         try {
             tagService.addTag(tag);
-        } catch (ServiceException e) {
+        } catch (PersistenceException e) {
             Assertions.assertEquals("Failed to validate: tag name is empty", e.getMessage());
         }
     }
@@ -79,7 +79,7 @@ class TagServiceImpTest {
 
         try {
             tagService.deleteTag(tag.getId());
-        } catch (ServiceException e) {
+        } catch (PersistenceException e) {
             Assertions.assertEquals("Failed to delete tag because it id ("
                     + tag.getId() +") is not found", e.getMessage());
         }

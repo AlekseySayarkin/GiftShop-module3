@@ -2,7 +2,7 @@ package com.epam.esm.service.util.impl;
 
 import com.epam.esm.dao.exception.ErrorCodeEnum;
 import com.epam.esm.model.GiftCertificate;
-import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.dao.exception.PersistenceException;
 import com.epam.esm.service.util.CertificateValidator;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +11,9 @@ import java.time.ZonedDateTime;
 @Component
 public class CertificateValidatorImpl implements CertificateValidator {
 
-    public void validateCertificate(GiftCertificate giftCertificate) throws ServiceException {
+    public void validateCertificate(GiftCertificate giftCertificate) throws PersistenceException {
         if (giftCertificate == null) {
-            throw new ServiceException("Failed to validate: certificate is empty",
+            throw new PersistenceException("Failed to validate: certificate is empty",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
 
@@ -25,52 +25,52 @@ public class CertificateValidatorImpl implements CertificateValidator {
         validateDuration(giftCertificate.getDuration());
     }
 
-    public void validateId(int id) throws ServiceException {
+    public void validateId(int id) throws PersistenceException {
         if (id < 0) {
-            throw new ServiceException("Failed to validate: certificate id is negative",
+            throw new PersistenceException("Failed to validate: certificate id is negative",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }
 
-    public void validateName(String name) throws ServiceException {
+    public void validateName(String name) throws PersistenceException {
         if (name == null || name.isEmpty()) {
-            throw new ServiceException("Failed to validate: certificate name is empty",
+            throw new PersistenceException("Failed to validate: certificate name is empty",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }
 
-    public void validateDescription(String description) throws ServiceException {
+    public void validateDescription(String description) throws PersistenceException {
         if (description == null || description.isEmpty()) {
-            throw new ServiceException("Failed to validate: certificate description is empty",
+            throw new PersistenceException("Failed to validate: certificate description is empty",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }
 
-    private void validatePrice(double price) throws ServiceException{
+    private void validatePrice(double price) throws PersistenceException {
         if (price < 0) {
-            throw new ServiceException("Failed to validate: certificate price is negative",
+            throw new PersistenceException("Failed to validate: certificate price is negative",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }
 
     private void validateCreateAndUpdateDates(ZonedDateTime createDate, ZonedDateTime updateDate)
-            throws ServiceException {
+            throws PersistenceException {
         if (createDate == null && updateDate == null) {
             return;
         }
         if (createDate == null) {
-            throw new ServiceException("Failed to validate: certificate create date is null while update date isn't",
+            throw new PersistenceException("Failed to validate: certificate create date is null while update date isn't",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
         if (updateDate.isBefore(createDate)) {
-            throw new ServiceException("Failed to validate: certificate update date is before create date",
+            throw new PersistenceException("Failed to validate: certificate update date is before create date",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }
 
-    private void validateDuration(int duration) throws ServiceException {
+    private void validateDuration(int duration) throws PersistenceException {
         if (duration <= 0) {
-            throw new ServiceException("Failed to validate: certificate price is negative",
+            throw new PersistenceException("Failed to validate: certificate price is negative",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }

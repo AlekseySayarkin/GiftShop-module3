@@ -2,7 +2,7 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.dao.exception.PersistenceException;
 import com.epam.esm.service.request.CertificateRequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,29 +22,29 @@ public class CertificateController {
 
     @GetMapping("/certificates")
     public List<GiftCertificate> getGiftCertificates(
-            @RequestBody(required = false) CertificateRequestBody request) throws ServiceException {
+            @RequestBody(required = false) CertificateRequestBody request) throws PersistenceException {
            return giftCertificateService.getGiftCertificates(request);
     }
 
     @GetMapping("/certificates/{id}")
-    public GiftCertificate getGiftCertificate(@PathVariable int id) throws ServiceException {
+    public GiftCertificate getGiftCertificate(@PathVariable int id) throws PersistenceException {
         return giftCertificateService.getGiftCertificate(id);
     }
 
     @PostMapping("/certificates")
-    public GiftCertificate addGiftCertificate(@RequestBody GiftCertificate giftCertificate) throws ServiceException {
+    public GiftCertificate addGiftCertificate(@RequestBody GiftCertificate giftCertificate) throws PersistenceException {
         return giftCertificateService.addGiftCertificate(giftCertificate);
     }
 
     @DeleteMapping("/certificates/{id}")
-    public HttpStatus deleteGiftCertificate( @PathVariable int id) throws ServiceException {
+    public HttpStatus deleteGiftCertificate( @PathVariable int id) throws PersistenceException {
         giftCertificateService.deleteGiftCertificate(id);
         return HttpStatus.OK;
     }
 
     @PutMapping("/certificates/{id}")
     public GiftCertificate updateGiftCertificate(
-            @RequestBody GiftCertificate giftCertificate, @PathVariable int id) throws ServiceException {
+            @RequestBody GiftCertificate giftCertificate, @PathVariable int id) throws PersistenceException {
         return giftCertificateService.updateGiftCertificate(giftCertificate, id);
     }
 }

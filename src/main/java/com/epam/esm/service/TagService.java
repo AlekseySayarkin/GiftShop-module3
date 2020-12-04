@@ -1,7 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.model.Tag;
-import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.dao.exception.PersistenceException;
 
 import java.util.List;
 
@@ -20,10 +20,10 @@ public interface TagService {
      * which equals to {@code String name}.
      *
      * @param name tag name.
-     * @throws ServiceException when failed to get {@code Tag} from persistence layer.
+     * @throws PersistenceException when failed to get {@code Tag} from persistence layer.
      * @return {@code Tag}.
      */
-    Tag getTag(String name) throws ServiceException;
+    Tag getTag(String name) throws PersistenceException;
 
     /**
      * Retrieves data of {@code Tag} from
@@ -31,33 +31,33 @@ public interface TagService {
      * which equals to {@code int id}.
      *
      * @param id tag id.
-     * @throws ServiceException when failed to get {@code Tag} from persistence layer.
+     * @throws PersistenceException when failed to get {@code Tag} from persistence layer.
      * @return {@code Tag}.
      */
-    Tag getTag(int id) throws ServiceException;
+    Tag getTag(int id) throws PersistenceException;
 
     /**
      * Retrieves all {@code Tag} from persistence layer.
      *
-     * @throws ServiceException when failed to get {@code Tag} from persistence layer.
+     * @throws PersistenceException when failed to get {@code Tag} from persistence layer.
      * @return List<Tag> - all existing tags in persistence layer.
      */
-    List<Tag> getAllTags() throws ServiceException;
+    List<Tag> getAllTags() throws PersistenceException;
 
     /**
      * Adds new {@code Tag} to persistence layer.
      *
      * @param tag {@code Tag} which to be added to persistence layer.
-     * @throws ServiceException when failed to add {@code Tag} to persistence layer.
+     * @throws PersistenceException when failed to add {@code Tag} to persistence layer.
      * @return id of a {@code Tag} from persistence layer.
      */
-    Tag addTag(Tag tag) throws ServiceException;
+    Tag addTag(Tag tag) throws PersistenceException;
 
     /**
      * Deletes {@code Tag} from persistence layer.
      *
      * @param tagId id of a {@code Tag} which to delete from persistence layer.
-     * @throws ServiceException when failed to delete {@code Tag} from persistence layer.
+     * @throws PersistenceException when failed to delete {@code Tag} from persistence layer.
      */
-    void deleteTag(int tagId) throws ServiceException;
+    void deleteTag(int tagId) throws PersistenceException;
 }

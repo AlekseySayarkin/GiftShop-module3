@@ -99,7 +99,7 @@ public interface GiftCertificateDAO {
      * Updates {@code GiftCertificate} in data source.
      * Null or default values in {@code GiftCertificate} are not updated.
      *
-     * @param giftCertificate {@code GiftCertificate} which to update in data source.
+     * @param giftCertificate {@code ServiceException} which to update in data source.
      * @return whether transaction was successful.
      */
     boolean updateGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException;
