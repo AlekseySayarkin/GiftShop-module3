@@ -20,8 +20,9 @@ public class TagController {
     }
 
     @GetMapping(value = "/tags")
-    public List<Tag> getTags() throws PersistenceException {
-        return tagService.getAllTags();
+    public List<Tag> getTags(@RequestParam int limit, @RequestParam int offset)
+            throws PersistenceException {
+        return tagService.getAllTagsByPage(limit, offset);
     }
 
     @GetMapping("/tags/{id}")

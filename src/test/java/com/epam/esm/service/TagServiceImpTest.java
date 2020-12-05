@@ -5,6 +5,7 @@ import com.epam.esm.dao.impl.SQLTagDaoImpl;
 import com.epam.esm.model.Tag;
 import com.epam.esm.dao.exception.PersistenceException;
 import com.epam.esm.service.impl.TagServiceImp;
+import com.epam.esm.service.util.impl.PaginationValidatorImpl;
 import com.epam.esm.service.util.impl.TagValidatorImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +23,7 @@ class TagServiceImpTest {
     @BeforeEach
     public void init() {
         tagDao = Mockito.mock(SQLTagDaoImpl.class);
-        tagService = new TagServiceImp(tagDao, new TagValidatorImpl());
+        tagService = new TagServiceImp(tagDao, new TagValidatorImpl(), new PaginationValidatorImpl());
     }
 
     @Test

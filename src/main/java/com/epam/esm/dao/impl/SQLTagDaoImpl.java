@@ -21,6 +21,7 @@ public class SQLTagDaoImpl implements TagDao {
     private static final String SQL_GET_ALL_TAGS = "select Id, Name from Tags";
     private static final String SQL_GET_TAG_BY_NAME = "select Id, Name from Tags where Name = ?";
     private static final String SQL_GET_TAG_BY_ID = "select Id, Name from Tags where Id = ?";
+    private static final String SQL_GET_TAGS_BY_PAGE = "select Id, Name from Tags limit ? offset ?";
     private static final String SQL_ADD_TAG = "insert into Tags (Name) values (?)";
     private static final String SQL_DELETE_TAG = "delete from Tags where ID = ?";
 
@@ -35,17 +36,22 @@ public class SQLTagDaoImpl implements TagDao {
 
     @Override
     public Tag getTag(String name) {
-        return jdbcTemplate.queryForObject(SQL_GET_TAG_BY_NAME, new Object[] { name }, tagRowMapper);
+        return jdbcTemplate.queryForObject(SQL_GET_TAG_BY_NAME, tagRowMapper, name);
     }
 
     @Override
     public Tag getTag(int id) {
-        return jdbcTemplate.queryForObject(SQL_GET_TAG_BY_ID, new Object[] { id }, tagRowMapper);
+        return jdbcTemplate.queryForObject(SQL_GET_TAG_BY_ID, tagRowMapper, id);
     }
 
     @Override
     public List<Tag> getAllTags() {
         return jdbcTemplate.query(SQL_GET_ALL_TAGS, tagRowMapper);
+    }
+
+    @Override
+    public List<Tag> getAllTagsByPage(int limit, int offset) {
+        return jdbcTemplate.query(SQL_GET_TAGS_BY_PAGE, tagRowMapper, limit, offset);
     }
 
     @Override

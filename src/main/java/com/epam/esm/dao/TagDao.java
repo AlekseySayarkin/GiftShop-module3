@@ -42,6 +42,16 @@ public interface TagDao {
     List<Tag> getAllTags();
 
     /**
+     * Retrieves certain number of {@code Tag} from data source.
+     *
+     * @param limit max amount of {@code Tag} to return.
+     * @param offset from which position in a data source
+     * to start returning.
+     * @return List<Tag> - certain number of  existing tags in data source.
+     */
+    List<Tag> getAllTagsByPage(int limit, int offset);
+
+    /**
      * Adds new {@code Tag} to data source.
      *
      * @param tag {@code Tag} which to be added to data source.

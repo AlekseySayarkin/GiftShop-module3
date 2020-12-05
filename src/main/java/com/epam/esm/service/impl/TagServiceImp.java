@@ -5,6 +5,7 @@ import com.epam.esm.dao.exception.ErrorCodeEnum;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.service.util.TagValidator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -21,11 +22,13 @@ public class TagServiceImp implements TagService {
 
     private final TagDao tagDao;
     private final TagValidator tagValidator;
+    private final PaginationValidator paginationValidator;
 
     @Autowired
-    public TagServiceImp(TagDao tagDao, TagValidator tagValidator) {
+    public TagServiceImp(TagDao tagDao, TagValidator tagValidator, PaginationValidator paginationValidator) {
         this.tagDao = tagDao;
         this.tagValidator = tagValidator;
+        this.paginationValidator = paginationValidator;
     }
 
     @Override
@@ -59,6 +62,19 @@ public class TagServiceImp implements TagService {
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getAllTags(): " + e.getMessage());
             throw new PersistenceException("Failed to get all tags", ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+        }
+    }
+
+    @Override
+    public List<Tag> getAllTagsByPage(int limit, int offset) throws PersistenceException {
+        paginationValidator.validatePagination(limit, offset);
+        try {
+            return tagDao.getAllTagsByPage(limit, offset);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            LOGGER.error("Following exception was thrown in getAllTagsByPage(): " + e.getMessage());
+            throw new PersistenceException("Failed to get specified number of tags",
+                    ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
         }
     }
 

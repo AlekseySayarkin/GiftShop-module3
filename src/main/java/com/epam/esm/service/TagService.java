@@ -45,6 +45,16 @@ public interface TagService {
     List<Tag> getAllTags() throws PersistenceException;
 
     /**
+     * Retrieves certain number of {@code Tag} from persistence layer.
+     *
+     * @param limit max amount of {@code Tag} to return.
+     * @param offset from which position in a data source to return.
+     * @throws PersistenceException when failed to get {@code Tag} from persistence layer.
+     * @return List<Tag> - certain number of existing tags in persistence layer.
+     */
+    List<Tag> getAllTagsByPage(int limit, int offset) throws PersistenceException;
+
+    /**
      * Adds new {@code Tag} to persistence layer.
      *
      * @param tag {@code Tag} which to be added to persistence layer.
