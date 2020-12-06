@@ -7,16 +7,6 @@ public class CertificateRequestBody {
     private SortParameter sortBy;
     private String tagName;
 
-    public CertificateRequestBody() {
-    }
-
-    public CertificateRequestBody(String content, SortType sortType, SortParameter sortBy, String tagName) {
-        this.content = content;
-        this.sortType = sortType;
-        this.sortBy = sortBy;
-        this.tagName = tagName;
-    }
-
     public String getContent() {
         return content;
     }

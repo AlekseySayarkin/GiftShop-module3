@@ -39,10 +39,12 @@ public interface GiftCertificateService {
 
     /**
      * Retrieves all {@code GiftCertificate} from persistence layer.
+     * @param limit max amount of {@code GiftCertificate} to return.
+     * @param offset from which position in a data source to return.
      * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - all existing certificates in persistence layer.
      */
-    List<GiftCertificate> geAllCertificatesByContent() throws PersistenceException;
+    List<GiftCertificate> getCertificatesByPage(int limit, int offset) throws PersistenceException;
 
     /**
      * Retrieves {@code GiftCertificate} from persistence layer
@@ -50,50 +52,65 @@ public interface GiftCertificateService {
      * in it name or description.
      *
      * @param content {@code GiftCertificate} name or description.
+     * @param limit max amount of {@code GiftCertificate} to return.
+     * @param offset from which position in a data source to return.
      * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - existing certificates in persistence layer.
      */
-    List<GiftCertificate> getGiftCertificatesByContent(String content) throws PersistenceException;
+    List<GiftCertificate> getGiftCertificatesByContent(
+            String content,int limit, int offset) throws PersistenceException;
 
     /**
      * Retrieves {@code GiftCertificate} from persistence layer
      * by name of a {@code Tag} which this {@code GiftCertificate} has.
      *
+     * @param limit max amount of {@code GiftCertificate} to return.
+     * @param offset from which position in a data source to return.
      * @param tagName name of a {@code Tag}.
      * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - existing certificates in persistence layer.
      */
-    List<GiftCertificate> getGiftCertificateByTagName(String tagName) throws PersistenceException;
+    List<GiftCertificate> getGiftCertificateByTagName(
+            String tagName, int limit, int offset) throws PersistenceException;
 
     /**
      * Retrieves all {@code GiftCertificate} from persistence layer
      * and sorts it by name according to {@code isAscending}.
      *
+     * @param limit max amount of {@code GiftCertificate} to return.
+     * @param offset from which position in a data source to return.
      * @param isAscending asc or desc sort.
-     *@throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - sorted certificates in persistence layer.
      */
-    List<GiftCertificate> getAllGiftCertificatesSortedByName(boolean isAscending) throws PersistenceException;
+    List<GiftCertificate> getAllGiftCertificatesSortedByName(
+            boolean isAscending, int limit, int offset) throws PersistenceException;
 
     /**
      * Retrieves all {@code GiftCertificate} from persistence layer
      * and sorts it by date according to {@code isAscending}.
      *
+     * @param limit max amount of {@code GiftCertificate} to return.
+     * @param offset from which position in a data source to return.
      * @param isAscending asc or desc sort.
      * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - sorted certificates in persistence layer.
      */
-    List<GiftCertificate> getAllGiftCertificatesSortedByDate(boolean isAscending) throws PersistenceException;
+    List<GiftCertificate> getAllGiftCertificatesSortedByDate(
+            boolean isAscending, int limit, int offset) throws PersistenceException;
 
     /**
      * Retrieves {@code GiftCertificate} from persistence layer
      * using one of non null fields of {@code CertificateRequestBody}.
      *
-     * @param requestBody representation of http request body.
+     * @param requestBody max amount and from which position in a data source of {@code GiftCertificate} to return.
+     * @param limit max amount of {@code GiftCertificate} to return.
+     * @param offset from which position in a data source to return.
      * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - certificates from persistence layer.
      */
-    List<GiftCertificate> getGiftCertificates(CertificateRequestBody requestBody) throws PersistenceException;
+    List<GiftCertificate> getGiftCertificates(CertificateRequestBody requestBody,
+            int limit, int offset) throws PersistenceException;
 
     /**
      * Adds new {@code GiftCertificate} to persistence layer.

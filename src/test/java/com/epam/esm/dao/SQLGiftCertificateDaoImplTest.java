@@ -26,6 +26,8 @@ class SQLGiftCertificateDaoImplTest {
 
     private GiftCertificateDAO giftCertificateDAO;
     private TagDao tagDao;
+    private int limit;
+    private int offset;
 
     @BeforeEach
     public void init() throws PersistenceException {
@@ -46,6 +48,9 @@ class SQLGiftCertificateDaoImplTest {
         tagDao.addTag(new Tag("spa"));
         tagDao.addTag(new Tag("relax"));
         tagDao.addTag(new Tag("tourism"));
+
+        limit = 50;
+        offset = 0;
     }
 
     private List<GiftCertificate> initCertificates(int size) {
@@ -151,7 +156,8 @@ class SQLGiftCertificateDaoImplTest {
             }
         }
 
-        List<GiftCertificate> actual = giftCertificateDAO.getGiftCertificateByTagName("relax");
+        List<GiftCertificate> actual = giftCertificateDAO.getGiftCertificateByTagName(
+                "relax", limit, offset);
         assertEquals(given, actual);
     }
 
@@ -181,7 +187,7 @@ class SQLGiftCertificateDaoImplTest {
             }
         }
 
-        List<GiftCertificate> actual = giftCertificateDAO.getAllGiftCertificates();
+        List<GiftCertificate> actual = giftCertificateDAO.getGiftCertificatesByPage(limit, offset);
         assertEquals(given, actual);
     }
 
@@ -205,38 +211,6 @@ class SQLGiftCertificateDaoImplTest {
     }
 
     @Test
-    void whenAddGiftCertificates_thenCorrectlyReturnThemSortedByDateAsc() throws PersistenceException {
-        List<GiftCertificate> given = initCertificates(10);
-
-        for (GiftCertificate certificate: given) {
-            certificate.setId(giftCertificateDAO.addGiftCertificate(certificate));
-
-            for (Tag tag: certificate.getTags()) {
-                giftCertificateDAO.createCertificateTagRelation(certificate.getId(), tag.getId());
-            }
-        }
-
-        List<GiftCertificate> actual = giftCertificateDAO.getAllGiftCertificatesSortedByDate(true);
-        assertEquals(given, actual);
-    }
-
-    @Test
-    void whenAddGiftCertificates_thenCorrectlyReturnThemSortedByDateDesc() throws PersistenceException {
-        List<GiftCertificate> given = initCertificates(10);
-
-        for (GiftCertificate certificate: given) {
-            certificate.setId(giftCertificateDAO.addGiftCertificate(certificate));
-
-            for (Tag tag: certificate.getTags()) {
-                giftCertificateDAO.createCertificateTagRelation(certificate.getId(), tag.getId());
-            }
-        }
-
-        List<GiftCertificate> actual = giftCertificateDAO.getAllGiftCertificatesSortedByDate(false);
-        assertEquals(given, actual);
-    }
-
-    @Test
     void whenAddGiftCertificates_thenCorrectlyReturnThemSortedByNameAsc() throws PersistenceException {
         List<GiftCertificate> given = initCertificates(10);
 
@@ -249,7 +223,8 @@ class SQLGiftCertificateDaoImplTest {
             }
         }
 
-        List<GiftCertificate> actual = giftCertificateDAO.getAllGiftCertificatesSortedByName(true);
+        List<GiftCertificate> actual = giftCertificateDAO.getAllGiftCertificatesSortedByName(
+                true, limit, offset);
         assertEquals(given, actual);
     }
 
@@ -267,7 +242,8 @@ class SQLGiftCertificateDaoImplTest {
         }
 
         Collections.reverse(given);
-        List<GiftCertificate> actual = giftCertificateDAO.getAllGiftCertificatesSortedByName(false);
+        List<GiftCertificate> actual = giftCertificateDAO.getAllGiftCertificatesSortedByName(
+                false, limit, offset);
         assertEquals(given, actual);
     }
 
@@ -283,7 +259,8 @@ class SQLGiftCertificateDaoImplTest {
             }
         }
 
-        List<GiftCertificate> actual = giftCertificateDAO.getAllGiftCertificates("Certificate description");
+        List<GiftCertificate> actual = giftCertificateDAO.getGiftCertificatesByContent(
+                "Certificate description", limit, offset);
         assertEquals(given, actual);
     }
 }

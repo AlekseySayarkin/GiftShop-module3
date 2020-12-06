@@ -12,6 +12,7 @@ import com.epam.esm.service.request.CertificateRequestBody;
 import com.epam.esm.service.request.SortParameter;
 import com.epam.esm.service.request.SortType;
 import com.epam.esm.service.util.impl.CertificateValidatorImpl;
+import com.epam.esm.service.util.impl.PaginationValidatorImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,14 +28,18 @@ class GiftCertificateServiceImplTest {
     private TagDao tagDao;
     private GiftCertificateDAO giftCertificateDAO;
     private GiftCertificateService giftCertificateService;
+    private int limit;
+    private int offset;
 
     @BeforeEach
     public void init() {
+        limit = 10;
+        offset = 0;
         tagDao = Mockito.mock(SQLTagDaoImpl.class);
         giftCertificateDAO = Mockito.mock(SQLGiftCertificateDaoImpl.class);
 
         giftCertificateService = new GiftCertificateServiceImpl(
-                giftCertificateDAO, tagDao, new CertificateValidatorImpl());
+                giftCertificateDAO, tagDao, new CertificateValidatorImpl(), new PaginationValidatorImpl());
     }
 
     private List<GiftCertificate> initCertificates() {
@@ -100,11 +105,11 @@ class GiftCertificateServiceImplTest {
             given.add(certificate);
         }
 
-        Mockito.when(giftCertificateService.geAllCertificatesByContent()).thenReturn(given);
+        Mockito.when(giftCertificateService.getCertificatesByPage(limit, offset)).thenReturn(given);
 
-        List<GiftCertificate> actual = giftCertificateService.geAllCertificatesByContent();
+        List<GiftCertificate> actual = giftCertificateService.getCertificatesByPage(limit, offset);
         Assertions.assertEquals(given, actual);
-        Mockito.verify(giftCertificateDAO).getAllGiftCertificates();
+        Mockito.verify(giftCertificateDAO).getGiftCertificatesByPage(limit, offset);
     }
 
     @Test
@@ -155,12 +160,13 @@ class GiftCertificateServiceImplTest {
         givenRequestBody.setSortBy(SortParameter.DATE);
         List<GiftCertificate> givenCertificates = initCertificates();
 
-        Mockito.when(giftCertificateDAO.getAllGiftCertificatesSortedByDate(true))
+        Mockito.when(giftCertificateDAO.getGiftCertificatesSortedByDate(true, limit, offset))
                 .thenReturn(givenCertificates);
 
-        List<GiftCertificate> actual = giftCertificateService.getGiftCertificates(givenRequestBody);
+        List<GiftCertificate> actual = giftCertificateService.getGiftCertificates(
+                givenRequestBody, limit, offset);
         Assertions.assertEquals(givenCertificates, actual);
-        Mockito.verify(giftCertificateDAO).getAllGiftCertificatesSortedByDate(true);
+        Mockito.verify(giftCertificateDAO).getGiftCertificatesSortedByDate(true, limit, offset);
     }
 
     @Test
@@ -171,11 +177,12 @@ class GiftCertificateServiceImplTest {
         List<GiftCertificate> givenCertificates = initCertificates();
         Collections.reverse(givenCertificates);
 
-        Mockito.when(giftCertificateDAO.getAllGiftCertificatesSortedByDate(false))
+        Mockito.when(giftCertificateDAO.getGiftCertificatesSortedByDate(false, limit, offset))
                 .thenReturn(givenCertificates);
 
-        List<GiftCertificate> actual = giftCertificateService.getGiftCertificates(givenRequestBody);
+        List<GiftCertificate> actual = giftCertificateService.getGiftCertificates(
+                givenRequestBody, limit, offset);
         Assertions.assertEquals(givenCertificates, actual);
-        Mockito.verify(giftCertificateDAO).getAllGiftCertificatesSortedByDate(false);
+        Mockito.verify(giftCertificateDAO).getGiftCertificatesSortedByDate(false, limit, offset);
     }
 }

@@ -39,15 +39,21 @@ public class SQLGiftCertificateDaoImpl implements GiftCertificateDAO {
             "on Tags.ID = CertificateDetails.TagID " +
             "where GiftCertificates.Name = ?";
 
-    private static final String SQL_GET_ALL_CERTIFICATES =
+    private static final String SQL_GET_CERTIFICATES_BY_PAGE =
+            "select * from (" +
             "select * from GiftCertificates " +
+            "limit ? offset ? " +
+            ") as GiftCertificates " +
             "left join CertificateDetails " +
             "on GiftCertificates.ID = CertificateDetails.CertificateID " +
             "left join Tags " +
             "on Tags.ID = CertificateDetails.TagID ";
 
     private static final String SQL_GET_ALL_CERTIFICATES_BY_CONTENT =
+            "select * from (" +
             "select * from GiftCertificates " +
+            "limit ? offset ? " +
+            ") as GiftCertificates " +
             "left join CertificateDetails " +
             "on GiftCertificates.ID = CertificateDetails.CertificateID " +
             "left join Tags " +
@@ -55,15 +61,18 @@ public class SQLGiftCertificateDaoImpl implements GiftCertificateDAO {
             "where GiftCertificates.Name like ? or Description like ? ";
 
     private static final String SQL_GET_CERTIFICATES_BY_TAG_NAME =
+            "select * from (" +
             "select * from GiftCertificates " +
+            "limit ? offset ? " +
+            ") as GiftCertificates " +
             "join CertificateDetails on GiftCertificates.ID = CertificateDetails.CertificateID " +
             "join Tags on Tags.ID = CertificateDetails.TagID " +
             "where CertificateDetails.CertificateID in " +
             "( " +
             "select CertificateDetails.CertificateID from CertificateDetails " +
             "join Tags on Tags.ID = CertificateDetails.TagID " +
-            "where Tags.name = ?" +
-            ")";
+            "where Tags.name = ? " +
+            ") ";
 
     private static final String SQL_ADD_CERTIFICATE =
             "insert into GiftCertificates " +
@@ -101,47 +110,47 @@ public class SQLGiftCertificateDaoImpl implements GiftCertificateDAO {
 
     @Override
     public GiftCertificate getGiftCertificate(String name) {
-        return jdbcTemplate.queryForObject(SQL_GET_CERTIFICATE_BY_NAME, new Object[] { name }, mapper);
+        return jdbcTemplate.queryForObject(SQL_GET_CERTIFICATE_BY_NAME, mapper, name);
     }
 
     @Override
     public GiftCertificate getGiftCertificate(int id) {
-        return jdbcTemplate.queryForObject(SQL_GET_CERTIFICATE_BY_ID, new Object[] { id }, mapper);
+        return jdbcTemplate.queryForObject(SQL_GET_CERTIFICATE_BY_ID, mapper, id);
     }
 
     @Override
-    public List<GiftCertificate> getAllGiftCertificates() {
-        return jdbcTemplate.query(SQL_GET_ALL_CERTIFICATES, extractor);
+    public List<GiftCertificate> getGiftCertificatesByPage(int limit, int offset) {
+        return jdbcTemplate.query(SQL_GET_CERTIFICATES_BY_PAGE, extractor, limit, offset);
     }
 
     @Override
-    public List<GiftCertificate> getAllGiftCertificates(String content) {
+    public List<GiftCertificate> getGiftCertificatesByContent(String content, int limit, int offset) {
         String param = "%" + content + "%";
         return jdbcTemplate.query(
-                SQL_GET_ALL_CERTIFICATES_BY_CONTENT, extractor, param, param);
+                SQL_GET_ALL_CERTIFICATES_BY_CONTENT, extractor, limit, offset, param, param);
     }
 
     @Override
-    public List<GiftCertificate> getGiftCertificateByTagName(String tagName) {
-        return jdbcTemplate.query(SQL_GET_CERTIFICATES_BY_TAG_NAME, extractor, tagName);
+    public List<GiftCertificate> getGiftCertificateByTagName(String tagName, int limit, int offset) {
+        return jdbcTemplate.query(SQL_GET_CERTIFICATES_BY_TAG_NAME, extractor, limit, offset, tagName);
     }
 
     @Override
-    public List<GiftCertificate> getAllGiftCertificatesSortedByName(boolean isAscending) {
-        return getAllGiftCertificatesSortedByParameter("GiftCertificates.Name", isAscending);
+    public List<GiftCertificate> getAllGiftCertificatesSortedByName(boolean isAscending,  int limit, int offset) {
+        return getAllGiftCertificatesSortedByParameter("GiftCertificates.Name", isAscending, limit, offset);
     }
 
     @Override
-    public List<GiftCertificate> getAllGiftCertificatesSortedByDate(boolean isAscending) {
-        return getAllGiftCertificatesSortedByParameter("CreateDate", isAscending);
+    public List<GiftCertificate> getGiftCertificatesSortedByDate(boolean isAscending, int limit, int offset) {
+        return getAllGiftCertificatesSortedByParameter("CreateDate", isAscending, limit, offset);
     }
 
     private List<GiftCertificate> getAllGiftCertificatesSortedByParameter(
-            String parameter, boolean isAscending) {
-        String sql = SQL_GET_ALL_CERTIFICATES + "order by " + parameter + " ";
-        sql += isAscending ? "ASC" : "DESC";
+            String parameter, boolean isAscending, int limit, int offset) {
+        String sql = SQL_GET_CERTIFICATES_BY_PAGE + "order by " + parameter;
+        sql += isAscending ? " ASC" : " DESC";
 
-        return jdbcTemplate.query(sql, extractor);
+        return jdbcTemplate.query(sql, extractor, limit, offset);
     }
 
     @Override

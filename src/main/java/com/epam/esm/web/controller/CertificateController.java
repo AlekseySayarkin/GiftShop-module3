@@ -21,9 +21,9 @@ public class CertificateController {
     }
 
     @GetMapping("/certificates")
-    public List<GiftCertificate> getGiftCertificates(
-            @RequestBody(required = false) CertificateRequestBody request) throws PersistenceException {
-           return giftCertificateService.getGiftCertificates(request);
+    public List<GiftCertificate> getGiftCertificates(@RequestBody(required = false) CertificateRequestBody request,
+             @RequestParam int limit, @RequestParam int offset) throws PersistenceException {
+           return giftCertificateService.getGiftCertificates(request, limit, offset);
     }
 
     @GetMapping("/certificates/{id}")
@@ -37,7 +37,7 @@ public class CertificateController {
     }
 
     @DeleteMapping("/certificates/{id}")
-    public HttpStatus deleteGiftCertificate( @PathVariable int id) throws PersistenceException {
+    public HttpStatus deleteGiftCertificate(@PathVariable int id) throws PersistenceException {
         giftCertificateService.deleteGiftCertificate(id);
         return HttpStatus.OK;
     }

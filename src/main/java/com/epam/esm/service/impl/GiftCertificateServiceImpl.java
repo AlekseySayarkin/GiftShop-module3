@@ -11,6 +11,7 @@ import com.epam.esm.service.request.CertificateRequestBody;
 import com.epam.esm.service.request.SortParameter;
 import com.epam.esm.service.request.SortType;
 import com.epam.esm.service.util.CertificateValidator;
+import com.epam.esm.service.util.PaginationValidator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +32,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateDAO giftCertificateDAO;
     private final TagDao tagDao;
     private final CertificateValidator certificateValidator;
+    private final PaginationValidator paginationValidator;
 
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDAO, TagDao tagDao,
-                                      CertificateValidator certificateValidator) {
+            CertificateValidator certificateValidator, PaginationValidator paginationValidator) {
         this.giftCertificateDAO = giftCertificateDAO;
         this.tagDao = tagDao;
         this.certificateValidator = certificateValidator;
+        this.paginationValidator = paginationValidator;
     }
 
     @Override
@@ -65,9 +68,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> geAllCertificatesByContent() throws PersistenceException {
+    public List<GiftCertificate> getCertificatesByPage(int limit, int offset)
+            throws PersistenceException {
+        paginationValidator.validatePagination(limit, offset);
         try {
-            return giftCertificateDAO.getAllGiftCertificates();
+            return giftCertificateDAO.getGiftCertificatesByPage(limit, offset);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getAllGiftCertificates(): " + e.getMessage());
             throw new PersistenceException("Failed to get all certificates", ErrorCodeEnum.FAILED_TO_RETRIEVE_CERTIFICATE);
@@ -75,13 +80,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> getGiftCertificatesByContent(String content) throws PersistenceException {
+    public List<GiftCertificate> getGiftCertificatesByContent(String content, int limit, int offset)
+            throws PersistenceException {
+        paginationValidator.validatePagination(limit, offset);
         if (content == null || content.isEmpty()) {
             throw new PersistenceException("Failed to validate: content is empty", ErrorCodeEnum.INVALID_INPUT);
         }
 
         try {
-            return giftCertificateDAO.getAllGiftCertificates(content);
+            return giftCertificateDAO.getGiftCertificatesByContent(content, limit, offset);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getAllGiftCertificates(String content): " + e.getMessage());
             throw new PersistenceException("Failed to get certificate by it content: " + content,
@@ -90,22 +97,27 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> getGiftCertificateByTagName(String tagName) throws PersistenceException {
+    public List<GiftCertificate> getGiftCertificateByTagName(String tagName, int limit, int offset)
+            throws PersistenceException {
         certificateValidator.validateName(tagName);
+        paginationValidator.validatePagination(limit, offset);
         try {
-            return giftCertificateDAO.getGiftCertificateByTagName(tagName);
+            return giftCertificateDAO.getGiftCertificateByTagName(
+                    tagName, limit, offset);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getGiftCertificateByTagName(): " + e.getMessage());
-            throw new PersistenceException("Failed to get certificate Failed to get certificate by tag name: " + tagName,
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_CERTIFICATE);
+            throw new PersistenceException("Failed to get certificate Failed to get certificate by tag name: " +
+                    tagName, ErrorCodeEnum.FAILED_TO_RETRIEVE_CERTIFICATE);
         }
     }
 
     @Override
-    public List<GiftCertificate> getAllGiftCertificatesSortedByName(boolean isAscending)
+    public List<GiftCertificate> getAllGiftCertificatesSortedByName(boolean isAscending, int limit, int offset)
             throws PersistenceException {
+        paginationValidator.validatePagination(limit, offset);
         try {
-            return giftCertificateDAO.getAllGiftCertificatesSortedByName(isAscending);
+            return giftCertificateDAO.getAllGiftCertificatesSortedByName(
+                    isAscending, limit, offset);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getAllGiftCertificatesSortedByName(): " + e.getMessage());
             throw new PersistenceException("Failed to get certificates", ErrorCodeEnum.FAILED_TO_RETRIEVE_CERTIFICATE);
@@ -113,10 +125,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> getAllGiftCertificatesSortedByDate(boolean isAscending)
+    public List<GiftCertificate> getAllGiftCertificatesSortedByDate(boolean isAscending,int limit, int offset)
             throws PersistenceException {
+        paginationValidator.validatePagination(limit, offset);
         try {
-            return giftCertificateDAO.getAllGiftCertificatesSortedByDate(isAscending);
+            return giftCertificateDAO.getGiftCertificatesSortedByDate(
+                    isAscending, limit, offset);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getAllGiftCertificatesSortedByDate(): " + e.getMessage());
             throw new PersistenceException("Failed to get certificate", ErrorCodeEnum.FAILED_TO_RETRIEVE_CERTIFICATE);
@@ -124,34 +138,36 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> getGiftCertificates(CertificateRequestBody requestBody) throws PersistenceException {
+    public List<GiftCertificate> getGiftCertificates(CertificateRequestBody requestBody, int limit, int offset)
+            throws PersistenceException {
+        paginationValidator.validatePagination(limit, offset);
         if (requestBody == null) {
-            return geAllCertificatesByContent();
+            return getCertificatesByPage(limit, offset);
         } else {
-            return getGiftCertificatesByRequestBody(requestBody);
+            return getGiftCertificatesByRequestBody(requestBody, limit, offset);
         }
     }
 
-    private List<GiftCertificate> getGiftCertificatesByRequestBody(CertificateRequestBody requestBody)
-            throws PersistenceException {
+    private List<GiftCertificate> getGiftCertificatesByRequestBody(
+            CertificateRequestBody requestBody, int limit, int offset) throws PersistenceException {
         if (requestBody.getContent() != null) {
-            return getGiftCertificatesByContent(requestBody.getContent());
+            return getGiftCertificatesByContent(requestBody.getContent(), limit, offset);
         }
         if (requestBody.getSortType() != null && requestBody.getSortBy() != null) {
-            return getSortedCertificates(requestBody.getSortType(), requestBody.getSortBy());
+            return getSortedCertificates(requestBody.getSortType(), requestBody.getSortBy(), limit, offset);
         }
         if (requestBody.getTagName() != null) {
-            return getGiftCertificateByTagName(requestBody.getTagName());
+            return getGiftCertificateByTagName(requestBody.getTagName(), limit, offset);
         }
 
         throw new PersistenceException("Error: request input body is empty", ErrorCodeEnum.INVALID_SORT_INPUT);
     }
 
-    private List<GiftCertificate> getSortedCertificates(SortType sortType, SortParameter sortBy)
+    private List<GiftCertificate> getSortedCertificates(SortType sortType, SortParameter sortBy, int limit, int offset)
             throws PersistenceException {
         return switch (sortBy) {
-            case DATE -> getAllGiftCertificatesSortedByDate(isAscending(sortType));
-            case NAME -> getAllGiftCertificatesSortedByName(isAscending(sortType));
+            case DATE -> getAllGiftCertificatesSortedByDate(isAscending(sortType), limit, offset);
+            case NAME -> getAllGiftCertificatesSortedByName(isAscending(sortType), limit, offset);
         };
     }
 
@@ -199,7 +215,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
             if (!giftCertificateDAO.deleteGiftCertificate(giftCertificate.getId())) {
                 LOGGER.error("Failed to delete certificate");
-                throw new PersistenceException("Failed to delete certificate", ErrorCodeEnum.FAILED_TO_DELETE_CERTIFICATE);
+                throw new PersistenceException("Failed to delete certificate",
+                        ErrorCodeEnum.FAILED_TO_DELETE_CERTIFICATE);
             }
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in deleteGiftCertificate(): " + e.getMessage());
@@ -219,7 +236,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
             if (!giftCertificateDAO.updateGiftCertificate(giftCertificate)) {
                 LOGGER.error("Failed to update certificate");
-                throw new PersistenceException("Failed to update certificate", ErrorCodeEnum.FAILED_TO_UPDATE_CERTIFICATE);
+                throw new PersistenceException("Failed to update certificate",
+                        ErrorCodeEnum.FAILED_TO_UPDATE_CERTIFICATE);
             }
             return getGiftCertificate(id);
         } catch (DataAccessException e) {
