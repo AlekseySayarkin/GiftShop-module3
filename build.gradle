@@ -18,6 +18,7 @@ dependencies {
 	compile group: 'org.springframework', name: 'spring-webmvc', version: '5.3.0'
 	compile group: 'org.springframework', name: 'spring-jdbc', version: '5.3.0'
 	compile group: 'org.springframework', name: 'spring-tx', version: '5.3.0'
+	compile group: 'org.springframework.hateoas', name: 'spring-hateoas', version: '1.2.1'
 	providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
 	compile group: 'org.json', name: 'json', version: '20200518'
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.11.3'

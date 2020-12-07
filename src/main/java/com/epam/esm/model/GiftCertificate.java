@@ -1,11 +1,13 @@
 package com.epam.esm.model;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class GiftCertificate {
+public class GiftCertificate extends RepresentationModel<GiftCertificate> {
 
     private int id;
     private String name;
