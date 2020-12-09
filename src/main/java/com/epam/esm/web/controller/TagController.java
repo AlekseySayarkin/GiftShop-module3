@@ -3,50 +3,41 @@ package com.epam.esm.web.controller;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.service.request.TagRequestBody;
+import com.epam.esm.web.dto.TagDto;
+import com.epam.esm.web.hateoas.TagProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/tags")
 public class TagController {
 
     private final TagService tagService;
-
-    private static final int DEFAULT_LIMIT = 10;
-    private static final int DEFAULT_OFFSET = 0;
+    private final TagProcessor tagProcessor;
 
     @Autowired
-    public TagController(TagService tagService) {
+    public TagController(TagService tagService, TagProcessor tagProcessor) {
         this.tagService = tagService;
+        this.tagProcessor = tagProcessor;
     }
 
     @GetMapping
-    public CollectionModel<Tag> getTags(@RequestParam int limit, @RequestParam int offset)
+    public CollectionModel<Tag> getTags(@RequestBody TagRequestBody request)
             throws PersistenceException {
-        CollectionModel<Tag> tags = CollectionModel.of(tagService.getAllTagsByPage(limit, offset));
-        tags.add(linkTo(methodOn(TagController.class).getTags(limit, offset)).withSelfRel());
-        return tags;
+        return tagProcessor.processGetTags(tagService.getAllTagsByPage(request), request);
     }
 
     @GetMapping("/{id}")
-    public Tag getTag(@PathVariable int id) throws PersistenceException {
-        Tag tag = tagService.getTag(id);
-        tag.add(linkTo(TagController.class).slash(tag.getId()).withSelfRel());
-        tag.add(linkTo(methodOn(TagController.class).getTags(DEFAULT_LIMIT, DEFAULT_OFFSET)).withRel("tags"));
-        return tag;
+    public TagDto getTag(@PathVariable int id) throws PersistenceException {
+        return tagProcessor.processGetTag(tagService.getTag(id));
     }
 
     @PostMapping
-    public Tag addTag(@RequestBody Tag tag) throws PersistenceException {
-        tag = tagService.addTag(tag);
-        tag.add(linkTo(methodOn(TagController.class).getTag(tag.getId())).withRel("addedTag"));
-        tag.add(linkTo(methodOn(TagController.class).getTags(DEFAULT_LIMIT, DEFAULT_OFFSET)).withRel("tags"));
-        return tag;
+    public TagDto addTag(@RequestBody Tag tag) throws PersistenceException {
+        return tagProcessor.processAddTag(tagService.addTag(tag));
     }
 
     @DeleteMapping("/{id}")

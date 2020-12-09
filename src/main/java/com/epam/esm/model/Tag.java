@@ -1,10 +1,8 @@
 package com.epam.esm.model;
 
-import org.springframework.hateoas.RepresentationModel;
-
 import java.util.Objects;
 
-public class Tag extends RepresentationModel<Tag> {
+public class Tag {
 
     private int id;
     private String name;
