@@ -1,10 +1,17 @@
 package com.epam.esm.model;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
+@Table(name = "Tags", schema = "GiftShop")
 public class Tag {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
+
+    @Column(unique = true, nullable = false)
     private String name;
 
     public Tag() {
