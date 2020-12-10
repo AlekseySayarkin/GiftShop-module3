@@ -1,11 +1,11 @@
 package com.epam.esm.web.hateoas;
 
-import com.epam.esm.dao.exception.PersistenceException;
-import com.epam.esm.service.request.TagRequestBody;
+import com.epam.esm.dao.exception.DaoException;
 import com.epam.esm.web.controller.TagController;
 import com.epam.esm.web.dto.TagDto;
 import com.epam.esm.model.Tag;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,45 +19,66 @@ public class TagProcessorImpl implements TagProcessor {
     private static final String ALL_TAGS = "tags";
     private static final String CURRENT_TAG = "tag";
 
-    private final TagRequestBody defaultRequestBody = TagRequestBody.getDefault();
+    private static final int DEFAULT_PAGE = 1;
+    private static final int DEFAULT_SIZE = 10;
 
-    public CollectionModel<Tag> processGetTags(List<Tag> tags, TagRequestBody request) throws PersistenceException {
+    @Override
+    public CollectionModel<Tag> setLinksToTagsPages(List<Tag> tags, int page, int size, int lastPage)
+            throws DaoException {
         CollectionModel<Tag> tagCollectionModel = CollectionModel.of(tags);
-        linkToTags(tagCollectionModel, request);
+
+        linkToTagsPage(tagCollectionModel, page, size);
+        if (hasNext(page, lastPage)) {
+            linkToNextPage(tagCollectionModel, page, size);
+        }
+        if (hasPrevious(page)) {
+            linkToPrevPage(tagCollectionModel, page, size);
+        }
 
         return tagCollectionModel;
     }
 
-    public TagDto processGetTag(Tag tag) throws PersistenceException {
+    @Override
+    public TagDto setLinksForTag(Tag tag) throws DaoException {
         TagDto tagDto = TagDto.of(tag);
         linkToTag(tagDto);
-        linkToTags(tagDto, defaultRequestBody);
+        linkToFirstTagsPage(tagDto);
 
         return tagDto;
     }
 
-    public TagDto processAddTag(Tag tag) throws PersistenceException {
-        TagDto tagDto = TagDto.of(tag);
-        linkToTag(tagDto);
-        linkToTags(tagDto, defaultRequestBody);
-
-        return tagDto;
-    }
-
-    private void linkToSelf(TagDto tagDto) {
-        tagDto.add(linkTo(TagController.class).slash(tagDto.getId()).withSelfRel());
-    }
-
-    private void linkToTags(CollectionModel<Tag> tagCollectionModel, TagRequestBody request)
-            throws PersistenceException {
-        tagCollectionModel.add(linkTo(methodOn(TagController.class).getTags(request)).withRel(ALL_TAGS));
-    }
-
-    private void linkToTags(TagDto tagDto, TagRequestBody request) throws PersistenceException {
-        tagDto.add(linkTo(methodOn(TagController.class).getTags(request)).withRel(ALL_TAGS));
-    }
-
-    private void linkToTag(TagDto tagDto) throws PersistenceException {
+    private void linkToTag(TagDto tagDto) throws DaoException {
         tagDto.add(linkTo(methodOn(TagController.class).getTag(tagDto.getId())).withRel(CURRENT_TAG));
+    }
+
+    private void linkToTagsPage(CollectionModel<Tag> tagCollectionModel, int page, int size)
+            throws DaoException {
+        tagCollectionModel.add(getLinkToTagsPage(page, size, ALL_TAGS));
+    }
+
+    private void linkToFirstTagsPage(TagDto tagDto) throws DaoException {
+        tagDto.add(getLinkToTagsPage(TagProcessorImpl.DEFAULT_PAGE, TagProcessorImpl.DEFAULT_SIZE, ALL_TAGS));
+    }
+
+    private void linkToNextPage(CollectionModel<Tag> tagCollectionModel, int page, int size)
+            throws DaoException {
+        tagCollectionModel.add(getLinkToTagsPage(page + 1, size, "next"));
+    }
+
+    private void linkToPrevPage(CollectionModel<Tag> tagCollectionModel, int page, int size)
+            throws DaoException {
+        tagCollectionModel.add(getLinkToTagsPage(page - 1, size, "prev"));
+    }
+
+    private Link getLinkToTagsPage(int page, int size, String rel) throws DaoException {
+        return linkTo(methodOn(TagController.class).getTags(page, size)).withRel(rel);
+    }
+
+    private boolean hasNext(int page, int lastPage) {
+        return page < lastPage;
+    }
+
+    private boolean hasPrevious(int page) {
+        return page > 1;
     }
 }
