@@ -1,34 +1,34 @@
 package com.epam.esm.service.request;
 
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
+
 public class TagRequestBody {
 
-    private int limit;
-    private int offset;
+    private SortType sortType;
+    private SortBy sortBy;
 
-    private static final int DEFAULT_LIMIT = 10;
-    private static final int DEFAULT_OFFSET = 0;
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    public static TagRequestBody getDefault() {
+    public static TagRequestBody getDefaultTagRequestBody() {
         TagRequestBody tagRequestBody = new TagRequestBody();
-        tagRequestBody.setLimit(DEFAULT_LIMIT);
-        tagRequestBody.setOffset(DEFAULT_OFFSET);
+        tagRequestBody.setSortBy(SortBy.NAME);
+        tagRequestBody.setSortType(SortType.ASC);
 
         return tagRequestBody;
+    }
+
+    public SortType getSortType() {
+        return sortType;
+    }
+
+    public void setSortType(SortType sortType) {
+        this.sortType = sortType;
+    }
+
+    public SortBy getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(SortBy sortBy) {
+        this.sortBy = sortBy;
     }
 }

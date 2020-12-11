@@ -5,10 +5,10 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "Tags", schema = "GiftShop")
-public class Tag {
+public class Tag implements BaseModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(unique = true, nullable = false)

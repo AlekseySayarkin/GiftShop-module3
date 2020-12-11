@@ -1,11 +1,13 @@
 package com.epam.esm.web.hateoas;
 
 import com.epam.esm.dao.exception.DaoException;
+import com.epam.esm.service.request.TagRequestBody;
 import com.epam.esm.web.controller.TagController;
 import com.epam.esm.web.dto.TagDto;
 import com.epam.esm.model.Tag;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,21 +23,24 @@ public class TagProcessorImpl implements TagProcessor {
 
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
+    private static final TagRequestBody defaultRequestBody = TagRequestBody.getDefaultTagRequestBody();
 
     @Override
-    public CollectionModel<Tag> setLinksToTagsPages(List<Tag> tags, int page, int size, int lastPage)
+    public PagedModel<Tag> setLinksToTagsPages(List<Tag> tags, int page, int size, int lastPage)
             throws DaoException {
-        CollectionModel<Tag> tagCollectionModel = CollectionModel.of(tags);
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(size, page,
+                (long) lastPage * size, lastPage);
+        PagedModel<Tag> pagedModel = PagedModel.of(tags, pageMetadata);
 
-        linkToTagsPage(tagCollectionModel, page, size);
+        linkToTagsPage(pagedModel, page, size);
         if (hasNext(page, lastPage)) {
-            linkToNextPage(tagCollectionModel, page, size);
+            linkToNextPage(pagedModel, page, size);
         }
         if (hasPrevious(page)) {
-            linkToPrevPage(tagCollectionModel, page, size);
+            linkToPrevPage(pagedModel, page, size);
         }
 
-        return tagCollectionModel;
+        return pagedModel;
     }
 
     @Override
@@ -71,7 +76,7 @@ public class TagProcessorImpl implements TagProcessor {
     }
 
     private Link getLinkToTagsPage(int page, int size, String rel) throws DaoException {
-        return linkTo(methodOn(TagController.class).getTags(page, size)).withRel(rel);
+        return linkTo(methodOn(TagController.class).getTags(defaultRequestBody, page, size)).withRel(rel);
     }
 
     private boolean hasNext(int page, int lastPage) {
