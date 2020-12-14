@@ -1,21 +1,43 @@
 package com.epam.esm.model;
 
-import org.springframework.hateoas.RepresentationModel;
-
+import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class GiftCertificate extends RepresentationModel<GiftCertificate> {
+@Entity
+@Table(name = "GiftCertificates")
+public class GiftCertificate implements BaseModel {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "Name")
     private String name;
+
+    @Column(name = "Description")
     private String description;
+
+    @Column(name = "Price")
     private double price;
+
+    @Column(name = "CreateDate", updatable=false)
     private ZonedDateTime createDate;
+
+    @Column(name = "LastUpdateDate")
     private ZonedDateTime lastUpdateDate;
+
+    @Column(name = "Duration")
     private int duration;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @JoinTable(
+            name = "CertificateDetails",
+            joinColumns = @JoinColumn(name = "TagId"),
+            inverseJoinColumns = @JoinColumn(name = "CertificateId")
+    )
     private Set<Tag> tags = new HashSet<>();
 
     public int getId() {

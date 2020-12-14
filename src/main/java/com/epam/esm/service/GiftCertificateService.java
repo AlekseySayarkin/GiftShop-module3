@@ -1,7 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.model.GiftCertificate;
-import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.dao.exception.DaoException;
 import com.epam.esm.service.request.CertificateRequestBody;
 
 import java.util.List;
@@ -21,10 +21,10 @@ public interface GiftCertificateService {
      * which equals to {@code String name}.
      *
      * @param name certificate name.
-     * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws DaoException when failed to get {@code GiftCertificate} from persistence layer.
      * @return {@code GiftCertificate}.
      */
-    GiftCertificate getGiftCertificate(String name) throws PersistenceException;
+    GiftCertificate getGiftCertificate(String name) throws DaoException;
 
     /**
      * Retrieves data of {@code GiftCertificate} from
@@ -32,19 +32,19 @@ public interface GiftCertificateService {
      * which equals to {@code int id}.
      *
      * @param id certificate id.
-     * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws DaoException when failed to get {@code GiftCertificate} from persistence layer.
      * @return {@code GiftCertificate}.
      */
-    GiftCertificate getGiftCertificate(int id) throws PersistenceException;
+    GiftCertificate getGiftCertificate(int id) throws DaoException;
 
     /**
      * Retrieves all {@code GiftCertificate} from persistence layer.
      * @param limit max amount of {@code GiftCertificate} to return.
      * @param offset from which position in a data source to return.
-     * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws DaoException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - all existing certificates in persistence layer.
      */
-    List<GiftCertificate> getCertificatesByPage(int limit, int offset) throws PersistenceException;
+    List<GiftCertificate> getCertificatesByPage(int limit, int offset) throws DaoException;
 
     /**
      * Retrieves {@code GiftCertificate} from persistence layer
@@ -54,11 +54,11 @@ public interface GiftCertificateService {
      * @param content {@code GiftCertificate} name or description.
      * @param limit max amount of {@code GiftCertificate} to return.
      * @param offset from which position in a data source to return.
-     * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws DaoException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - existing certificates in persistence layer.
      */
     List<GiftCertificate> getGiftCertificatesByContent(
-            String content,int limit, int offset) throws PersistenceException;
+            String content,int limit, int offset) throws DaoException;
 
     /**
      * Retrieves {@code GiftCertificate} from persistence layer
@@ -67,11 +67,11 @@ public interface GiftCertificateService {
      * @param limit max amount of {@code GiftCertificate} to return.
      * @param offset from which position in a data source to return.
      * @param tagName name of a {@code Tag}.
-     * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws DaoException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - existing certificates in persistence layer.
      */
     List<GiftCertificate> getGiftCertificateByTagName(
-            String tagName, int limit, int offset) throws PersistenceException;
+            String tagName, int limit, int offset) throws DaoException;
 
     /**
      * Retrieves all {@code GiftCertificate} from persistence layer
@@ -80,11 +80,11 @@ public interface GiftCertificateService {
      * @param limit max amount of {@code GiftCertificate} to return.
      * @param offset from which position in a data source to return.
      * @param isAscending asc or desc sort.
-     * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws DaoException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - sorted certificates in persistence layer.
      */
     List<GiftCertificate> getAllGiftCertificatesSortedByName(
-            boolean isAscending, int limit, int offset) throws PersistenceException;
+            boolean isAscending, int limit, int offset) throws DaoException;
 
     /**
      * Retrieves all {@code GiftCertificate} from persistence layer
@@ -93,41 +93,38 @@ public interface GiftCertificateService {
      * @param limit max amount of {@code GiftCertificate} to return.
      * @param offset from which position in a data source to return.
      * @param isAscending asc or desc sort.
-     * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws DaoException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - sorted certificates in persistence layer.
      */
     List<GiftCertificate> getAllGiftCertificatesSortedByDate(
-            boolean isAscending, int limit, int offset) throws PersistenceException;
+            boolean isAscending, int limit, int offset) throws DaoException;
 
     /**
      * Retrieves {@code GiftCertificate} from persistence layer
      * using one of non null fields of {@code CertificateRequestBody}.
      *
      * @param requestBody max amount and from which position in a data source of {@code GiftCertificate} to return.
-     * @param limit max amount of {@code GiftCertificate} to return.
-     * @param offset from which position in a data source to return.
-     * @throws PersistenceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws DaoException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - certificates from persistence layer.
      */
-    List<GiftCertificate> getGiftCertificates(CertificateRequestBody requestBody,
-            int limit, int offset) throws PersistenceException;
+    List<GiftCertificate> getGiftCertificates(CertificateRequestBody requestBody) throws DaoException;
 
     /**
      * Adds new {@code GiftCertificate} to persistence layer.
      *
      * @param giftCertificate {@code GiftCertificate} which to add to persistence layer.
-     * @throws PersistenceException when failed to add {@code GiftCertificate} to persistence layer.
+     * @throws DaoException when failed to add {@code GiftCertificate} to persistence layer.
      * @return {@code GiftCertificate} from persistence layer.
      */
-    GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException;
+    GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) throws DaoException;
 
     /**
      * Deletes {@code GiftCertificate} from persistence layer.
      *
      * @param id id of {@code GiftCertificate} which to delete from persistence layer.
-     * @throws PersistenceException when failed to delete {@code GiftCertificate} from persistence layer.
+     * @throws DaoException when failed to delete {@code GiftCertificate} from persistence layer.
      */
-    void deleteGiftCertificate(int id) throws PersistenceException;
+    void deleteGiftCertificate(int id) throws DaoException;
 
     /**
      * Updates {@code GiftCertificate} in persistence layer.
@@ -135,8 +132,8 @@ public interface GiftCertificateService {
      *
      * @param giftCertificate {@code GiftCertificate} which to update in persistence layer.
      * @param id id of {@code GiftCertificate} which to update in persistence layer.
-     * @throws PersistenceException when failed to update {@code GiftCertificate} in persistence layer.
+     * @throws DaoException when failed to update {@code GiftCertificate} in persistence layer.
      * @return updated {@code GiftCertificate}
      */
-    GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate, int id) throws PersistenceException;
+    GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate, int id) throws DaoException;
 }

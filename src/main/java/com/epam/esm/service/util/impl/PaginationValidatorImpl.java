@@ -1,7 +1,7 @@
 package com.epam.esm.service.util.impl;
 
 import com.epam.esm.dao.exception.ErrorCodeEnum;
-import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.dao.exception.DaoException;
 import com.epam.esm.service.util.PaginationValidator;
 import org.springframework.stereotype.Component;
 
@@ -11,17 +11,17 @@ public class PaginationValidatorImpl implements PaginationValidator {
     private static final int MAX_AMOUNT_OF_ITEMS = 100;
 
     @Override
-    public void validatePagination(int limit, int offset) throws PersistenceException {
-        if (limit <= 0) {
-            throw new PersistenceException("Failed to validate: limit is negative",
+    public void validatePagination(int size, int page) throws DaoException {
+        if (size <= 0) {
+            throw new DaoException("Failed to validate: size must be positive",
                     ErrorCodeEnum.PAGINATION_VALIDATION_ERROR);
         }
-        if (limit > MAX_AMOUNT_OF_ITEMS) {
-            throw new PersistenceException("Failed to validate: limit is bigger then maximum allowed",
+        if (size > MAX_AMOUNT_OF_ITEMS) {
+            throw new DaoException("Failed to validate: size is bigger then maximum allowed",
                     ErrorCodeEnum.PAGINATION_VALIDATION_ERROR);
         }
-        if (offset< 0) {
-            throw new PersistenceException("Failed to validate: offset is negative",
+        if (page <= 0) {
+            throw new DaoException("Failed to validate: page must be positive",
                     ErrorCodeEnum.PAGINATION_VALIDATION_ERROR);
         }
     }

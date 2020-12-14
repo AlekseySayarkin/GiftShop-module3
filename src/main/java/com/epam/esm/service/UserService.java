@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.dao.exception.DaoException;
 import com.epam.esm.model.User;
 
 import java.util.List;
@@ -20,10 +20,10 @@ public interface UserService {
      * which equals to {@code String name}.
      *
      * @param login user login.
-     * @throws PersistenceException when failed to get {@code User} from persistence layer.
+     * @throws DaoException when failed to get {@code User} from persistence layer.
      * @return {@code User}.
      */
-    User getUser(String login) throws PersistenceException;
+    User getUser(String login) throws DaoException;
 
     /**
      * Retrieves data of {@code User} from
@@ -31,10 +31,10 @@ public interface UserService {
      * which equals to {@code int id}.
      *
      * @param id user id.
-     * @throws PersistenceException when failed to get {@code User} from persistence layer.
+     * @throws DaoException when failed to get {@code User} from persistence layer.
      * @return {@code User}.
      */
-    User getUser(int id) throws PersistenceException;
+    User getUser(int id) throws DaoException;
 
     /**
      * Retrieves certain number of {@code User} from persistence layer.
@@ -42,8 +42,8 @@ public interface UserService {
      * @param limit max amount of {@code Tag} to return.
      * @param offset from which position in a persistence layer
      * to start returning.
-     * @throws PersistenceException when failed to get {@code User} from persistence layer.
+     * @throws DaoException when failed to get {@code User} from persistence layer.
      * @return List<Tag> - certain number of  existing tags in persistence layer.
      */
-    List<User> getAllUsersByPage(int limit, int offset) throws PersistenceException;
+    List<User> getAllUsersByPage(int limit, int offset) throws DaoException;
 }

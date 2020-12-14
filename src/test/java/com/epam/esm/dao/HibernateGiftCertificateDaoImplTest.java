@@ -1,11 +1,9 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.dao.exception.PersistenceException;
-import com.epam.esm.dao.extractor.GiftCertificateExtractor;
-import com.epam.esm.dao.impl.SQLGiftCertificateDaoImpl;
-import com.epam.esm.dao.impl.SQLTagDaoImpl;
-import com.epam.esm.dao.mapper.GiftCertificateMapper;
-import com.epam.esm.dao.mapper.TagRowMapper;
+import com.epam.esm.dao.exception.DaoException;
+import com.epam.esm.dao.impl.HibernateGiftCertificateDaoImpl;
+import com.epam.esm.dao.impl.HibernateTagDaoImpl;
+import com.epam.esm.dao.util.PersistenceUtilImpl;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
 import org.junit.jupiter.api.Assertions;
@@ -22,7 +20,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-class SQLGiftCertificateDaoImplTest {
+class HibernateGiftCertificateDaoImplTest {
 
     private GiftCertificateDAO giftCertificateDAO;
     private TagDao tagDao;
@@ -30,7 +28,7 @@ class SQLGiftCertificateDaoImplTest {
     private int offset;
 
     @BeforeEach
-    public void init() throws PersistenceException {
+    public void init() throws DaoException {
         DataSource dataSource = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("db/ClearTables.sql")
@@ -41,9 +39,9 @@ class SQLGiftCertificateDaoImplTest {
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-        tagDao = new SQLTagDaoImpl(jdbcTemplate, new TagRowMapper());
-        giftCertificateDAO = new SQLGiftCertificateDaoImpl(
-                jdbcTemplate, new GiftCertificateExtractor(), new GiftCertificateMapper());
+        tagDao = new HibernateTagDaoImpl(new PersistenceUtilImpl<>());
+        giftCertificateDAO = new HibernateGiftCertificateDaoImpl(
+                new PersistenceUtilImpl<>());
 
         tagDao.addTag(new Tag("spa"));
         tagDao.addTag(new Tag("relax"));
@@ -53,7 +51,7 @@ class SQLGiftCertificateDaoImplTest {
         offset = 0;
     }
 
-    private List<GiftCertificate> initCertificates(int size) {
+    private List<GiftCertificate> initCertificates(int size) throws DaoException {
         List<GiftCertificate> given = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
@@ -66,7 +64,7 @@ class SQLGiftCertificateDaoImplTest {
         return given;
     }
 
-    private GiftCertificate initCertificate() {
+    private GiftCertificate initCertificate() throws DaoException {
         GiftCertificate certificate = new GiftCertificate();
         certificate.setName("Tour to Greece");
         certificate.setDescription("Certificate description");
@@ -119,7 +117,7 @@ class SQLGiftCertificateDaoImplTest {
     }
 
     @Test
-    void whenAddGiftCertificate_thenCorrectlyReturnItById() throws PersistenceException {
+    void whenAddGiftCertificate_thenCorrectlyReturnItById() throws DaoException {
         GiftCertificate given = initCertificate();
 
         given.setId(giftCertificateDAO.addGiftCertificate(given));
@@ -132,7 +130,7 @@ class SQLGiftCertificateDaoImplTest {
     }
 
     @Test
-    void whenAddGiftCertificate_thenCorrectlyReturnItByName() throws PersistenceException {
+    void whenAddGiftCertificate_thenCorrectlyReturnItByName() throws DaoException {
         GiftCertificate given = initCertificate();
 
         given.setId(giftCertificateDAO.addGiftCertificate(given));
@@ -145,7 +143,7 @@ class SQLGiftCertificateDaoImplTest {
     }
 
     @Test
-    void whenAddGiftCertificates_thenCorrectlyReturnThemByTagName() throws PersistenceException {
+    void whenAddGiftCertificates_thenCorrectlyReturnThemByTagName() throws DaoException {
         List<GiftCertificate> given = initCertificates(10);
 
         for (GiftCertificate certificate: given) {
@@ -162,7 +160,7 @@ class SQLGiftCertificateDaoImplTest {
     }
 
     @Test
-    void whenAddGiftCertificate_thenCorrectlyDeleteIt() throws PersistenceException {
+    void whenAddGiftCertificate_thenCorrectlyDeleteIt() throws DaoException {
         GiftCertificate given = initCertificate();
 
         given.setId(giftCertificateDAO.addGiftCertificate(given));
@@ -176,7 +174,7 @@ class SQLGiftCertificateDaoImplTest {
     }
 
     @Test
-    void whenAddGiftCertificates_thenCorrectlyReturnThem() throws PersistenceException {
+    void whenAddGiftCertificates_thenCorrectlyReturnThem() throws DaoException {
         List<GiftCertificate> given = initCertificates(20);
 
         for (GiftCertificate certificate: given) {
@@ -192,7 +190,7 @@ class SQLGiftCertificateDaoImplTest {
     }
 
     @Test
-    void whenAddGiftCertificate_thenCorrectlyUpdateIt() throws PersistenceException {
+    void whenAddGiftCertificate_thenCorrectlyUpdateIt() throws DaoException {
         GiftCertificate given = initCertificate();
 
         given.setId(giftCertificateDAO.addGiftCertificate(given));
@@ -211,7 +209,7 @@ class SQLGiftCertificateDaoImplTest {
     }
 
     @Test
-    void whenAddGiftCertificates_thenCorrectlyReturnThemSortedByNameAsc() throws PersistenceException {
+    void whenAddGiftCertificates_thenCorrectlyReturnThemSortedByNameAsc() throws DaoException {
         List<GiftCertificate> given = initCertificates(10);
 
         for (int i = 0; i < given.size(); i++) {
@@ -229,7 +227,7 @@ class SQLGiftCertificateDaoImplTest {
     }
 
     @Test
-    void whenAddGiftCertificates_thenCorrectlyReturnThemSortedByNameDesc() throws PersistenceException {
+    void whenAddGiftCertificates_thenCorrectlyReturnThemSortedByNameDesc() throws DaoException {
         List<GiftCertificate> given = initCertificates(10);
 
         for (int i = 0; i < given.size(); i++) {
@@ -248,7 +246,7 @@ class SQLGiftCertificateDaoImplTest {
     }
 
     @Test
-    void whenAddGiftCertificates_thenCorrectlyReturnThemByContent() throws PersistenceException {
+    void whenAddGiftCertificates_thenCorrectlyReturnThemByContent() throws DaoException {
         List<GiftCertificate> given = initCertificates(10);
 
         for (GiftCertificate certificate: given) {
