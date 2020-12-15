@@ -1,6 +1,6 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.dao.exception.DaoException;
+import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.Tag;
@@ -24,7 +24,7 @@ public interface TagDao {
      * @param name tag name.
      * @return {@code Tag}.
      */
-    Tag getTag(String name) throws DaoException;
+    Tag getTag(String name) throws ServiceException;
 
     /**
      * Retrieves data of {@code Tag} from
@@ -52,7 +52,7 @@ public interface TagDao {
      * @param size page size of {@code Tag} to return from data source.
      * @return List<Tag> - certain number of  existing tags in data source.
      */
-    List<Tag> getAllTagsByPage(int page, int size, SortType type, SortBy by) throws DaoException;
+    List<Tag> getAllTagsByPage(int page, int size, SortType type, SortBy by) throws ServiceException;
 
     /**
      * Retrieves number of pages from data source if every page
@@ -68,9 +68,9 @@ public interface TagDao {
      *
      * @param tag {@code Tag} which to be added to data source.
      * @return id of a {@code Tag} from data source.
-     * @throws DaoException when failed to add {@code Tag} to data source.
+     * @throws ServiceException when failed to add {@code Tag} to data source.
      */
-    int addTag(Tag tag) throws DaoException;
+    int addTag(Tag tag) throws ServiceException;
 
     /**
      * Deletes {@code Tag} from data source.

@@ -3,6 +3,9 @@ package com.epam.esm.web.dto;
 import com.epam.esm.model.Tag;
 import org.springframework.hateoas.RepresentationModel;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class TagDto extends RepresentationModel<TagDto> {
 
     private int id;
@@ -18,6 +21,10 @@ public class TagDto extends RepresentationModel<TagDto> {
     public TagDto(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public static List<TagDto> of(List<Tag> tags) {
+        return tags.stream().map(TagDto::of).collect(Collectors.toList());
     }
 
     public static TagDto of(Tag tag) {
