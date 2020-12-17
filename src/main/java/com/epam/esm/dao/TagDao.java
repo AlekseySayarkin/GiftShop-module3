@@ -24,7 +24,7 @@ public interface TagDao {
      * @param name tag name.
      * @return {@code Tag}.
      */
-    Tag getTag(String name) throws ServiceException;
+    Tag getTagByName(String name) throws ServiceException;
 
     /**
      * Retrieves data of {@code Tag} from

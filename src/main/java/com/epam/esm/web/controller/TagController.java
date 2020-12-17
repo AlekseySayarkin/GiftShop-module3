@@ -11,7 +11,6 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -29,7 +28,7 @@ public class TagController {
     }
 
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<TagDto>>> getTags(
+    public CollectionModel<EntityModel<TagDto>> getTags(
             @RequestBody(required = false) TagRequestBody requestBody,
             @RequestParam int page, @RequestParam int size) throws ServiceException {
 
@@ -37,19 +36,17 @@ public class TagController {
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
                 size, page, (long) lastPage * size, lastPage);
         modelAssembler.setMetadata(pageMetadata);
-        return ResponseEntity.ok(
-                modelAssembler.toCollectionModel(
-                       TagDto.of(tagService.getAllTagsByPage(requestBody, page, size))));
+        return modelAssembler.toCollectionModel(TagDto.of(tagService.getAllTagsByPage(requestBody, page, size)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<TagDto>> getTag(@PathVariable int id) throws ServiceException {
-        return ResponseEntity.ok(modelAssembler.toModel(TagDto.of(tagService.getTag(id))));
+    public EntityModel<TagDto> getTag(@PathVariable int id) throws ServiceException {
+        return modelAssembler.toModel(TagDto.of(tagService.getTag(id)));
     }
 
     @PostMapping
-    public ResponseEntity<EntityModel<TagDto>> addTag(@RequestBody Tag tag) throws ServiceException {
-        return ResponseEntity.ok(modelAssembler.toModel(TagDto.of(tagService.addTag(tag))));
+    public EntityModel<TagDto> addTag(@RequestBody Tag tag) throws ServiceException {
+        return modelAssembler.toModel(TagDto.of(tagService.addTag(tag)));
     }
 
     @DeleteMapping("/{id}")

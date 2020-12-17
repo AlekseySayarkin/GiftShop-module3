@@ -39,7 +39,7 @@ public class TagServiceImp implements TagService {
     public Tag getTag(String name) throws ServiceException {
         tagValidator.validateName(name);
         try {
-            return tagDao.getTag(name);
+            return tagDao.getTagByName(name);
         } catch (NoResultException ex) {
             throw new ServiceException(String.format("Failed to get tag with name = {%s}", name),
                     ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
@@ -77,7 +77,6 @@ public class TagServiceImp implements TagService {
         try {
             return tagDao.getAllTagsByPage(page, size, requestBody.getSortType(), requestBody.getSortBy());
         } catch (DataAccessException e) {
-            e.printStackTrace();
             LOGGER.error("Following exception was thrown in getAllTagsByPage(): " + e.getMessage());
             throw new ServiceException("Failed to get specified number of tags",
                     ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
@@ -94,7 +93,6 @@ public class TagServiceImp implements TagService {
     }
 
     @Override
-    @Transactional
     public Tag addTag(Tag tag) throws ServiceException {
         tagValidator.validateTag(tag);
         try {
@@ -108,7 +106,6 @@ public class TagServiceImp implements TagService {
     }
 
     @Override
-    @Transactional
     public void deleteTag(int tagId) throws ServiceException {
         tagValidator.validateId(tagId);
         try {
