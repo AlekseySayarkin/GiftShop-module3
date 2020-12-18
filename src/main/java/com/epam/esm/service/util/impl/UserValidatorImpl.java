@@ -1,7 +1,7 @@
 package com.epam.esm.service.util.impl;
 
 import com.epam.esm.dao.exception.ErrorCodeEnum;
-import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.dao.exception.DaoException;
 import com.epam.esm.model.User;
 import com.epam.esm.service.util.UserValidator;
 import org.springframework.stereotype.Component;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 public class UserValidatorImpl implements UserValidator {
 
     @Override
-    public void validateUser(User user) throws PersistenceException {
+    public void validateUser(User user) throws DaoException {
         if (user == null) {
-            throw new PersistenceException("Failed to validate: user is empty",
+            throw new DaoException("Failed to validate: user is empty",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
 
@@ -22,25 +22,25 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void validateId(int id) throws PersistenceException {
+    public void validateId(int id) throws DaoException {
         if (id < 0) {
-            throw new PersistenceException("Failed to validate: id is negative",
+            throw new DaoException("Failed to validate: id is negative",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }
 
     @Override
-    public void validateLogin(String login) throws PersistenceException {
+    public void validateLogin(String login) throws DaoException {
         if (login == null || login.isEmpty()) {
-            throw new PersistenceException("Failed to validate: login is empty",
+            throw new DaoException("Failed to validate: login is empty",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }
 
     @Override
-    public void validatePassword(String password) throws PersistenceException {
+    public void validatePassword(String password) throws DaoException {
         if (password == null || password.isEmpty()) {
-            throw new PersistenceException("Failed to validate: login is empty",
+            throw new DaoException("Failed to validate: login is empty",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }

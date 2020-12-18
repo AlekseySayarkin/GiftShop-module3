@@ -2,11 +2,11 @@ package com.epam.esm.service;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.impl.SQLGiftCertificateDaoImpl;
-import com.epam.esm.dao.impl.SQLTagDaoImpl;
+import com.epam.esm.dao.impl.HibernateGiftCertificateDaoImpl;
+import com.epam.esm.dao.impl.HibernateTagDaoImpl;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
-import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.dao.exception.DaoException;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import com.epam.esm.service.request.CertificateRequestBody;
 import com.epam.esm.service.request.SortParameter;
@@ -35,8 +35,8 @@ class GiftCertificateServiceImplTest {
     public void init() {
         limit = 10;
         offset = 0;
-        tagDao = Mockito.mock(SQLTagDaoImpl.class);
-        giftCertificateDAO = Mockito.mock(SQLGiftCertificateDaoImpl.class);
+        tagDao = Mockito.mock(HibernateTagDaoImpl.class);
+        giftCertificateDAO = Mockito.mock(HibernateGiftCertificateDaoImpl.class);
 
         giftCertificateService = new GiftCertificateServiceImpl(
                 giftCertificateDAO, tagDao, new CertificateValidatorImpl(), new PaginationValidatorImpl());
@@ -70,7 +70,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void whenGetCertificate_thenCorrectlyReturnsItById() throws PersistenceException {
+    void whenGetCertificate_thenCorrectlyReturnsItById() throws DaoException {
         GiftCertificate given = new GiftCertificate();
         given.setId(1);
         given.setName("Tourism");
@@ -83,7 +83,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void whenGetCertificate_thenCorrectlyReturnsItByName() throws PersistenceException {
+    void whenGetCertificate_thenCorrectlyReturnsItByName() throws DaoException {
         GiftCertificate given = new GiftCertificate();
         given.setId(1);
         given.setName("Tourism");
@@ -96,7 +96,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void whenAddGiftCertificates_thenCorrectlyReturnThem() throws PersistenceException {
+    void whenAddGiftCertificates_thenCorrectlyReturnThem() throws DaoException {
         List<GiftCertificate> given = new ArrayList<>();
         for (int i = 1; i < 10; i++) {
             GiftCertificate certificate = new GiftCertificate();
@@ -113,7 +113,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void whenAddCertificate_thenReturnItId() throws PersistenceException {
+    void whenAddCertificate_thenReturnItId() throws DaoException {
         GiftCertificate givenCertificate = initCertificate();
         Tag givenTag = new Tag(1,"spa");
         int expectedId = 1;
@@ -137,7 +137,7 @@ class GiftCertificateServiceImplTest {
 
         try {
             giftCertificateService.addGiftCertificate(giftCertificate);
-        } catch (PersistenceException e) {
+        } catch (DaoException e) {
             Assertions.assertEquals("Failed to validate: certificate name is empty", e.getMessage());
         }
     }
@@ -148,32 +148,36 @@ class GiftCertificateServiceImplTest {
 
         try {
             giftCertificateService.deleteGiftCertificate(givenCertificate.getId());
-        } catch (PersistenceException e) {
+        } catch (DaoException e) {
             Assertions.assertEquals("Failed to delete certificate: certificate not found", e.getMessage());
         }
     }
 
     @Test
-    void whenAddCertificate_thenReturnThemSortedByDateAsc() throws PersistenceException {
+    void whenAddCertificate_thenReturnThemSortedByDateAsc() throws DaoException {
         CertificateRequestBody givenRequestBody = new CertificateRequestBody();
         givenRequestBody.setSortType(SortType.ASC);
         givenRequestBody.setSortBy(SortParameter.DATE);
+        givenRequestBody.setLimit(10);
+        givenRequestBody.setOffset(0);
         List<GiftCertificate> givenCertificates = initCertificates();
 
         Mockito.when(giftCertificateDAO.getGiftCertificatesSortedByDate(true, limit, offset))
                 .thenReturn(givenCertificates);
 
         List<GiftCertificate> actual = giftCertificateService.getGiftCertificates(
-                givenRequestBody, limit, offset);
+                givenRequestBody);
         Assertions.assertEquals(givenCertificates, actual);
         Mockito.verify(giftCertificateDAO).getGiftCertificatesSortedByDate(true, limit, offset);
     }
 
     @Test
-    void whenAddCertificate_thenReturnThemSortedByDateDesc() throws PersistenceException {
+    void whenAddCertificate_thenReturnThemSortedByDateDesc() throws DaoException {
         CertificateRequestBody givenRequestBody = new CertificateRequestBody();
         givenRequestBody.setSortType(SortType.DESC);
         givenRequestBody.setSortBy(SortParameter.DATE);
+        givenRequestBody.setLimit(10);
+        givenRequestBody.setOffset(0);
         List<GiftCertificate> givenCertificates = initCertificates();
         Collections.reverse(givenCertificates);
 
@@ -181,7 +185,7 @@ class GiftCertificateServiceImplTest {
                 .thenReturn(givenCertificates);
 
         List<GiftCertificate> actual = giftCertificateService.getGiftCertificates(
-                givenRequestBody, limit, offset);
+                givenRequestBody);
         Assertions.assertEquals(givenCertificates, actual);
         Mockito.verify(giftCertificateDAO).getGiftCertificatesSortedByDate(false, limit, offset);
     }

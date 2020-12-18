@@ -1,6 +1,6 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.dao.exception.DaoException;
 import com.epam.esm.model.GiftCertificate;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public interface GiftCertificateDAO {
      * @param name certificate name.
      * @return {@code GiftCertificate}.
      */
-    GiftCertificate getGiftCertificate(String name);
+    GiftCertificate getGiftCertificate(String name) throws DaoException;
 
     /**
      * Retrieves data of {@code GiftCertificate} from
@@ -93,9 +93,9 @@ public interface GiftCertificateDAO {
      *
      * @param giftCertificate {@code GiftCertificate} which to be added to data source.
      * @return id of a {@code GiftCertificate} from data source.
-     * @throws PersistenceException when failed to add {@code GiftCertificate} to data source.
+     * @throws DaoException when failed to add {@code GiftCertificate} to data source.
      */
-    int addGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException;
+    int addGiftCertificate(GiftCertificate giftCertificate) throws DaoException;
 
     /**
      * Deletes {@code GiftCertificate} from data source.
@@ -112,7 +112,7 @@ public interface GiftCertificateDAO {
      * @param giftCertificate {@code ServiceException} which to update in data source.
      * @return whether transaction was successful.
      */
-    boolean updateGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException;
+    GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate) throws DaoException;
 
     /**
      * Creates many to many relation with {@code GiftCertificate} and {@code Tag}.

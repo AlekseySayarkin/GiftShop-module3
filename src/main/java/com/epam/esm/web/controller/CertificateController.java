@@ -2,14 +2,13 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.dao.exception.DaoException;
 import com.epam.esm.service.request.CertificateRequestBody;
+import com.epam.esm.web.dto.GiftCertificateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -28,49 +27,51 @@ public class CertificateController {
     }
 
     @GetMapping("/certificates")
-    public CollectionModel<GiftCertificate> getGiftCertificates(@RequestBody(required = false) CertificateRequestBody request,
-             @RequestParam int limit, @RequestParam int offset) throws PersistenceException {
+    public CollectionModel<GiftCertificate> getGiftCertificates(
+            @RequestBody CertificateRequestBody request) throws DaoException {
         CollectionModel<GiftCertificate> giftCertificates =
-                CollectionModel.of(giftCertificateService.getGiftCertificates(request, limit, offset));
+                CollectionModel.of(giftCertificateService.getGiftCertificates(request));
         giftCertificates.add(linkTo(methodOn(CertificateController.class)
-                .getGiftCertificates(null, limit, offset)).withSelfRel());
+                .getGiftCertificates(null)).withSelfRel());
        return giftCertificates;
     }
 
     @GetMapping("/certificates/{id}")
-    public GiftCertificate getGiftCertificate(@PathVariable int id) throws PersistenceException {
-        GiftCertificate giftCertificate = giftCertificateService.getGiftCertificate(id);
+    public GiftCertificateDto getGiftCertificate(@PathVariable int id) throws DaoException {
+        GiftCertificateDto giftCertificate = GiftCertificateDto.of(giftCertificateService.getGiftCertificate(id));
         giftCertificate.add(linkTo(CertificateController.class).slash(id).withSelfRel());
         giftCertificate.add(linkTo(methodOn(CertificateController.class)
-                .getGiftCertificates(null, DEFAULT_LIMIT, DEFAULT_OFFSET)).withRel("GiftCertificates"));
+                .getGiftCertificates(null)).withRel("GiftCertificates")); //set def limit and offset
         return giftCertificate;
     }
 
     @PostMapping("/certificates")
-    public GiftCertificate addGiftCertificate(@RequestBody GiftCertificate giftCertificate)
-            throws PersistenceException {
-        giftCertificate = giftCertificateService.addGiftCertificate(giftCertificate);
-        giftCertificate.add(linkTo(methodOn(CertificateController.class)
+    public GiftCertificateDto addGiftCertificate(@RequestBody GiftCertificate giftCertificate)
+            throws DaoException {
+        GiftCertificateDto giftCertificateDto =
+                GiftCertificateDto.of(giftCertificateService.addGiftCertificate(giftCertificate));
+        giftCertificateDto.add(linkTo(methodOn(CertificateController.class)
                 .getGiftCertificate(giftCertificate.getId())).withRel("addedCertificate"));
-        giftCertificate.add(linkTo(methodOn(CertificateController.class)
+        giftCertificateDto.add(linkTo(methodOn(CertificateController.class)
                 .getGiftCertificate(giftCertificate.getId())).withRel("certificates"));
-        return giftCertificate;
+        return giftCertificateDto;
     }
 
     @DeleteMapping("/certificates/{id}")
-    public HttpStatus deleteGiftCertificate(@PathVariable int id) throws PersistenceException {
+    public HttpStatus deleteGiftCertificate(@PathVariable int id) throws DaoException {
         giftCertificateService.deleteGiftCertificate(id);
         return HttpStatus.OK;
     }
 
     @PutMapping("/certificates/{id}")
-    public GiftCertificate updateGiftCertificate(
-            @RequestBody GiftCertificate giftCertificate, @PathVariable int id) throws PersistenceException {
-        giftCertificate = giftCertificateService.updateGiftCertificate(giftCertificate, id);
-        giftCertificate.add(linkTo(methodOn(CertificateController.class)
+    public GiftCertificateDto updateGiftCertificate(
+            @RequestBody GiftCertificate giftCertificate, @PathVariable int id) throws DaoException {
+        GiftCertificateDto giftCertificateDto =
+                GiftCertificateDto.of(giftCertificateService.updateGiftCertificate(giftCertificate, id));
+        giftCertificateDto.add(linkTo(methodOn(CertificateController.class)
                 .getGiftCertificate(giftCertificate.getId())).withRel("updatedCertificate"));
-        giftCertificate.add(linkTo(methodOn(CertificateController.class)
+        giftCertificateDto.add(linkTo(methodOn(CertificateController.class)
                 .getGiftCertificate(giftCertificate.getId())).withRel("certificates"));
-        return giftCertificate;
+        return giftCertificateDto;
     }
 }

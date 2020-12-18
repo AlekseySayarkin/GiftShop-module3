@@ -1,6 +1,6 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.dao.exception.DaoException;
 import com.epam.esm.model.User;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ public class UserController {
 
     @GetMapping(value = "/users")
     public List<User> getUsers(@RequestParam int limit, @RequestParam int offset)
-            throws PersistenceException {
+            throws DaoException {
         return userService.getAllUsersByPage(limit, offset);
     }
 
     @GetMapping("/user/{id}")
-    public User getUser(@PathVariable int id) throws PersistenceException {
+    public User getUser(@PathVariable int id) throws DaoException {
         return userService.getUser(id);
     }
 }

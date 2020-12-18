@@ -6,6 +6,8 @@ public class CertificateRequestBody {
     private SortType sortType;
     private SortParameter sortBy;
     private String tagName;
+    private int limit;
+    private int offset;
 
     public String getContent() {
         return content;
@@ -37,5 +39,21 @@ public class CertificateRequestBody {
 
     public void setTagName(String tagName) {
         this.tagName = tagName;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 }
