@@ -1,17 +1,17 @@
-package com.epam.esm.dao.util;
+package com.epam.esm.dao.service;
 
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.BaseModel;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Repository
+@Component
 @EntityScan(basePackages = "com.epam.esm.model")
-public class PersistenceUtilImpl<T extends BaseModel> implements PersistenceUtil<T> {
+public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceService<T> {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -73,5 +73,13 @@ public class PersistenceUtilImpl<T extends BaseModel> implements PersistenceUtil
     public void deleteModel(int modelId) {
         T model = getModelById(modelId);
         entityManager.remove(model);
+    }
+
+    @Override
+    public T updateModel(T model) {
+        model = entityManager.merge(model);
+        entityManager.flush();
+
+        return model;
     }
 }
