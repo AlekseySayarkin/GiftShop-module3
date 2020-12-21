@@ -1,12 +1,14 @@
 package com.epam.esm.web.dto;
 
 import com.epam.esm.model.GiftCertificate;
-import com.epam.esm.model.Tag;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
 
@@ -22,19 +24,21 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     public static GiftCertificateDto of(GiftCertificate giftCertificate) {
         GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
         giftCertificateDto.setId(giftCertificate.getId());
-        giftCertificateDto.setName(giftCertificateDto.getName());
-        giftCertificateDto.setDescription(giftCertificateDto.getDescription());
-        giftCertificateDto.setPrice(giftCertificateDto.getPrice());
+        giftCertificateDto.setName(giftCertificate.getName());
+        giftCertificateDto.setDescription(giftCertificate.getDescription());
+        giftCertificateDto.setPrice(giftCertificate.getPrice());
         giftCertificateDto.setCreateDate(giftCertificate.getCreateDate());
         giftCertificateDto.setLastUpdateDate(giftCertificate.getLastUpdateDate());
-        giftCertificateDto.setDescription(giftCertificateDto.getDescription());
+        giftCertificateDto.setDuration(giftCertificate.getDuration());
         Set<TagDto> tagsDto = new HashSet<>();
-        for (Tag tag: giftCertificate.getTags()) {
-            tagsDto.add(TagDto.of(tag));
-        }
+        giftCertificate.getTags().forEach(t -> tagsDto.add(TagDto.of(t)));
         giftCertificateDto.setTags(tagsDto);
 
         return giftCertificateDto;
+    }
+
+    public static List<GiftCertificateDto> of(List<GiftCertificate> certificates) {
+        return certificates.stream().map(GiftCertificateDto::of).collect(Collectors.toList());
     }
 
     public int getId() {
@@ -99,5 +103,19 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
 
     public void setTags(Set<TagDto> tags) {
         this.tags = tags;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        GiftCertificateDto that = (GiftCertificateDto) o;
+        return id == that.id && Double.compare(that.price, price) == 0 && duration == that.duration && name.equals(that.name) && description.equals(that.description) && createDate.equals(that.createDate) && lastUpdateDate.equals(that.lastUpdateDate) && tags.equals(that.tags);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, name, description, price, createDate, lastUpdateDate, duration, tags);
     }
 }

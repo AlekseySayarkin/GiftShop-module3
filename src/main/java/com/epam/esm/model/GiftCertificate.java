@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "GiftCertificates")
+@Table(name = "GiftCertificates", schema = "GiftShop")
 public class GiftCertificate implements BaseModel {
 
     @Id
@@ -32,11 +32,11 @@ public class GiftCertificate implements BaseModel {
     @Column(name = "Duration")
     private int duration;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "CertificateDetails",
-            joinColumns = @JoinColumn(name = "TagId"),
-            inverseJoinColumns = @JoinColumn(name = "CertificateId")
+            joinColumns = @JoinColumn(name = "CertificateId"),
+            inverseJoinColumns = @JoinColumn(name = "TagId")
     )
     private Set<Tag> tags = new HashSet<>();
 
