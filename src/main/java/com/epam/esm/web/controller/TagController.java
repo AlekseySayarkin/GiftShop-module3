@@ -3,15 +3,19 @@ package com.epam.esm.web.controller;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.service.request.TagRequestBody;
+import com.epam.esm.dao.request.TagRequestBody;
 import com.epam.esm.web.dto.TagDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
+import com.epam.esm.web.hateoas.ModelLinkBuilder;
+import com.epam.esm.web.hateoas.TagLinkBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.PostConstruct;
 
 
 @RestController
@@ -27,16 +31,22 @@ public class TagController {
         this.modelAssembler = modelAssembler;
     }
 
+    @PostConstruct
+    public void init() {
+        modelAssembler.setModelLinkBuilder(new TagLinkBuilder());
+    }
+
     @GetMapping
     public CollectionModel<EntityModel<TagDto>> getTags(
             @RequestBody(required = false) TagRequestBody requestBody,
             @RequestParam int page, @RequestParam int size) throws ServiceException {
-
         int lastPage = tagService.getLastPage(size);
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
                 size, page, (long) lastPage * size, lastPage);
         modelAssembler.setMetadata(pageMetadata);
-        return modelAssembler.toCollectionModel(TagDto.of(tagService.getAllTagsByPage(requestBody, page, size)));
+
+        return modelAssembler.toCollectionModel(
+                TagDto.of(tagService.getAllTagsByPage(requestBody, page, size)));
     }
 
     @GetMapping("/{id}")

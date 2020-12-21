@@ -1,11 +1,12 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.service.request.TagRequestBody;
+import com.epam.esm.dao.request.TagRequestBody;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.service.util.TagValidator;
 import org.apache.log4j.LogManager;
@@ -15,7 +16,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -74,12 +74,15 @@ public class TagServiceImp implements TagService {
         if (requestBody == null) {
             requestBody = TagRequestBody.getDefaultTagRequestBody();
         }
+        if (!requestBody.getSortBy().equals(SortBy.NAME)) {
+            throw new ServiceException("Cant sort tags by " + requestBody.getSortBy(),
+                    ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+        }
         try {
-            return tagDao.getAllTagsByPage(page, size, requestBody.getSortType(), requestBody.getSortBy());
+            return tagDao.getAllTagsByPage(requestBody, page, size);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getAllTagsByPage(): " + e.getMessage());
-            throw new ServiceException("Failed to get specified number of tags",
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+            throw new ServiceException("Failed to get tags", ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
         }
     }
 

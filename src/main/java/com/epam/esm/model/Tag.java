@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Tags", schema = "GiftShop")
+@Table(name = "tags", schema = "GiftShop")
 public class Tag implements BaseModel {
 
     @Id
@@ -53,13 +53,5 @@ public class Tag implements BaseModel {
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
-    }
-
-    @Override
-    public String toString() {
-        return "Tag{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

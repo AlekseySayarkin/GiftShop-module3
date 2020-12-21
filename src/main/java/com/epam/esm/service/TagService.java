@@ -2,7 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.service.request.TagRequestBody;
+import com.epam.esm.dao.request.TagRequestBody;
 
 import java.util.List;
 

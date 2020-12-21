@@ -1,4 +1,4 @@
-package com.epam.esm.service.request;
+package com.epam.esm.dao.request;
 
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;

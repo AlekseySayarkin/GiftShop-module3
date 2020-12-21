@@ -1,10 +1,10 @@
 package com.epam.esm.dao;
 
+import com.epam.esm.dao.request.TagRequestBody;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.Tag;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 
 /**
@@ -24,7 +24,7 @@ public interface TagDao {
      * @param name tag name.
      * @return {@code Tag}.
      */
-    Tag getTagByName(String name) throws ServiceException;
+    Tag getTagByName(String name) throws NoResultException;
 
     /**
      * Retrieves data of {@code Tag} from
@@ -46,13 +46,11 @@ public interface TagDao {
     /**
      * Retrieves certain number of {@code Tag} from data source.
      *
-     * @param by by witch to sort.
-     * @param type type of sort.
      * @param page page number of {@code Tag} to return.
      * @param size page size of {@code Tag} to return from data source.
      * @return List<Tag> - certain number of  existing tags in data source.
      */
-    List<Tag> getAllTagsByPage(int page, int size, SortType type, SortBy by) throws ServiceException;
+    List<Tag> getAllTagsByPage(TagRequestBody requestBody, int page, int size);
 
     /**
      * Retrieves number of pages from data source if every page

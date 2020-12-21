@@ -4,6 +4,7 @@ import com.epam.esm.model.Tag;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TagDto extends RepresentationModel<TagDto> {
@@ -48,5 +49,19 @@ public class TagDto extends RepresentationModel<TagDto> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        TagDto tagDto = (TagDto) o;
+        return id == tagDto.id && name.equals(tagDto.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, name);
     }
 }

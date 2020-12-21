@@ -1,7 +1,7 @@
 package com.epam.esm.web.hateoas;
 
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.service.request.TagRequestBody;
+import com.epam.esm.dao.request.TagRequestBody;
 import com.epam.esm.web.controller.TagController;
 import com.epam.esm.web.dto.TagDto;
 import org.springframework.hateoas.CollectionModel;
@@ -15,7 +15,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class TagLinkBuilder implements ModelLinkBuilder<TagDto>{
+public class TagLinkBuilder implements ModelLinkBuilder<TagDto> {
 
     private static final String ALL_TAGS = "tags";
     private static final String CURRENT_TAG = "tag";
