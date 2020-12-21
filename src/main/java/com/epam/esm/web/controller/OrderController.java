@@ -1,6 +1,6 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.dao.request.OrderRequestBody;
+import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.model.Order;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.exception.ServiceException;
@@ -36,7 +36,7 @@ public class OrderController {
 
     @GetMapping
     public CollectionModel<EntityModel<OrderDto>> getOrders(
-            @RequestBody(required = false) OrderRequestBody requestBody,
+            @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size) throws ServiceException {
         int lastPage = orderService.getLastPage(size);
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(

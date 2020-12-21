@@ -3,18 +3,18 @@ package com.epam.esm.dao.request;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 
-public class UserRequestBody {
+public class UserSearchCriteria {
 
     private String login;
     private SortType sortType;
     private SortBy sortBy;
 
-    public static UserRequestBody getDefaultUserRequestBody() {
-        UserRequestBody userRequestBody = new UserRequestBody();
-        userRequestBody.setSortBy(SortBy.NAME);
-        userRequestBody.setSortType(SortType.ASC);
+    public static UserSearchCriteria getDefaultUserRequestBody() {
+        UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
+        userSearchCriteria.setSortBy(SortBy.NAME);
+        userSearchCriteria.setSortType(SortType.ASC);
 
-        return userRequestBody;
+        return userSearchCriteria;
     }
 
     public String getLogin() {

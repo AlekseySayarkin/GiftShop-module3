@@ -2,7 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.dao.request.TagRequestBody;
+import com.epam.esm.dao.request.TagSearchCriteria;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public interface TagService {
      * @throws ServiceException when failed to get {@code Tag} from persistence layer.
      * @return List<Tag> - certain number of existing tags in persistence layer.
      */
-    List<Tag> getAllTagsByPage(TagRequestBody requestBody, int page, int size) throws ServiceException;
+    List<Tag> getAllTagsByPage(TagSearchCriteria requestBody, int page, int size) throws ServiceException;
 
     /**
      * Retrieves number of pages from persistence layer if every page

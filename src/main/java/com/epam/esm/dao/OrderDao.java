@@ -1,6 +1,6 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.dao.request.OrderRequestBody;
+import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
 
@@ -24,7 +24,7 @@ public interface OrderDao {
      * @param id userId.
      * @return {@code Order}.
      */
-    List<Order> getTagByUserId(int id, OrderRequestBody requestBody, int page, int size)
+    List<Order> getTagByUserId(int id, OrderSearchCriteria requestBody, int page, int size)
             throws NoResultException;
 
     /**
@@ -51,7 +51,7 @@ public interface OrderDao {
      * @param size page size of {@code Order} to return from data source.
      * @return List<Order> - certain number of existing orders in data source.
      */
-    List<Order> getAllOrdersByPage(OrderRequestBody requestBody, int page, int size);
+    List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size);
 
     /**
      * Retrieves number of pages from data source if every page

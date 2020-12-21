@@ -1,7 +1,7 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.dao.request.OrderRequestBody;
-import com.epam.esm.dao.request.UserRequestBody;
+import com.epam.esm.dao.request.OrderSearchCriteria;
+import com.epam.esm.dao.request.UserSearchCriteria;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.ServiceException;
@@ -44,7 +44,7 @@ public class UserController {
 
     @GetMapping(value = "/users")
     public CollectionModel<EntityModel<UserDto>> getUsers(
-            @RequestBody(required = false) UserRequestBody request,
+            @RequestBody(required = false) UserSearchCriteria request,
             @RequestParam int size, @RequestParam int page) throws ServiceException {
         int lastPage = userService.getLastPage(size);
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
@@ -62,7 +62,7 @@ public class UserController {
 
     @GetMapping("/user/{id}/orders")
     public CollectionModel<EntityModel<OrderDto>> getUserOrders(
-            @RequestBody(required = false) OrderRequestBody requestBody,
+            @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size, @PathVariable int id) throws ServiceException {
         return orderModelAssembler.toCollectionModel(
                 OrderDto.of(orderService.getTagByUserId(id, requestBody, page, size)));

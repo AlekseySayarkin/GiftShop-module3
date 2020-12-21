@@ -2,7 +2,7 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.dao.request.CertificateRequestBody;
+import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.dto.GiftCertificateDto;
 import com.epam.esm.web.hateoas.CertificateLinkBuilder;
@@ -36,7 +36,7 @@ public class CertificateController {
 
     @GetMapping("/certificates")
     public CollectionModel<EntityModel<GiftCertificateDto>> getGiftCertificates(
-            @RequestBody(required = false) CertificateRequestBody request,
+            @RequestBody(required = false) CertificateSearchCriteria request,
             @RequestParam int page, @RequestParam int size) throws ServiceException {
         int lastPage = giftCertificateService.getLastPage(size);
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(

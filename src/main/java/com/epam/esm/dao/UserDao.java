@@ -1,6 +1,6 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.dao.request.UserRequestBody;
+import com.epam.esm.dao.request.UserSearchCriteria;
 import com.epam.esm.model.User;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public interface UserDao {
      * to start returning.
      * @return List<Tag> - certain number of  existing tags in data source.
      */
-    List<User> getAllUsersByPage(UserRequestBody requestBody, int page, int size);
+    List<User> getAllUsersByPage(UserSearchCriteria requestBody, int page, int size);
 
     /**
      * Retrieves number of pages from data source if every page

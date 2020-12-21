@@ -4,7 +4,7 @@ import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.dao.request.CertificateRequestBody;
+import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.util.CertificateValidator;
 import com.epam.esm.service.util.PaginationValidator;
@@ -63,11 +63,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> getGiftCertificatesByPage(CertificateRequestBody requestBody, int page, int size)
+    public List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria requestBody, int page, int size)
             throws ServiceException {
         paginationValidator.validatePagination(size, page);
         if (requestBody == null) {
-            requestBody = CertificateRequestBody.getDefaultCertificateRequestBody();
+            requestBody = CertificateSearchCriteria.getDefaultCertificateRequestBody();
         }
         return giftCertificateDAO.getGiftCertificatesByRequestBody(requestBody, page, size);
     }

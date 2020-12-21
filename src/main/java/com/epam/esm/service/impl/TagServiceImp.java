@@ -6,7 +6,7 @@ import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.dao.request.TagRequestBody;
+import com.epam.esm.dao.request.TagSearchCriteria;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.service.util.TagValidator;
 import org.apache.log4j.LogManager;
@@ -69,10 +69,10 @@ public class TagServiceImp implements TagService {
     }
 
     @Override
-    public List<Tag> getAllTagsByPage(TagRequestBody requestBody, int page, int size) throws ServiceException {
+    public List<Tag> getAllTagsByPage(TagSearchCriteria requestBody, int page, int size) throws ServiceException {
         paginationValidator.validatePagination(size, page);
         if (requestBody == null) {
-            requestBody = TagRequestBody.getDefaultTagRequestBody();
+            requestBody = TagSearchCriteria.getDefaultTagRequestBody();
         }
         if (!requestBody.getSortBy().equals(SortBy.NAME)) {
             throw new ServiceException("Cant sort tags by " + requestBody.getSortBy(),

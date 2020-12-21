@@ -1,7 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
-import com.epam.esm.dao.request.CertificateRequestBody;
+import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.dao.service.PersistenceService;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
@@ -54,9 +54,9 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
 
     @Override
     public List<GiftCertificate> getGiftCertificatesByRequestBody(
-            CertificateRequestBody requestBody, int page, int size) throws ServiceException {
+            CertificateSearchCriteria requestBody, int page, int size) throws ServiceException {
         if (requestBody == null) {
-            requestBody = CertificateRequestBody.getDefaultCertificateRequestBody();
+            requestBody = CertificateSearchCriteria.getDefaultCertificateRequestBody();
         }
         if (!requestBody.getSortBy().equals(SortBy.NAME) && !requestBody.getSortBy().equals(SortBy.DATE)) {
             throw new ServiceException("Cant sort users by " + requestBody.getSortBy(),
@@ -67,7 +67,7 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     }
 
     private List<GiftCertificate> getGiftCertificatesFromQuery(
-            CertificateRequestBody requestBody, int page, int size) {
+            CertificateSearchCriteria requestBody, int page, int size) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> query = builder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = query.from(GiftCertificate.class);
@@ -90,7 +90,7 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     }
 
     private <T extends AbstractQuery<GiftCertificate>> void buildQuery(
-            Root<GiftCertificate> root, T query, CertificateRequestBody requestBody) {
+            Root<GiftCertificate> root, T query, CertificateSearchCriteria requestBody) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         Join<GiftCertificate, Tag> tags = root.join("tags");
         List<Predicate> predicates = new ArrayList<>();

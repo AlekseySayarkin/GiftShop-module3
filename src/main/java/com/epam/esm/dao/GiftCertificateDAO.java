@@ -1,6 +1,6 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.dao.request.CertificateRequestBody;
+import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.exception.ServiceException;
 
@@ -44,7 +44,7 @@ public interface GiftCertificateDAO {
      * @param page from which position in a data source
      * @return List<GiftCertificate> - all existing certificates in data source.
      */
-    List<GiftCertificate> getGiftCertificatesByRequestBody(CertificateRequestBody requestBody, int page, int size) throws ServiceException;
+    List<GiftCertificate> getGiftCertificatesByRequestBody(CertificateSearchCriteria requestBody, int page, int size) throws ServiceException;
 
     /**
      * Retrieves count of {@code GiftCertificate} from data source.

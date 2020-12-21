@@ -1,6 +1,6 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.dao.request.TagRequestBody;
+import com.epam.esm.dao.request.TagSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.model.Tag;
 
@@ -50,7 +50,7 @@ public interface TagDao {
      * @param size page size of {@code Tag} to return from data source.
      * @return List<Tag> - certain number of  existing tags in data source.
      */
-    List<Tag> getAllTagsByPage(TagRequestBody requestBody, int page, int size);
+    List<Tag> getAllTagsByPage(TagSearchCriteria requestBody, int page, int size);
 
     /**
      * Retrieves number of pages from data source if every page

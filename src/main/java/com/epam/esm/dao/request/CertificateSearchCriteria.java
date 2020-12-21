@@ -5,7 +5,7 @@ import com.epam.esm.dao.sort.SortBy;
 
 import java.util.List;
 
-public class CertificateRequestBody {
+public class CertificateSearchCriteria {
 
     private String content;
     private SortType sortType;
@@ -14,12 +14,12 @@ public class CertificateRequestBody {
     private int size;
     private int page;
 
-    public static CertificateRequestBody getDefaultCertificateRequestBody() {
-        CertificateRequestBody certificateRequestBody = new CertificateRequestBody();
-        certificateRequestBody.setSortBy(SortBy.NAME);
-        certificateRequestBody.setSortType(SortType.ASC);
+    public static CertificateSearchCriteria getDefaultCertificateRequestBody() {
+        CertificateSearchCriteria certificateSearchCriteria = new CertificateSearchCriteria();
+        certificateSearchCriteria.setSortBy(SortBy.NAME);
+        certificateSearchCriteria.setSortType(SortType.ASC);
 
-        return certificateRequestBody;
+        return certificateSearchCriteria;
     }
 
     public String getContent() {

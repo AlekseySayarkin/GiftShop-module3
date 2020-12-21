@@ -1,7 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.UserDao;
-import com.epam.esm.dao.request.UserRequestBody;
+import com.epam.esm.dao.request.UserSearchCriteria;
 import com.epam.esm.dao.service.PersistenceService;
 import com.epam.esm.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class HibernateUserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> getAllUsersByPage(UserRequestBody requestBody, int page, int size) {
+    public List<User> getAllUsersByPage(UserSearchCriteria requestBody, int page, int size) {
         return persistenceService.getAllModelsByPage(
                 SQL_GET_ALL_USERS, page, size, requestBody.getSortType(), requestBody.getSortBy());
     }

@@ -1,7 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.request.TagRequestBody;
+import com.epam.esm.dao.request.TagSearchCriteria;
 import com.epam.esm.dao.service.PersistenceService;
 import com.epam.esm.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class HibernateTagDaoImpl implements TagDao {
     }
 
     @Override
-    public List<Tag> getAllTagsByPage(TagRequestBody requestBody, int page, int size) {
+    public List<Tag> getAllTagsByPage(TagSearchCriteria requestBody, int page, int size) {
         return persistenceService.getAllModelsByPage(
                 GET_ALL_TAGS, page, size, requestBody.getSortType(), requestBody.getSortBy());
     }

@@ -3,7 +3,7 @@ package com.epam.esm.web.controller;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.dao.request.TagRequestBody;
+import com.epam.esm.dao.request.TagSearchCriteria;
 import com.epam.esm.web.dto.TagDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
 import com.epam.esm.web.hateoas.TagLinkBuilder;
@@ -37,7 +37,7 @@ public class TagController {
 
     @GetMapping
     public CollectionModel<EntityModel<TagDto>> getTags(
-            @RequestBody(required = false) TagRequestBody requestBody,
+            @RequestBody(required = false) TagSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size) throws ServiceException {
         int lastPage = tagService.getLastPage(size);
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(

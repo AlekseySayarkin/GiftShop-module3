@@ -1,7 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.OrderDao;
-import com.epam.esm.dao.request.OrderRequestBody;
+import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
@@ -37,11 +37,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getTagByUserId(int id, OrderRequestBody requestBody, int page, int size) throws ServiceException {
+    public List<Order> getTagByUserId(int id, OrderSearchCriteria requestBody, int page, int size) throws ServiceException {
         paginationValidator.validatePagination(size, page);
 
         if (requestBody == null) {
-            requestBody = OrderRequestBody.getDefaultUserRequestBody();
+            requestBody = OrderSearchCriteria.getDefaultUserRequestBody();
         }
         if (!requestBody.getSortBy().equals(SortBy.COST)) {
             LOGGER.error("Cant sort orders by " + requestBody.getSortBy());
@@ -83,11 +83,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrdersByPage(OrderRequestBody requestBody, int page, int size) throws ServiceException {
+    public List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size) throws ServiceException {
         paginationValidator.validatePagination(size, page);
 
         if (requestBody == null) {
-            requestBody = OrderRequestBody.getDefaultUserRequestBody();
+            requestBody = OrderSearchCriteria.getDefaultUserRequestBody();
         }
         if (!requestBody.getSortBy().equals(SortBy.COST)) {
             LOGGER.error("Cant sort orders by " + requestBody.getSortBy());

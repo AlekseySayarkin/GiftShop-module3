@@ -1,7 +1,7 @@
 package com.epam.esm.web.hateoas;
 
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.dao.request.TagRequestBody;
+import com.epam.esm.dao.request.TagSearchCriteria;
 import com.epam.esm.web.controller.TagController;
 import com.epam.esm.web.dto.TagDto;
 import org.springframework.hateoas.CollectionModel;
@@ -22,7 +22,7 @@ public class TagLinkBuilder implements ModelLinkBuilder<TagDto> {
 
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
-    private static final TagRequestBody defaultRequestBody = TagRequestBody.getDefaultTagRequestBody();
+    private static final TagSearchCriteria defaultRequestBody = TagSearchCriteria.getDefaultTagRequestBody();
 
     @Override
     public void linkToModel(EntityModel<TagDto> modelDto) throws ServiceException {

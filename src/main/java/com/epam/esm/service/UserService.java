@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.request.UserRequestBody;
+import com.epam.esm.dao.request.UserSearchCriteria;
 import com.epam.esm.model.User;
 import com.epam.esm.service.exception.ServiceException;
 
@@ -46,7 +46,7 @@ public interface UserService {
      * @throws ServiceException when failed to get {@code User} from persistence layer.
      * @return List<Tag> - certain number of  existing tags in persistence layer.
      */
-    List<User> getAllUsersByPage(UserRequestBody requestBody, int limit, int offset) throws ServiceException;
+    List<User> getAllUsersByPage(UserSearchCriteria requestBody, int limit, int offset) throws ServiceException;
 
     /**
      * Retrieves number of pages from persistence layer if every page

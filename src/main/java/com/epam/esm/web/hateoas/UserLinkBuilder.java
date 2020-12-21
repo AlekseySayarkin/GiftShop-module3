@@ -1,6 +1,6 @@
 package com.epam.esm.web.hateoas;
 
-import com.epam.esm.dao.request.UserRequestBody;
+import com.epam.esm.dao.request.UserSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.controller.TagController;
 import com.epam.esm.web.controller.UserController;
@@ -21,7 +21,7 @@ public class UserLinkBuilder implements ModelLinkBuilder<UserDto> {
 
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
-    private static final UserRequestBody defaultRequestBody = UserRequestBody.getDefaultUserRequestBody();
+    private static final UserSearchCriteria defaultRequestBody = UserSearchCriteria.getDefaultUserRequestBody();
 
     @Override
     public void linkToModel(EntityModel<UserDto> modelDto) throws ServiceException {

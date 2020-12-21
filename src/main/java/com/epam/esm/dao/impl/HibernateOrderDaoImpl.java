@@ -1,7 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.OrderDao;
-import com.epam.esm.dao.request.OrderRequestBody;
+import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.dao.service.PersistenceService;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
@@ -55,7 +55,7 @@ public class HibernateOrderDaoImpl implements OrderDao {
 
     @Override
     public List<Order> getTagByUserId(
-            int id, OrderRequestBody requestBody, int page, int size) throws NoResultException {
+            int id, OrderSearchCriteria requestBody, int page, int size) throws NoResultException {
         return persistenceService.getModelsByUserId(
                 GET_ORDER_BY_USER_ID, id, page, size, requestBody.getSortType(), requestBody.getSortBy());
     }
@@ -73,7 +73,7 @@ public class HibernateOrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> getAllOrdersByPage(OrderRequestBody requestBody, int page, int size) {
+    public List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size) {
         return persistenceService.getAllModelsByPage(
                 GET_ORDER_COUNT, page, size, requestBody.getSortType(), requestBody.getSortBy());
     }

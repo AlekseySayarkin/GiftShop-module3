@@ -1,6 +1,6 @@
 package com.epam.esm.web.hateoas;
 
-import com.epam.esm.dao.request.OrderRequestBody;
+import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.controller.OrderController;
 import com.epam.esm.web.dto.OrderDto;
@@ -20,7 +20,7 @@ public class OrderLinkBuilder implements ModelLinkBuilder<OrderDto> {
 
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
-    private static final OrderRequestBody defaultRequestBody = OrderRequestBody.getDefaultUserRequestBody();
+    private static final OrderSearchCriteria defaultRequestBody = OrderSearchCriteria.getDefaultUserRequestBody();
 
     @Override
     public void linkToModel(EntityModel<OrderDto> modelDto) throws ServiceException {

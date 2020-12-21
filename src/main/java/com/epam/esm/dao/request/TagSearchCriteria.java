@@ -3,17 +3,17 @@ package com.epam.esm.dao.request;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 
-public class TagRequestBody {
+public class TagSearchCriteria {
 
     private SortType sortType;
     private SortBy sortBy;
 
-    public static TagRequestBody getDefaultTagRequestBody() {
-        TagRequestBody tagRequestBody = new TagRequestBody();
-        tagRequestBody.setSortBy(SortBy.NAME);
-        tagRequestBody.setSortType(SortType.ASC);
+    public static TagSearchCriteria getDefaultTagRequestBody() {
+        TagSearchCriteria tagSearchCriteria = new TagSearchCriteria();
+        tagSearchCriteria.setSortBy(SortBy.NAME);
+        tagSearchCriteria.setSortType(SortType.ASC);
 
-        return tagRequestBody;
+        return tagSearchCriteria;
     }
 
     public SortType getSortType() {

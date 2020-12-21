@@ -1,6 +1,6 @@
 package com.epam.esm.web.hateoas;
 
-import com.epam.esm.dao.request.CertificateRequestBody;
+import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.controller.CertificateController;
 import com.epam.esm.web.dto.GiftCertificateDto;
@@ -22,8 +22,8 @@ public class CertificateLinkBuilder implements ModelLinkBuilder<GiftCertificateD
 
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
-    private static final CertificateRequestBody defaultRequestBody =
-            CertificateRequestBody.getDefaultCertificateRequestBody();
+    private static final CertificateSearchCriteria defaultRequestBody =
+            CertificateSearchCriteria.getDefaultCertificateRequestBody();
 
     @Override
     public void linkToModel(EntityModel<GiftCertificateDto> modelDto) throws ServiceException {

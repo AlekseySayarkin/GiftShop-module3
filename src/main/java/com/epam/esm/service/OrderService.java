@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.request.OrderRequestBody;
+import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.exception.ServiceException;
@@ -18,7 +18,7 @@ public interface OrderService {
      * @throws ServiceException when failed to get {@code Order} from persistence layer.
      * @return {@code Order}.
      */
-    List<Order> getTagByUserId(int id, OrderRequestBody requestBody, int page, int size)
+    List<Order> getTagByUserId(int id, OrderSearchCriteria requestBody, int page, int size)
             throws ServiceException;
 
     /**
@@ -48,7 +48,7 @@ public interface OrderService {
      * @throws ServiceException when failed to get {@code Order} from persistence layer.
      * @return List<Order> - certain number of existing tags in persistence layer.
      */
-    List<Order> getAllOrdersByPage(OrderRequestBody requestBody, int page, int size) throws ServiceException;
+    List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size) throws ServiceException;
 
     /**
      * Retrieves number of pages from persistence layer if every page
