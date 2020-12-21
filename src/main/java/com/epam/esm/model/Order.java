@@ -1,21 +1,41 @@
 package com.epam.esm.model;
 
+import javax.persistence.*;
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+@Entity
+@Table(name = "Orders")
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "Cost")
     private double cost;
+
+    @Column(name = "CreateDate")
     private ZonedDateTime createDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId")
     private User user;
-    private List<GiftCertificate> giftCertificateList;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "OrderDetails",
+            joinColumns = @JoinColumn(name = "orderId"),
+            inverseJoinColumns = @JoinColumn(name = "certificateId")
+    )
+    private Set<GiftCertificate> giftCertificateList = new HashSet<>();
 
     public Order() {
     }
 
-    public Order(int id, double cost, ZonedDateTime createDate, User user, List<GiftCertificate> giftCertificateList) {
+    public Order(int id, double cost, ZonedDateTime createDate, User user, Set<GiftCertificate> giftCertificateList) {
         this.id = id;
         this.cost = cost;
         this.createDate = createDate;
@@ -55,11 +75,11 @@ public class Order {
         this.user = user;
     }
 
-    public List<GiftCertificate> getGiftCertificateList() {
+    public Set<GiftCertificate> getGiftCertificateList() {
         return giftCertificateList;
     }
 
-    public void setGiftCertificateList(List<GiftCertificate> giftCertificateList) {
+    public void setGiftCertificateList(Set<GiftCertificate> giftCertificateList) {
         this.giftCertificateList = giftCertificateList;
     }
 
