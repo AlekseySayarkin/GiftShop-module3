@@ -1,8 +1,8 @@
 package com.epam.esm.service.util.impl;
 
-import com.epam.esm.dao.exception.ErrorCodeEnum;
-import com.epam.esm.dao.exception.DaoException;
+import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.User;
+import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.util.UserValidator;
 import org.springframework.stereotype.Component;
 
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 public class UserValidatorImpl implements UserValidator {
 
     @Override
-    public void validateUser(User user) throws DaoException {
+    public void validateUser(User user) throws ServiceException {
         if (user == null) {
-            throw new DaoException("Failed to validate: user is empty",
+            throw new ServiceException("Failed to validate: user is empty",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
 
@@ -22,25 +22,25 @@ public class UserValidatorImpl implements UserValidator {
     }
 
     @Override
-    public void validateId(int id) throws DaoException {
+    public void validateId(int id) throws ServiceException {
         if (id < 0) {
-            throw new DaoException("Failed to validate: id is negative",
+            throw new ServiceException("Failed to validate: id is negative",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }
 
     @Override
-    public void validateLogin(String login) throws DaoException {
+    public void validateLogin(String login) throws ServiceException {
         if (login == null || login.isEmpty()) {
-            throw new DaoException("Failed to validate: login is empty",
+            throw new ServiceException("Failed to validate: login is empty",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }
 
     @Override
-    public void validatePassword(String password) throws DaoException {
+    public void validatePassword(String password) throws ServiceException {
         if (password == null || password.isEmpty()) {
-            throw new DaoException("Failed to validate: login is empty",
+            throw new ServiceException("Failed to validate: login is empty",
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }

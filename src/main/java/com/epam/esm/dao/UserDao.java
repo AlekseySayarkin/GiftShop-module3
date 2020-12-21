@@ -1,5 +1,6 @@
 package com.epam.esm.dao;
 
+import com.epam.esm.dao.request.UserRequestBody;
 import com.epam.esm.model.User;
 
 import java.util.List;
@@ -36,10 +37,19 @@ public interface UserDao {
     /**
      * Retrieves certain number of {@code User} from data source.
      *
-     * @param limit max amount of {@code Tag} to return.
-     * @param offset from which position in a data source
+     * @param size max amount of {@code Tag} to return.
+     * @param page from which position in a data source
      * to start returning.
      * @return List<Tag> - certain number of  existing tags in data source.
      */
-    List<User> getAllUsersByPage(int limit, int offset);
+    List<User> getAllUsersByPage(UserRequestBody requestBody, int page, int size);
+
+    /**
+     * Retrieves number of pages from data source if every page
+     * contains certain number of {@code User}.
+     *
+     * @param size size of a page.
+     * @return number of pages.
+     */
+    int getLastPage(int size);
 }

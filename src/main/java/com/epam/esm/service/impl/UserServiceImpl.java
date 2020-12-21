@@ -1,10 +1,12 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.UserDao;
-import com.epam.esm.dao.exception.ErrorCodeEnum;
-import com.epam.esm.dao.exception.DaoException;
+import com.epam.esm.dao.request.UserRequestBody;
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.User;
 import com.epam.esm.service.UserService;
+import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.service.util.UserValidator;
 import org.apache.log4j.LogManager;
@@ -19,6 +21,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
+    private static final int MAX_PAGE_SIZE = 50;
 
     private final UserDao userDao;
     private final UserValidator userValidator;
@@ -32,38 +35,52 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String login) throws DaoException {
+    public User getUser(String login) throws ServiceException {
         userValidator.validateLogin(login);
         try {
             return userDao.getUser(login);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getUser(String login): " + e.getMessage());
-            throw new DaoException("Failed to get user by it login: " + login,
+            throw new ServiceException("Failed to get user by it login: " + login,
                     ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
         }
     }
 
     @Override
-    public User getUser(int id) throws DaoException {
+    public User getUser(int id) throws ServiceException {
         userValidator.validateId(id);
         try {
             return userDao.getUser(id);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getUser(int id): " + e.getMessage());
-            throw new DaoException("Failed to get user by it id: " + id,
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
+            throw new ServiceException("Failed to get user by it id: " + id, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
         }
     }
 
     @Override
-    public List<User> getAllUsersByPage(int limit, int offset) throws DaoException {
+    public List<User> getAllUsersByPage(UserRequestBody requestBody, int limit, int offset) throws ServiceException {
         paginationValidator.validatePagination(limit, offset);
+        if (requestBody == null) {
+            requestBody = UserRequestBody.getDefaultUserRequestBody();
+        }
+        if (!requestBody.getSortBy().equals(SortBy.NAME)) {
+            throw new ServiceException("Cant sort users by " + requestBody.getSortBy(),
+                    ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+        }
         try {
-            return userDao.getAllUsersByPage(limit, offset);
+            return userDao.getAllUsersByPage(requestBody, limit, offset);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getAllUsersByPage(): " + e.getMessage());
-            throw new DaoException("Failed to get users",
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
+            throw new ServiceException("Failed to get users", ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
         }
+    }
+
+    @Override
+    public int getLastPage(int size) throws ServiceException {
+        if (size <= 0 || size > MAX_PAGE_SIZE) {
+            throw new ServiceException("Failed to get last page: size is negative",
+                    ErrorCodeEnum.FAILED_TO_RETRIEVE_PAGE);
+        }
+        return userDao.getLastPage(size);
     }
 }

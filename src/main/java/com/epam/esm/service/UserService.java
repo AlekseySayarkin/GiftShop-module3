@@ -1,7 +1,8 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.exception.DaoException;
+import com.epam.esm.dao.request.UserRequestBody;
 import com.epam.esm.model.User;
+import com.epam.esm.service.exception.ServiceException;
 
 import java.util.List;
 
@@ -20,10 +21,10 @@ public interface UserService {
      * which equals to {@code String name}.
      *
      * @param login user login.
-     * @throws DaoException when failed to get {@code User} from persistence layer.
+     * @throws ServiceException when failed to get {@code User} from persistence layer.
      * @return {@code User}.
      */
-    User getUser(String login) throws DaoException;
+    User getUser(String login) throws ServiceException;
 
     /**
      * Retrieves data of {@code User} from
@@ -31,10 +32,10 @@ public interface UserService {
      * which equals to {@code int id}.
      *
      * @param id user id.
-     * @throws DaoException when failed to get {@code User} from persistence layer.
+     * @throws ServiceException when failed to get {@code User} from persistence layer.
      * @return {@code User}.
      */
-    User getUser(int id) throws DaoException;
+    User getUser(int id) throws ServiceException;
 
     /**
      * Retrieves certain number of {@code User} from persistence layer.
@@ -42,8 +43,17 @@ public interface UserService {
      * @param limit max amount of {@code Tag} to return.
      * @param offset from which position in a persistence layer
      * to start returning.
-     * @throws DaoException when failed to get {@code User} from persistence layer.
+     * @throws ServiceException when failed to get {@code User} from persistence layer.
      * @return List<Tag> - certain number of  existing tags in persistence layer.
      */
-    List<User> getAllUsersByPage(int limit, int offset) throws DaoException;
+    List<User> getAllUsersByPage(UserRequestBody requestBody, int limit, int offset) throws ServiceException;
+
+    /**
+     * Retrieves number of pages from persistence layer if every page
+     * contains certain number of {@code User}.
+     *
+     * @param size size of a page.
+     * @return number of pages.
+     */
+    int getLastPage(int size) throws ServiceException;
 }
