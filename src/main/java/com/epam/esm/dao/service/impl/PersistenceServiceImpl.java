@@ -1,15 +1,18 @@
-package com.epam.esm.dao.service;
+package com.epam.esm.dao.service.impl;
 
+import com.epam.esm.dao.service.PersistenceService;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.BaseModel;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Component
+@Scope("prototype")
 @EntityScan(basePackages = "com.epam.esm.model")
 public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceService<T> {
 
@@ -27,6 +30,16 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
         TypedQuery<T> typedQuery = entityManager.createQuery(query, type);
         typedQuery.setParameter("name", name);
         return typedQuery.getSingleResult();
+    }
+
+    @Override
+    public List<T> getModelsByUserId(String query, int id, int page, int size, SortType sortType, SortBy by) {
+        query += "order by " + by + " " + sortType;
+        TypedQuery<T> typedQuery = entityManager.createQuery(query, type);
+        typedQuery.setParameter("userId", id);
+        typedQuery.setFirstResult((page - 1) * size);
+        typedQuery.setMaxResults(size);
+        return typedQuery.getResultList();
     }
 
     @Override

@@ -30,12 +30,12 @@ public class HibernateUserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUser(String login) {
+    public User getUserByLogin(String login) {
         return  persistenceService.getModelByName(SQL_GET_USER_BY_NAME, login);
     }
 
     @Override
-    public User getUser(int id) {
+    public User getUserById(int id) {
         return persistenceService.getModelById(id);
     }
 

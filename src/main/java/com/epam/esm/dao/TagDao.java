@@ -34,7 +34,7 @@ public interface TagDao {
      * @param id tag id.
      * @return {@code Tag}.
      */
-    Tag getTag(int id);
+    Tag getTagById(int id);
 
     /**
      * Retrieves all {@code Tag} from data source.

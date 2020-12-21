@@ -24,7 +24,7 @@ public interface UserService {
      * @throws ServiceException when failed to get {@code User} from persistence layer.
      * @return {@code User}.
      */
-    User getUser(String login) throws ServiceException;
+    User getUserByLogin(String login) throws ServiceException;
 
     /**
      * Retrieves data of {@code User} from
@@ -35,7 +35,7 @@ public interface UserService {
      * @throws ServiceException when failed to get {@code User} from persistence layer.
      * @return {@code User}.
      */
-    User getUser(int id) throws ServiceException;
+    User getUserById(int id) throws ServiceException;
 
     /**
      * Retrieves certain number of {@code User} from persistence layer.

@@ -58,11 +58,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getOrder(int id) throws ServiceException {
+    public Order getOrderById(int id) throws ServiceException {
         orderValidator.validateId(id);
 
         try {
-            return orderDao.getOrder(id);
+            return orderDao.getOrderById(id);
         } catch (DataAccessException e) {
             LOGGER.error(String.format("Failed to get order by user id = {%s}", id));
             throw new ServiceException(String.format("Failed to get order by user id = {%s}", id),

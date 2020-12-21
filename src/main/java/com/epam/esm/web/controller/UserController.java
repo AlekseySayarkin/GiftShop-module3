@@ -57,7 +57,7 @@ public class UserController {
 
     @GetMapping("/user/{id}")
     public EntityModel<UserDto> getUser(@PathVariable int id) throws ServiceException {
-        return modelAssembler.toModel(UserDto.of(userService.getUser(id)));
+        return modelAssembler.toModel(UserDto.of(userService.getUserById(id)));
     }
 
     @GetMapping("/user/{id}/orders")

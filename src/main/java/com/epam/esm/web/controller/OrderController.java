@@ -49,7 +49,7 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public EntityModel<OrderDto> getOrder(@PathVariable int id) throws ServiceException {
-        return modelAssembler.toModel(OrderDto.of(orderService.getOrder(id)));
+        return modelAssembler.toModel(OrderDto.of(orderService.getOrderById(id)));
     }
 
     @PostMapping

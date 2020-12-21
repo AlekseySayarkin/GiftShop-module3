@@ -43,12 +43,12 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public GiftCertificate getGiftCertificate(String name) throws NoResultException {
+    public GiftCertificate getGiftCertificateByName(String name) throws NoResultException {
         return persistenceService.getModelByName(GET_CERTIFICATE_BY_NAME, name);
     }
 
     @Override
-    public GiftCertificate getGiftCertificate(int id) {
+    public GiftCertificate getGiftCertificateById(int id) {
         return persistenceService.getModelById(id);
     }
 

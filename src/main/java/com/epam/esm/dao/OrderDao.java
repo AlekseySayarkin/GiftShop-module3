@@ -35,7 +35,7 @@ public interface OrderDao {
      * @param id order id.
      * @return {@code Order}.
      */
-    Order getOrder(int id);
+    Order getOrderById(int id);
 
     /**
      * Get the most widely used tag of a user with the highest cost of all orders.

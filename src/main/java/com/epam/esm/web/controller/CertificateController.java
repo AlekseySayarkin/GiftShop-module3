@@ -49,7 +49,7 @@ public class CertificateController {
 
     @GetMapping("/certificates/{id}")
     public EntityModel<GiftCertificateDto> getGiftCertificate(@PathVariable int id) throws ServiceException {
-        return modelAssembler.toModel(GiftCertificateDto.of(giftCertificateService.getGiftCertificate(id)));
+        return modelAssembler.toModel(GiftCertificateDto.of(giftCertificateService.getGiftCertificateById(id)));
     }
 
     @PostMapping("/certificates")

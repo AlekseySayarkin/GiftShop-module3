@@ -35,10 +35,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String login) throws ServiceException {
+    public User getUserByLogin(String login) throws ServiceException {
         userValidator.validateLogin(login);
         try {
-            return userDao.getUser(login);
+            return userDao.getUserByLogin(login);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getUser(String login): " + e.getMessage());
             throw new ServiceException("Failed to get user by it login: " + login,
@@ -47,10 +47,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(int id) throws ServiceException {
+    public User getUserById(int id) throws ServiceException {
         userValidator.validateId(id);
         try {
-            return userDao.getUser(id);
+            return userDao.getUserById(id);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getUser(int id): " + e.getMessage());
             throw new ServiceException("Failed to get user by it id: " + id, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);

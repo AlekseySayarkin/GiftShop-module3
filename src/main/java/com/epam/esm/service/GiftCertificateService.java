@@ -24,7 +24,7 @@ public interface GiftCertificateService {
      * @throws ServiceException when failed to get {@code GiftCertificate} from persistence layer.
      * @return {@code GiftCertificate}.
      */
-    GiftCertificate getGiftCertificate(String name) throws ServiceException;
+    GiftCertificate getGiftCertificateByName(String name) throws ServiceException;
 
     /**
      * Retrieves data of {@code GiftCertificate} from
@@ -35,7 +35,7 @@ public interface GiftCertificateService {
      * @throws ServiceException when failed to get {@code GiftCertificate} from persistence layer.
      * @return {@code GiftCertificate}.
      */
-    GiftCertificate getGiftCertificate(int id) throws ServiceException;
+    GiftCertificate getGiftCertificateById(int id) throws ServiceException;
 
     /**
      * Retrieves {@code GiftCertificate} from persistence layer

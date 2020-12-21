@@ -6,7 +6,6 @@ import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.dao.request.TagRequestBody;
 import com.epam.esm.web.dto.TagDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
-import com.epam.esm.web.hateoas.ModelLinkBuilder;
 import com.epam.esm.web.hateoas.TagLinkBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -51,7 +50,7 @@ public class TagController {
 
     @GetMapping("/{id}")
     public EntityModel<TagDto> getTag(@PathVariable int id) throws ServiceException {
-        return modelAssembler.toModel(TagDto.of(tagService.getTag(id)));
+        return modelAssembler.toModel(TagDto.of(tagService.getTagById(id)));
     }
 
     @PostMapping

@@ -30,7 +30,7 @@ public interface OrderService {
      * @throws ServiceException when failed to get {@code Order} from persistence layer.
      * @return {@code Order}.
      */
-    Order getOrder(int id) throws ServiceException;
+    Order getOrderById(int id) throws ServiceException;
 
     /**
      * Get the most widely used tag of a user with the highest cost of all orders.

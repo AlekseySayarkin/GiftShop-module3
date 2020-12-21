@@ -25,7 +25,7 @@ public interface GiftCertificateDAO {
      * @param name certificate name.
      * @return {@code GiftCertificate}.
      */
-    GiftCertificate getGiftCertificate(String name) throws NoResultException;
+    GiftCertificate getGiftCertificateByName(String name) throws NoResultException;
 
     /**
      * Retrieves data of {@code GiftCertificate} from
@@ -35,7 +35,7 @@ public interface GiftCertificateDAO {
      * @param id certificate id.
      * @return {@code GiftCertificate}.
      */
-    GiftCertificate getGiftCertificate(int id);
+    GiftCertificate getGiftCertificateById(int id);
 
     /**
      * Retrieves all {@code GiftCertificate} from data source.

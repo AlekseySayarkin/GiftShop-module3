@@ -22,7 +22,7 @@ public interface UserDao {
      * @param login user login.
      * @return {@code User}.
      */
-    User getUser(String login);
+    User getUserByLogin(String login);
 
     /**
      * Retrieves data of {@code User} from
@@ -32,7 +32,7 @@ public interface UserDao {
      * @param id user id.
      * @return {@code User}.
      */
-    User getUser(int id);
+    User getUserById(int id);
 
     /**
      * Retrieves certain number of {@code User} from data source.

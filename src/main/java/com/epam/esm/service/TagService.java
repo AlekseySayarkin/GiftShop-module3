@@ -24,7 +24,7 @@ public interface TagService {
      * @throws ServiceException when failed to get {@code Tag} from persistence layer.
      * @return {@code Tag}.
      */
-    Tag getTag(String name) throws ServiceException;
+    Tag getTagByName(String name) throws ServiceException;
 
     /**
      * Retrieves data of {@code Tag} from
@@ -35,7 +35,7 @@ public interface TagService {
      * @throws ServiceException when failed to get {@code Tag} from persistence layer.
      * @return {@code Tag}.
      */
-    Tag getTag(int id) throws ServiceException;
+    Tag getTagById(int id) throws ServiceException;
 
     /**
      * Retrieves all {@code Tag} from persistence layer.

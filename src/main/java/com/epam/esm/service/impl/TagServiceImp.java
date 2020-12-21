@@ -36,7 +36,7 @@ public class TagServiceImp implements TagService {
     }
 
     @Override
-    public Tag getTag(String name) throws ServiceException {
+    public Tag getTagByName(String name) throws ServiceException {
         tagValidator.validateName(name);
         try {
             return tagDao.getTagByName(name);
@@ -47,10 +47,10 @@ public class TagServiceImp implements TagService {
     }
 
     @Override
-    public Tag getTag(int id) throws ServiceException {
+    public Tag getTagById(int id) throws ServiceException {
         tagValidator.validateId(id);
         try {
-            return tagDao.getTag(id);
+            return tagDao.getTagById(id);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getTag(int id): " + e.getMessage());
             throw new ServiceException("Failed to get tag by it id: " + id,

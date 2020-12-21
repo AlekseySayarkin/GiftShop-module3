@@ -38,10 +38,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public GiftCertificate getGiftCertificate(String name) throws ServiceException {
+    public GiftCertificate getGiftCertificateByName(String name) throws ServiceException {
         certificateValidator.validateName(name);
         try {
-            return giftCertificateDAO.getGiftCertificate(name);
+            return giftCertificateDAO.getGiftCertificateByName(name);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getGiftCertificate(String name): " + e.getMessage());
             throw new ServiceException("Failed to get certificate by it name: " + name,
@@ -50,10 +50,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public GiftCertificate getGiftCertificate(int id) throws ServiceException {
+    public GiftCertificate getGiftCertificateById(int id) throws ServiceException {
         certificateValidator.validateId(id);
         try {
-            return giftCertificateDAO.getGiftCertificate(id);
+            return giftCertificateDAO.getGiftCertificateById(id);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getGiftCertificate(int id): " + e.getMessage());
             throw new ServiceException("Failed to get certificate by it id: " + id,
@@ -98,7 +98,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public void deleteGiftCertificate(int id) throws ServiceException {
-        GiftCertificate giftCertificate = getGiftCertificate(id);
+        GiftCertificate giftCertificate = getGiftCertificateById(id);
         if (giftCertificate == null) {
             throw new ServiceException("Failed to delete certificate: certificate not found",
                     ErrorCodeEnum.FAILED_TO_DELETE_CERTIFICATE);

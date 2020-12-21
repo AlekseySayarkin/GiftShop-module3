@@ -36,7 +36,7 @@ public class HibernateTagDaoImpl implements TagDao {
     }
 
     @Override
-    public Tag getTag(int id) {
+    public Tag getTagById(int id) {
         return persistenceService.getModelById(id);
     }
 
