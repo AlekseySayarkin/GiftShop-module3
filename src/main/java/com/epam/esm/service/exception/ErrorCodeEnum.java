@@ -1,4 +1,4 @@
-package com.epam.esm.dao.exception;
+package com.epam.esm.service.exception;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -11,13 +11,18 @@ public enum ErrorCodeEnum {
     FAILED_TO_RETRIEVE_TAG(50602),
     FAILED_TO_DELETE_TAG(50702),
     FAILED_TO_ADD_TAG(50802),
+    FAILED_TO_RETRIEVE_ORDER(50604),
+    FAILED_TO_ADD_ORDER(50609),
+    FAILED_TO_DELETE_ORDER(50610),
     INVALID_INPUT(509),
     INVALID_SORT_INPUT(510),
     CERTIFICATE_VALIDATION_ERROR(51100),
     TAG_VALIDATION_ERROR(51201),
+    ORDER_VALIDATION_ERROR(51203),
     PAGINATION_VALIDATION_ERROR(407),
     USER_VALIDATION_EXCEPTION(51202),
-    FAILED_TO_RETRIEVE_USER(50603);
+    FAILED_TO_RETRIEVE_USER(50603),
+    FAILED_TO_RETRIEVE_PAGE(50509);
 
     private final int code;
 

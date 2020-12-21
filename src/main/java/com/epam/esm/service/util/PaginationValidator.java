@@ -1,8 +1,8 @@
 package com.epam.esm.service.util;
 
-import com.epam.esm.dao.exception.DaoException;
+import com.epam.esm.service.exception.ServiceException;
 
 public interface PaginationValidator {
 
-    void validatePagination(int limit, int offset) throws DaoException;
+    void validatePagination(int limit, int offset) throws ServiceException;
 }
