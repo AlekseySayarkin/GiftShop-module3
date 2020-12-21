@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 
 @Service
@@ -133,11 +134,8 @@ public class OrderServiceImpl implements OrderService {
     public void deleteOrder(int orderId) throws ServiceException {
         orderValidator.validateId(orderId);
         try {
-            if (!orderDao.deleteOrder(orderId)) {
-                LOGGER.error("Failed to add order");
-                throw new ServiceException("Failed to add order", ErrorCodeEnum.FAILED_TO_DELETE_ORDER);
-            }
-        } catch (DataAccessException e) {
+            orderDao.deleteOrder(orderId);
+        } catch (DataAccessException | NoResultException | IllegalArgumentException e) {
             LOGGER.error("Failed to add order");
             throw new ServiceException("Failed to add order", ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
         }

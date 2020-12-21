@@ -129,13 +129,8 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public boolean deleteGiftCertificate(int id) {
-        try {
-            persistenceService.deleteModel(id);
-            return true;
-        } catch (NoResultException | IllegalArgumentException e) {
-            return false;
-        }
+    public void deleteGiftCertificate(int id) {
+        persistenceService.deleteModel(id);
     }
 
     @Override

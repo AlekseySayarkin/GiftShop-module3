@@ -74,7 +74,6 @@ public interface OrderDao {
      * Deletes {@code Order} from data source.
      *
      * @param orderId id of a {@code Order} which to delete from data source.
-     * @return whether transaction was successful.
      */
-    boolean deleteOrder(int orderId);
+    void deleteOrder(int orderId);
 }

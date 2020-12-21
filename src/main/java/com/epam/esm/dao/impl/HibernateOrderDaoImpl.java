@@ -89,12 +89,7 @@ public class HibernateOrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public boolean deleteOrder(int orderId) {
-        try {
-            persistenceService.deleteModel(orderId);
-            return true;
-        } catch (NoResultException | IllegalArgumentException e) {
-            return false;
-        }
+    public void deleteOrder(int orderId) {
+        persistenceService.deleteModel(orderId);
     }
 }

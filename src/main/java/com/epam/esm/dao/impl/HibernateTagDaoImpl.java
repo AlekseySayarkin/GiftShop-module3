@@ -62,12 +62,7 @@ public class HibernateTagDaoImpl implements TagDao {
     }
 
     @Override
-    public boolean deleteTag(int tagId) {
-        try {
-            persistenceService.deleteModel(tagId);
-            return true;
-        } catch (NoResultException | IllegalArgumentException e) {
-            return false;
-        }
+    public void deleteTag(int tagId) {
+        persistenceService.deleteModel(tagId);
     }
 }

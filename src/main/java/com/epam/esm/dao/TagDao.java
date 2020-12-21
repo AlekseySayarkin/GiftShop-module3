@@ -74,7 +74,6 @@ public interface TagDao {
      * Deletes {@code Tag} from data source.
      *
      * @param tagId id of a {@code Tag} which to delete from data source.
-     * @return whether transaction was successful.
      */
-    boolean deleteTag(int tagId);
+    void deleteTag(int tagId);
 }

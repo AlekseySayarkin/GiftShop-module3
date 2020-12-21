@@ -112,12 +112,8 @@ public class TagServiceImp implements TagService {
     public void deleteTag(int tagId) throws ServiceException {
         tagValidator.validateId(tagId);
         try {
-            if (!tagDao.deleteTag(tagId)) {
-                LOGGER.error("Failed to delete tag");
-                throw new ServiceException("Failed to delete tag because it id (" + tagId + ") is not found",
-                        ErrorCodeEnum.FAILED_TO_DELETE_TAG);
-            }
-        } catch (DataAccessException e) {
+            tagDao.deleteTag(tagId);
+        } catch (DataAccessException | NoResultException | IllegalArgumentException e) {
             LOGGER.error("Following exception was thrown in deleteTag(): " + e.getMessage());
             throw new ServiceException("Failed to delete tag by it id: " + tagId,
                     ErrorCodeEnum.FAILED_TO_DELETE_TAG);

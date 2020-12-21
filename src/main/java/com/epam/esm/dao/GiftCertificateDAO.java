@@ -67,9 +67,8 @@ public interface GiftCertificateDAO {
      * Deletes {@code GiftCertificate} from data source.
      *
      * @param id id of {@code GiftCertificate} which to deleted from data source.
-     * @return whether transaction was successful.
      */
-    boolean deleteGiftCertificate(int id);
+    void deleteGiftCertificate(int id);
 
     /**
      * Updates {@code GiftCertificate} in data source.

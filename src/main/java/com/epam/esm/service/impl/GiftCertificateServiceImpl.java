@@ -15,6 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NoResultException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -104,12 +105,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                     ErrorCodeEnum.FAILED_TO_DELETE_CERTIFICATE);
         }
         try {
-            if (!giftCertificateDAO.deleteGiftCertificate(giftCertificate.getId())) {
-                LOGGER.error("Failed to delete certificate");
-                throw new ServiceException("Failed to delete certificate",
-                        ErrorCodeEnum.FAILED_TO_DELETE_CERTIFICATE);
-            }
-        } catch (DataAccessException e) {
+            giftCertificateDAO.deleteGiftCertificate(giftCertificate.getId());
+        } catch (DataAccessException | NoResultException | IllegalArgumentException e) {
             LOGGER.error("Following exception was thrown in deleteGiftCertificate(): " + e.getMessage());
             throw new ServiceException("Failed to delete certificate", ErrorCodeEnum.FAILED_TO_DELETE_CERTIFICATE);
         }
