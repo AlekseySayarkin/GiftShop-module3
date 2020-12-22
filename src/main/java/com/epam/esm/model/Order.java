@@ -26,7 +26,7 @@ public class Order {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "OrderDetails",
+            name = "OrderCertificate",
             joinColumns = @JoinColumn(name = "orderId"),
             inverseJoinColumns = @JoinColumn(name = "certificateId")
     )

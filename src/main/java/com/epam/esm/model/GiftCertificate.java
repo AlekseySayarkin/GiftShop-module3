@@ -34,7 +34,7 @@ public class GiftCertificate implements BaseModel {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "CertificateDetails",
+            name = "CertificateTag",
             joinColumns = @JoinColumn(name = "CertificateId"),
             inverseJoinColumns = @JoinColumn(name = "TagId")
     )
