@@ -2,7 +2,6 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dao.request.UserSearchCriteria;
-import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.User;
 import com.epam.esm.service.UserService;
@@ -60,13 +59,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsersByPage(UserSearchCriteria requestBody, int limit, int offset) throws ServiceException {
         paginationValidator.validatePagination(limit, offset);
+
         if (requestBody == null) {
             requestBody = UserSearchCriteria.getDefaultUserRequestBody();
         }
-        if (!requestBody.getSortBy().equals(SortBy.NAME)) {
-            throw new ServiceException("Cant sort users by " + requestBody.getSortBy(),
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
-        }
+        userValidator.validateUserSearchCriteria(requestBody);
+
         try {
             return userDao.getAllUsersByPage(requestBody, limit, offset);
         } catch (DataAccessException e) {

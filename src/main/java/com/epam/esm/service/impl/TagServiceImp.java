@@ -1,7 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
@@ -71,13 +70,12 @@ public class TagServiceImp implements TagService {
     @Override
     public List<Tag> getAllTagsByPage(TagSearchCriteria requestBody, int page, int size) throws ServiceException {
         paginationValidator.validatePagination(size, page);
+
         if (requestBody == null) {
             requestBody = TagSearchCriteria.getDefaultTagRequestBody();
         }
-        if (!requestBody.getSortBy().equals(SortBy.NAME)) {
-            throw new ServiceException("Cant sort tags by " + requestBody.getSortBy(),
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
-        }
+        tagValidator.validateTagSearchCriteria(requestBody);
+
         try {
             return tagDao.getAllTagsByPage(requestBody, page, size);
         } catch (DataAccessException e) {

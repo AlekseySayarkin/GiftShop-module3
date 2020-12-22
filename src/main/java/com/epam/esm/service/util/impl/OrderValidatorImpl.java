@@ -1,5 +1,7 @@
 package com.epam.esm.service.util.impl;
 
+import com.epam.esm.dao.request.OrderSearchCriteria;
+import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.User;
 import com.epam.esm.service.exception.ErrorCodeEnum;
@@ -26,6 +28,14 @@ public class OrderValidatorImpl implements OrderValidator {
     public void validateId(int id) throws ServiceException {
         if (id < 0) {
             throw new ServiceException("Failed to validate: order id is negative",
+                    ErrorCodeEnum.ORDER_VALIDATION_ERROR);
+        }
+    }
+
+    @Override
+    public void validateOrderSearchCriteria(OrderSearchCriteria searchCriteria) throws ServiceException {
+        if (!searchCriteria.getSortBy().equals(SortBy.COST)) {
+            throw new ServiceException("Cant sort orders by " + searchCriteria.getSortBy(),
                     ErrorCodeEnum.ORDER_VALIDATION_ERROR);
         }
     }

@@ -2,7 +2,6 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.request.OrderSearchCriteria;
-import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.OrderService;
@@ -43,11 +42,7 @@ public class OrderServiceImpl implements OrderService {
         if (requestBody == null) {
             requestBody = OrderSearchCriteria.getDefaultUserRequestBody();
         }
-        if (!requestBody.getSortBy().equals(SortBy.COST)) {
-            LOGGER.error("Cant sort orders by " + requestBody.getSortBy());
-            throw new ServiceException("Cant sort orders by " + requestBody.getSortBy(),
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
-        }
+        orderValidator.validateOrderSearchCriteria(requestBody);
 
         try {
             return orderDao.getTagByUserId(id, requestBody, page, size);
@@ -89,11 +84,7 @@ public class OrderServiceImpl implements OrderService {
         if (requestBody == null) {
             requestBody = OrderSearchCriteria.getDefaultUserRequestBody();
         }
-        if (!requestBody.getSortBy().equals(SortBy.COST)) {
-            LOGGER.error("Cant sort orders by " + requestBody.getSortBy());
-            throw new ServiceException("Cant sort orders by " + requestBody.getSortBy(),
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
-        }
+        orderValidator.validateOrderSearchCriteria(requestBody);
 
         try {
             return orderDao.getAllOrdersByPage(requestBody, page, size);

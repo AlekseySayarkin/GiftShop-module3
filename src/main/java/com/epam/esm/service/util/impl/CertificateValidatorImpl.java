@@ -1,16 +1,20 @@
 package com.epam.esm.service.util.impl;
 
+import com.epam.esm.dao.request.CertificateSearchCriteria;
+import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.util.CertificateValidator;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 
 @Component
 public class CertificateValidatorImpl implements CertificateValidator {
 
+    @Override
     public void validateCertificate(GiftCertificate giftCertificate) throws ServiceException {
         if (giftCertificate == null) {
             throw new ServiceException("Failed to validate: certificate is empty",
@@ -25,6 +29,7 @@ public class CertificateValidatorImpl implements CertificateValidator {
         validateDuration(giftCertificate.getDuration());
     }
 
+    @Override
     public void validateId(int id) throws ServiceException {
         if (id < 0) {
             throw new ServiceException("Failed to validate: certificate id is negative",
@@ -32,6 +37,7 @@ public class CertificateValidatorImpl implements CertificateValidator {
         }
     }
 
+    @Override
     public void validateName(String name) throws ServiceException {
         if (name == null || name.isEmpty()) {
             throw new ServiceException("Failed to validate: certificate name is empty",
@@ -39,9 +45,18 @@ public class CertificateValidatorImpl implements CertificateValidator {
         }
     }
 
+    @Override
     public void validateDescription(String description) throws ServiceException {
         if (description == null || description.isEmpty()) {
             throw new ServiceException("Failed to validate: certificate description is empty",
+                    ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
+        }
+    }
+
+    @Override
+    public void validateCertificateSearchCriteria(CertificateSearchCriteria searchCriteria) throws ServiceException {
+        if (!searchCriteria.getSortBy().equals(SortBy.NAME) && !searchCriteria.getSortBy().equals(SortBy.DATE)) {
+            throw new ServiceException("Cant sort certificates by " + searchCriteria.getSortBy(),
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }
     }

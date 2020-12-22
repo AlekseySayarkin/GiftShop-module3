@@ -66,9 +66,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria requestBody, int page, int size)
             throws ServiceException {
         paginationValidator.validatePagination(size, page);
+
         if (requestBody == null) {
             requestBody = CertificateSearchCriteria.getDefaultCertificateRequestBody();
         }
+        certificateValidator.validateCertificateSearchCriteria(requestBody);
+
         return giftCertificateDAO.getGiftCertificatesByRequestBody(requestBody, page, size);
     }
 
