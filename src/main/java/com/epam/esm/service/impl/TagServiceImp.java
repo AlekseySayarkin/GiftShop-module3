@@ -99,9 +99,7 @@ public class TagServiceImp implements TagService {
     public Tag addTag(Tag tag) throws ServiceException {
         tagValidator.validateTag(tag);
         try {
-            int id = tagDao.addTag(tag);
-            tag.setId(id);
-            return tag;
+            return tagDao.addTag(tag);
         } catch (ServiceException e) {
             throw new ServiceException(String.format("Failed to add tag with name = {%s}.", tag.getName()),
                     ErrorCodeEnum.FAILED_TO_DELETE_TAG);

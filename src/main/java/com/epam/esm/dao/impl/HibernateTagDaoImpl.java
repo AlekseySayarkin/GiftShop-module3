@@ -57,7 +57,7 @@ public class HibernateTagDaoImpl implements TagDao {
     }
 
     @Override
-    public int addTag(Tag tag) throws PersistenceException {
+    public Tag addTag(Tag tag) throws PersistenceException {
         return persistenceService.addModel(tag);
     }
 

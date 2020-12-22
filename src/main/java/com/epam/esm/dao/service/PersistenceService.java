@@ -14,7 +14,7 @@ public interface PersistenceService<T> {
     List<T> getAllModels(String query);
     List<T> getAllModelsByPage(String query, int page, int size, SortType sortType, SortBy by);
     int getLastPage(String query, int size);
-    int addModel(T model);
+    T addModel(T model);
     void deleteModel(int modelId);
     T updateModel(T model);
 }

@@ -61,7 +61,7 @@ public interface GiftCertificateDAO {
      * @return id of a {@code GiftCertificate} from data source.
      * @throws PersistenceException when failed to add {@code GiftCertificate} to data source.
      */
-    int addGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException;
+    GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException;
 
     /**
      * Deletes {@code GiftCertificate} from data source.

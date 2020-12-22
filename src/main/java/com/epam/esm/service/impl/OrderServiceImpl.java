@@ -122,8 +122,7 @@ public class OrderServiceImpl implements OrderService {
     public Order addOrder(Order order) throws ServiceException {
         orderValidator.validateOrder(order);
         try {
-            order.setId(orderDao.addOrder(order));
-            return order;
+            return orderDao.addOrder(order);
         } catch (DataAccessException e) {
             LOGGER.error("Failed to add order");
             throw new ServiceException("Failed to add order", ErrorCodeEnum.FAILED_TO_ADD_ORDER);

@@ -68,7 +68,7 @@ public interface TagDao {
      * @return id of a {@code Tag} from data source.
      * @throws ServiceException when failed to add {@code Tag} to data source.
      */
-    int addTag(Tag tag) throws ServiceException;
+    Tag addTag(Tag tag) throws ServiceException;
 
     /**
      * Deletes {@code Tag} from data source.

@@ -68,7 +68,7 @@ public interface OrderDao {
      * @param order {@code Order} which to be added to data source.
      * @return id of a {@code Order} from data source.
      */
-    int addOrder(Order order);
+    Order addOrder(Order order);
 
     /**
      * Deletes {@code Order} from data source.

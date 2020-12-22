@@ -84,7 +84,7 @@ public class HibernateOrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public int addOrder(Order order) {
+    public Order addOrder(Order order) {
         return persistenceService.addModel(order);
     }
 

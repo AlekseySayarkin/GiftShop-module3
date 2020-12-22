@@ -124,7 +124,7 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public int addGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException {
+    public GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException {
         return persistenceService.addModel(giftCertificate);
     }
 

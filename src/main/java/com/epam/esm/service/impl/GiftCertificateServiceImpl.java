@@ -85,10 +85,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificate.setCreateDate(ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
             giftCertificate.setLastUpdateDate(giftCertificate.getCreateDate());
 
-            int id = giftCertificateDAO.addGiftCertificate(giftCertificate);
-            giftCertificate.setId(id);
-
-            return giftCertificate;
+            return giftCertificateDAO.addGiftCertificate(giftCertificate);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in addGiftCertificate(): " + e.getMessage());
             throw new ServiceException("Failed to add certificate: certificate already exist",
