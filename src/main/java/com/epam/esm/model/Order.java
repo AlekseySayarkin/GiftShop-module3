@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Orders")
-public class Order {
+public class Order implements BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +20,11 @@ public class Order {
     @Column(name = "CreateDate")
     private ZonedDateTime createDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     private User user;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "OrderCertificate",
             joinColumns = @JoinColumn(name = "orderId"),

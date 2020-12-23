@@ -10,7 +10,7 @@ public class OrderSearchCriteria {
 
     public static OrderSearchCriteria getDefaultUserRequestBody() {
         OrderSearchCriteria orderSearchCriteria = new OrderSearchCriteria();
-        orderSearchCriteria.setSortBy(SortBy.NAME);
+        orderSearchCriteria.setSortBy(SortBy.COST);
         orderSearchCriteria.setSortType(SortType.ASC);
 
         return orderSearchCriteria;
