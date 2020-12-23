@@ -81,7 +81,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) throws ServiceException {
         certificateValidator.validateCertificate(giftCertificate);
         try {
@@ -97,7 +97,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void deleteGiftCertificate(int id) throws ServiceException {
         GiftCertificate giftCertificate = getGiftCertificateById(id);
         if (giftCertificate == null) {
@@ -113,7 +113,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate, int id) throws ServiceException {
         giftCertificate.setId(id);
         certificateValidator.validateCertificate(giftCertificate);
