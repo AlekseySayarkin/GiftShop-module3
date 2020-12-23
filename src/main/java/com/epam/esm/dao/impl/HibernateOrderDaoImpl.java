@@ -27,10 +27,10 @@ public class HibernateOrderDaoImpl implements OrderDao {
     private static final String GET_ORDER_COUNT = "SELECT count(o.id) FROM Order o";
     private static final String GET_MOST_FREQUENT_TAG =
             "SELECT tags.ID, tags.Name, count(tags.Name) AS count FROM Orders " +
-            "INNER JOIN OrderDetails ON OrderDetails.OrderId = Orders.id " +
+            "INNER JOIN OrderCertificate ON OrderCertificate.OrderId = Orders.id " +
             "INNER JOIN GiftCertificates ON CertificateId = GiftCertificates.id " +
-            "INNER JOIN CertificateDetails ON CertificateDetails.CertificateId = GiftCertificates.id " +
-            "INNER JOIN tags on CertificateDetails.tagId = tags.id " +
+            "INNER JOIN CertificateTag ON CertificateTag.CertificateId = GiftCertificates.id " +
+            "INNER JOIN tags on CertificateTag.tagId = tags.id " +
             "WHERE userId IN ( " +
             "   SELECT userId FROM ( " +
             "       SELECT Sum(Cost) sumCost, userId " +
@@ -85,11 +85,11 @@ public class HibernateOrderDaoImpl implements OrderDao {
 
     @Override
     public Order addOrder(Order order) {
-        return persistenceService.addModel(order);
+        return persistenceService.add(order);
     }
 
     @Override
     public void deleteOrder(int orderId) {
-        persistenceService.deleteModel(orderId);
+        persistenceService.delete(orderId);
     }
 }

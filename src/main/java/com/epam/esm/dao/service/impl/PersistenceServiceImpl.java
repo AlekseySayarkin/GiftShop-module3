@@ -76,20 +76,20 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
     }
 
     @Override
-    public T addModel(T model) {
+    public T add(T model) {
         entityManager.persist(model);
         entityManager.flush();
         return model;
     }
 
     @Override
-    public void deleteModel(int modelId) {
+    public void delete(int modelId) {
         T model = getModelById(modelId);
         entityManager.remove(model);
     }
 
     @Override
-    public T updateModel(T model) {
+    public T update(T model) {
         model = entityManager.merge(model);
         entityManager.flush();
 

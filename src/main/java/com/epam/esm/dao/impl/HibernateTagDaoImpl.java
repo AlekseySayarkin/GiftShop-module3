@@ -58,11 +58,11 @@ public class HibernateTagDaoImpl implements TagDao {
 
     @Override
     public Tag addTag(Tag tag) throws PersistenceException {
-        return persistenceService.addModel(tag);
+        return persistenceService.add(tag);
     }
 
     @Override
     public void deleteTag(int tagId) {
-        persistenceService.deleteModel(tagId);
+        persistenceService.delete(tagId);
     }
 }
