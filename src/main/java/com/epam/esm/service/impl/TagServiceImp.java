@@ -13,8 +13,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 @Service
@@ -49,7 +51,13 @@ public class TagServiceImp implements TagService {
     public Tag getTagById(int id) throws ServiceException {
         tagValidator.validateId(id);
         try {
-            return tagDao.getTagById(id);
+            Tag tag = tagDao.getTagById(id);
+            if (tag == null) {
+                throw new ServiceException("Failed to get tag by it id: " + id,
+                        ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+            }
+
+            return tag;
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getTag(int id): " + e.getMessage());
             throw new ServiceException("Failed to get tag by it id: " + id,
@@ -94,17 +102,19 @@ public class TagServiceImp implements TagService {
     }
 
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public Tag addTag(Tag tag) throws ServiceException {
         tagValidator.validateTag(tag);
         try {
             return tagDao.addTag(tag);
-        } catch (ServiceException e) {
-            throw new ServiceException(String.format("Failed to add tag with name = {%s}.", tag.getName()),
-                    ErrorCodeEnum.FAILED_TO_DELETE_TAG);
+        } catch (PersistenceException | DataAccessException e) {
+            LOGGER.error("Failed to add tag");
+            throw new ServiceException("Failed to add tag", ErrorCodeEnum.FAILED_TO_ADD_TAG);
         }
     }
 
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public void deleteTag(int tagId) throws ServiceException {
         tagValidator.validateId(tagId);
         try {

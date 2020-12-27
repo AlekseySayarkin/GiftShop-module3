@@ -1,6 +1,7 @@
 package com.epam.esm.web.dto;
 
 import com.epam.esm.model.GiftCertificate;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.time.ZonedDateTime;
@@ -19,7 +20,7 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     private ZonedDateTime createDate;
     private ZonedDateTime lastUpdateDate;
     private int duration;
-    private Set<TagDto> tags = new HashSet<>();
+    private Set<EntityModel<TagDto>> tags = new HashSet<>();
 
     public static GiftCertificateDto of(GiftCertificate giftCertificate) {
         GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
@@ -30,8 +31,8 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
         giftCertificateDto.setCreateDate(giftCertificate.getCreateDate());
         giftCertificateDto.setLastUpdateDate(giftCertificate.getLastUpdateDate());
         giftCertificateDto.setDuration(giftCertificate.getDuration());
-        Set<TagDto> tagsDto = new HashSet<>();
-        giftCertificate.getTags().forEach(t -> tagsDto.add(TagDto.of(t)));
+        Set<EntityModel<TagDto>> tagsDto = new HashSet<>();
+        giftCertificate.getTags().forEach(t -> tagsDto.add(EntityModel.of(TagDto.of(t))));
         giftCertificateDto.setTags(tagsDto);
 
         return giftCertificateDto;
@@ -97,11 +98,11 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
         this.duration = duration;
     }
 
-    public Set<TagDto> getTags() {
+    public Set<EntityModel<TagDto>> getTags() {
         return tags;
     }
 
-    public void setTags(Set<TagDto> tags) {
+    public void setTags(Set<EntityModel<TagDto>> tags) {
         this.tags = tags;
     }
 

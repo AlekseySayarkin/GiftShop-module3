@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -54,7 +55,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificate getGiftCertificateById(int id) throws ServiceException {
         certificateValidator.validateId(id);
         try {
-            return giftCertificateDAO.getGiftCertificateById(id);
+            GiftCertificate giftCertificate = giftCertificateDAO.getGiftCertificateById(id);
+            if (giftCertificate == null) {
+                throw new ServiceException("Failed to get certificate by it id: " + id,
+                        ErrorCodeEnum.FAILED_TO_RETRIEVE_CERTIFICATE);
+            }
+
+            return giftCertificate;
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getGiftCertificate(int id): " + e.getMessage());
             throw new ServiceException("Failed to get certificate by it id: " + id,
@@ -89,7 +96,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificate.setLastUpdateDate(giftCertificate.getCreateDate());
 
             return giftCertificateDAO.addGiftCertificate(giftCertificate);
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | PersistenceException e) {
             LOGGER.error("Following exception was thrown in addGiftCertificate(): " + e.getMessage());
             throw new ServiceException("Failed to add certificate: certificate already exist",
                     ErrorCodeEnum.FAILED_TO_ADD_CERTIFICATE);

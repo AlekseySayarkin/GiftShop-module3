@@ -49,7 +49,12 @@ public class UserServiceImpl implements UserService {
     public User getUserById(int id) throws ServiceException {
         userValidator.validateId(id);
         try {
-            return userDao.getUserById(id);
+            User user = userDao.getUserById(id);
+            if (user == null) {
+                throw new ServiceException("Failed to get user by it id: " + id, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
+            }
+
+            return user;
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getUser(int id): " + e.getMessage());
             throw new ServiceException("Failed to get user by it id: " + id, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);

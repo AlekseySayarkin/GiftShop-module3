@@ -24,6 +24,7 @@ public class HibernateOrderDaoImpl implements OrderDao {
     private final PersistenceService<Order> persistenceService;
 
     private static final String GET_ORDER_BY_USER_ID = "SELECT o FROM Order o WHERE o.userId=:userId";
+    private static final String GET_ALL_ORDERS = "SELECT o FROM Order o ";
     private static final String GET_ORDER_COUNT = "SELECT count(o.id) FROM Order o";
     private static final String GET_MOST_FREQUENT_TAG =
             "SELECT tags.ID, tags.Name, count(tags.Name) AS count FROM Orders " +
@@ -75,7 +76,7 @@ public class HibernateOrderDaoImpl implements OrderDao {
     @Override
     public List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size) {
         return persistenceService.getAllModelsByPage(
-                GET_ORDER_COUNT, page, size, requestBody.getSortType(), requestBody.getSortBy());
+                GET_ALL_ORDERS, page, size, requestBody.getSortType(), requestBody.getSortBy());
     }
 
     @Override

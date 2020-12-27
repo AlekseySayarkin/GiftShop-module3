@@ -14,8 +14,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 @Service
@@ -58,7 +60,13 @@ public class OrderServiceImpl implements OrderService {
         orderValidator.validateId(id);
 
         try {
-            return orderDao.getOrderById(id);
+            Order order = orderDao.getOrderById(id);
+            if (order == null) {
+                throw new ServiceException(String.format("Failed to get order by user id = {%s}", id),
+                        ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+            }
+
+            return order;
         } catch (DataAccessException e) {
             LOGGER.error(String.format("Failed to get order by user id = {%s}", id));
             throw new ServiceException(String.format("Failed to get order by user id = {%s}", id),
@@ -110,17 +118,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public Order addOrder(Order order) throws ServiceException {
         orderValidator.validateOrder(order);
         try {
             return orderDao.addOrder(order);
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | PersistenceException e) {
             LOGGER.error("Failed to add order");
             throw new ServiceException("Failed to add order", ErrorCodeEnum.FAILED_TO_ADD_ORDER);
         }
     }
 
     @Override
+    @Transactional(rollbackFor = ServiceException.class)
     public void deleteOrder(int orderId) throws ServiceException {
         orderValidator.validateId(orderId);
         try {

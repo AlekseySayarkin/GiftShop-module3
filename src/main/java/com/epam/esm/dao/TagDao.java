@@ -1,10 +1,11 @@
 package com.epam.esm.dao;
 
 import com.epam.esm.dao.request.TagSearchCriteria;
-import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.model.Tag;
 
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 /**
@@ -66,9 +67,9 @@ public interface TagDao {
      *
      * @param tag {@code Tag} which to be added to data source.
      * @return id of a {@code Tag} from data source.
-     * @throws ServiceException when failed to add {@code Tag} to data source.
+     * @throws PersistenceException when failed to add {@code Tag} to data source.
      */
-    Tag addTag(Tag tag) throws ServiceException;
+    Tag addTag(Tag tag) throws PersistenceException;
 
     /**
      * Deletes {@code Tag} from data source.

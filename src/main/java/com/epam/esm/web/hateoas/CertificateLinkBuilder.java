@@ -4,11 +4,13 @@ import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.controller.CertificateController;
 import com.epam.esm.web.dto.GiftCertificateDto;
+import com.epam.esm.web.dto.TagDto;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Objects;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -16,6 +18,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class CertificateLinkBuilder implements ModelLinkBuilder<GiftCertificateDto> {
+
+    private static ModelLinkBuilder<TagDto> tagLinkBuilder;
 
     private static final String ALL_CERTIFICATES = "certificates";
     private static final String CURRENT_CERTIFICATE = "certificate";
@@ -25,8 +29,17 @@ public class CertificateLinkBuilder implements ModelLinkBuilder<GiftCertificateD
     private static final CertificateSearchCriteria defaultRequestBody =
             CertificateSearchCriteria.getDefaultCertificateRequestBody();
 
+    @PostConstruct
+    public void init() {
+        CertificateLinkBuilder.tagLinkBuilder = new TagLinkBuilder();
+    }
+
     @Override
     public void linkToModel(EntityModel<GiftCertificateDto> modelDto) throws ServiceException {
+        for (EntityModel<TagDto> tag: Objects.requireNonNull(modelDto.getContent()).getTags()) {
+            tagLinkBuilder.linkToModel(tag);
+        }
+        
         modelDto.add(linkTo(methodOn(CertificateController.class).getGiftCertificate(
                 Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_CERTIFICATE));
     }

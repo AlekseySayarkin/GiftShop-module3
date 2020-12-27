@@ -2,7 +2,6 @@ package com.epam.esm.web.hateoas;
 
 import com.epam.esm.dao.request.UserSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.web.controller.TagController;
 import com.epam.esm.web.controller.UserController;
 import com.epam.esm.web.dto.UserDto;
 import org.springframework.hateoas.CollectionModel;
@@ -25,7 +24,7 @@ public class UserLinkBuilder implements ModelLinkBuilder<UserDto> {
 
     @Override
     public void linkToModel(EntityModel<UserDto> modelDto) throws ServiceException {
-        modelDto.add(linkTo(methodOn(TagController.class).getTag(
+        modelDto.add(linkTo(methodOn(UserController.class).getUser(
                 Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_USERS));
     }
 
