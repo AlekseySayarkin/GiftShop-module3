@@ -49,7 +49,7 @@ public class UserValidatorImpl implements UserValidator {
 
     @Override
     public void validateUserSearchCriteria(UserSearchCriteria searchCriteria) throws ServiceException {
-        if (!searchCriteria.getSortBy().equals(SortBy.NAME)) {
+        if (!searchCriteria.getSortBy().equals(SortBy.LOGIN)) {
             throw new ServiceException("Cant sort users by " + searchCriteria.getSortBy(),
                     ErrorCodeEnum.USER_VALIDATION_ERROR);
         }

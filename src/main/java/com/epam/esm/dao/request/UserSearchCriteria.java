@@ -11,7 +11,7 @@ public class UserSearchCriteria {
 
     public static UserSearchCriteria getDefaultUserRequestBody() {
         UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
-        userSearchCriteria.setSortBy(SortBy.NAME);
+        userSearchCriteria.setSortBy(SortBy.LOGIN);
         userSearchCriteria.setSortType(SortType.ASC);
 
         return userSearchCriteria;

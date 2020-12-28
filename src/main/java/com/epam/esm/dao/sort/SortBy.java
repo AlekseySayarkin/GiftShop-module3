@@ -14,5 +14,9 @@ public enum SortBy {
 
     @JsonProperty("cost")
     @JsonAlias("COST")
-    COST
+    COST,
+
+    @JsonProperty("login")
+    @JsonAlias("Login")
+    LOGIN
 }
