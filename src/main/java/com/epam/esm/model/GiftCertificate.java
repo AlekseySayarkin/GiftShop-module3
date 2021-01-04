@@ -1,5 +1,7 @@
 package com.epam.esm.model;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -8,6 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "GiftCertificates", schema = "GiftShop")
+@Audited
 public class GiftCertificate implements BaseModel {
 
     @Id
