@@ -1,5 +1,7 @@
 package com.epam.esm.model;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -7,6 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Users")
+@Audited
 public class User implements BaseModel {
 
     @Id

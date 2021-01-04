@@ -1,10 +1,13 @@
 package com.epam.esm.model;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tags", schema = "GiftShop")
+@Audited
 public class Tag implements BaseModel {
 
     @Id
