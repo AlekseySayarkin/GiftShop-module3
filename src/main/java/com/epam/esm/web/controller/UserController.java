@@ -2,6 +2,8 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.dao.request.UserSearchCriteria;
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.ServiceException;
@@ -9,6 +11,7 @@ import com.epam.esm.web.dto.OrderDto;
 import com.epam.esm.web.dto.UserDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
 import com.epam.esm.web.hateoas.OrderLinkBuilder;
+import com.epam.esm.web.hateoas.RepresentationModel;
 import com.epam.esm.web.hateoas.UserLinkBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -27,9 +30,8 @@ public class UserController {
     private final ModelAssembler<OrderDto> orderModelAssembler;
 
     @Autowired
-    public UserController(UserService userService,
-              ModelAssembler<UserDto> modelAssembler, ModelAssembler<OrderDto> orderModelAssembler,
-              OrderService orderService) {
+    public UserController(UserService userService, ModelAssembler<UserDto> modelAssembler,
+                          ModelAssembler<OrderDto> orderModelAssembler, OrderService orderService) {
         this.userService = userService;
         this.modelAssembler = modelAssembler;
         this.orderModelAssembler = orderModelAssembler;
@@ -45,26 +47,29 @@ public class UserController {
     @GetMapping(value = "/users")
     public CollectionModel<EntityModel<UserDto>> getUsers(
             @RequestBody(required = false) UserSearchCriteria request,
-            @RequestParam int size, @RequestParam int page) throws ServiceException {
+            @RequestParam int page, @RequestParam int size,
+            @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
         int lastPage = userService.getLastPage(size);
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
                 size, page, (long) lastPage * size, lastPage);
-        modelAssembler.setMetadata(pageMetadata);
+        RepresentationModel model = new RepresentationModel(pageMetadata, sortType, sortBy);
+        modelAssembler.setRepresentationModel(model);
 
         return modelAssembler.toCollectionModel(
-                UserDto.of(userService.getAllUsersByPage(request, page, size)));
+                UserDto.of(userService.getAllUsersByPage(request, page, size, sortType, sortBy)));
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/users/{id}")
     public EntityModel<UserDto> getUser(@PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(UserDto.of(userService.getUserById(id)));
     }
 
-    @GetMapping("/user/{id}/orders")
+    @GetMapping("/users/{id}/orders")
     public CollectionModel<EntityModel<OrderDto>> getUserOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
-            @RequestParam int page, @RequestParam int size, @PathVariable int id) throws ServiceException {
+            @RequestParam int page, @RequestParam int size, @PathVariable int id,
+            @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
         return orderModelAssembler.toCollectionModel(
-                OrderDto.of(orderService.getTagByUserId(id, requestBody, page, size)));
+                OrderDto.of(orderService.getOrdersByUserId(id, requestBody, page, size, sortType, sortBy)));
     }
 }

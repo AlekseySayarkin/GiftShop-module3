@@ -1,6 +1,8 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
@@ -70,13 +72,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria requestBody, int page, int size)
-            throws ServiceException {
+    public List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria requestBody, int page, int size,
+                                                           SortType sortType, SortBy sortBy) throws ServiceException {
         paginationValidator.validatePagination(size, page);
 
         if (requestBody == null) {
             requestBody = CertificateSearchCriteria.getDefaultCertificateRequestBody();
         }
+        requestBody.setSortType(sortType);
+        requestBody.setSortBy(sortBy);
         certificateValidator.validateCertificateSearchCriteria(requestBody);
 
         return giftCertificateDAO.getGiftCertificatesByRequestBody(requestBody, page, size);

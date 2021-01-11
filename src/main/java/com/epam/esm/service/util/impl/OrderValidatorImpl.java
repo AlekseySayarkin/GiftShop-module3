@@ -20,7 +20,7 @@ public class OrderValidatorImpl implements OrderValidator {
         }
 
         validateId(order.getId());
-        validateCost(order.getCost());
+        validateCost(order.getTotalCost());
         validateUser(order.getUser());
     }
 

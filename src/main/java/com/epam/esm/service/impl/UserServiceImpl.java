@@ -2,6 +2,8 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dao.request.UserSearchCriteria;
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.User;
 import com.epam.esm.service.UserService;
@@ -20,6 +22,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
+
     private static final int MAX_PAGE_SIZE = 50;
 
     private final UserDao userDao;
@@ -62,16 +65,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsersByPage(UserSearchCriteria requestBody, int limit, int offset) throws ServiceException {
-        paginationValidator.validatePagination(limit, offset);
+    public List<User> getAllUsersByPage(UserSearchCriteria requestBody, int page, int size,
+                                        SortType sortType, SortBy sortBy) throws ServiceException {
+        paginationValidator.validatePagination(page, size);
 
         if (requestBody == null) {
             requestBody = UserSearchCriteria.getDefaultUserRequestBody();
         }
+        requestBody.setSortType(sortType);
+        requestBody.setSortBy(sortBy);
         userValidator.validateUserSearchCriteria(requestBody);
 
         try {
-            return userDao.getAllUsersByPage(requestBody, limit, offset);
+            return userDao.getAllUsersByPage(requestBody, page, size);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getAllUsersByPage(): " + e.getMessage());
             throw new ServiceException("Failed to get users", ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);

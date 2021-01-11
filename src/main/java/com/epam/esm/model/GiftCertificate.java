@@ -1,5 +1,6 @@
 package com.epam.esm.model;
 
+import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Set;
 @Entity
 @Table(name = "GiftCertificates", schema = "GiftShop")
 @Audited
+@Where(clause = "Active = true")
 public class GiftCertificate implements BaseModel {
 
     @Id
@@ -35,6 +37,10 @@ public class GiftCertificate implements BaseModel {
     @Column(name = "Duration")
     private int duration;
 
+    @Column(name = "Active")
+    private boolean isActive;
+
+    @Where(clause = "Active = true")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "CertificateTag",
@@ -105,6 +111,14 @@ public class GiftCertificate implements BaseModel {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     @Override

@@ -16,9 +16,12 @@ public class HibernateTagDaoImpl implements TagDao {
 
     private final PersistenceService<Tag> persistenceService;
 
-    private static final String GET_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name=:name";
-    private static final String GET_ALL_TAGS = "SELECT t FROM Tag t ";
-    private static final String GET_TAG_COUNT = "SELECT count(t.id) FROM Tag t";
+    private static final boolean ACTIVE_TAG = true;
+    private static final boolean DELETED_TAG = false;
+
+    private static final String GET_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name=:name AND t.isActive=true ";
+    private static final String GET_ALL_TAGS = "SELECT t FROM Tag t WHERE t.isActive=true ";
+    private static final String GET_TAG_COUNT = "SELECT count(t.id) FROM Tag t WHERE t.isActive=true ";
 
     @Autowired
     public HibernateTagDaoImpl(PersistenceService<Tag> persistenceService) {
@@ -58,11 +61,17 @@ public class HibernateTagDaoImpl implements TagDao {
 
     @Override
     public Tag addTag(Tag tag) throws PersistenceException {
+        tag.setActive(ACTIVE_TAG);
         return persistenceService.add(tag);
     }
 
     @Override
     public void deleteTag(int tagId) {
-        persistenceService.delete(tagId);
+        Tag tag = persistenceService.getModelById(tagId);
+        if (tag == null) {
+            throw new NoResultException("Failed to find tag to delete by id:" + tagId);
+        }
+        tag.setActive(DELETED_TAG);
+        persistenceService.update(tag);
     }
 }

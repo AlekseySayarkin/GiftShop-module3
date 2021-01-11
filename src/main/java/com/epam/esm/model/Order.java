@@ -1,5 +1,6 @@
 package com.epam.esm.model;
 
+import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Orders")
 @Audited
+@Where(clause = "Active = true")
 public class Order implements BaseModel {
 
     @Id
@@ -18,7 +20,7 @@ public class Order implements BaseModel {
     private int id;
 
     @Column(name = "Cost")
-    private double cost;
+    private double totalCost;
 
     @Column(name = "CreateDate")
     private ZonedDateTime createDate;
@@ -35,12 +37,15 @@ public class Order implements BaseModel {
     )
     private Set<GiftCertificate> giftCertificateList = new HashSet<>();
 
+    @Column(name = "Active")
+    private boolean isActive;
+
     public Order() {
     }
 
-    public Order(int id, double cost, ZonedDateTime createDate, User user, Set<GiftCertificate> giftCertificateList) {
+    public Order(int id, double totalCost, ZonedDateTime createDate, User user, Set<GiftCertificate> giftCertificateList) {
         this.id = id;
-        this.cost = cost;
+        this.totalCost = totalCost;
         this.createDate = createDate;
         this.user = user;
         this.giftCertificateList = giftCertificateList;
@@ -54,12 +59,12 @@ public class Order implements BaseModel {
         this.id = id;
     }
 
-    public double getCost() {
-        return cost;
+    public double getTotalCost() {
+        return totalCost;
     }
 
-    public void setCost(double cost) {
-        this.cost = cost;
+    public void setTotalCost(double cost) {
+        this.totalCost = cost;
     }
 
     public ZonedDateTime getCreateDate() {
@@ -86,24 +91,32 @@ public class Order implements BaseModel {
         this.giftCertificateList = giftCertificateList;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return id == order.id && Double.compare(order.cost, cost) == 0 && createDate.equals(order.createDate) && user.equals(order.user) && giftCertificateList.equals(order.giftCertificateList);
+        return id == order.id && Double.compare(order.totalCost, totalCost) == 0 && createDate.equals(order.createDate) && user.equals(order.user) && giftCertificateList.equals(order.giftCertificateList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, cost, createDate, user, giftCertificateList);
+        return Objects.hash(id, totalCost, createDate, giftCertificateList);
     }
 
     @Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", cost=" + cost +
+                ", cost=" + totalCost +
                 ", createDate=" + createDate +
                 ", user=" + user +
                 ", giftCertificateList=" + giftCertificateList +

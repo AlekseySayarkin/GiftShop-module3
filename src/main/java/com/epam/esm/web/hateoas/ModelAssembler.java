@@ -5,6 +5,6 @@ import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
 
 public interface ModelAssembler<T> extends SimpleRepresentationModelAssembler<T> {
 
-    void setMetadata(PagedModel.PageMetadata metadata);
+    void setRepresentationModel(RepresentationModel representationModel);
     void setModelLinkBuilder(ModelLinkBuilder<T> modelLinkBuilder);
 }

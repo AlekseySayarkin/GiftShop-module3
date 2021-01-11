@@ -21,6 +21,7 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
 
     private Class<T> type;
 
+    @Override
     public void setType(Class<T> type) {
         this.type = type;
     }
@@ -30,16 +31,6 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
         TypedQuery<T> typedQuery = entityManager.createQuery(query, type);
         typedQuery.setParameter("name", name);
         return typedQuery.getSingleResult();
-    }
-
-    @Override
-    public List<T> getModelsByUserId(String query, int id, int page, int size, SortType sortType, SortBy by) {
-        query += "order by " + by + " " + sortType;
-        TypedQuery<T> typedQuery = entityManager.createQuery(query, type);
-        typedQuery.setParameter("userId", id);
-        typedQuery.setFirstResult((page - 1) * size);
-        typedQuery.setMaxResults(size);
-        return typedQuery.getResultList();
     }
 
     @Override
@@ -85,6 +76,9 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
     @Override
     public void delete(int modelId) {
         T model = getModelById(modelId);
+        if (model == null) {
+            throw new NoResultException("Failed to find model to delete by id:" + modelId);
+        }
         entityManager.remove(model);
     }
 

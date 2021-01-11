@@ -1,5 +1,7 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
@@ -41,12 +43,16 @@ public interface GiftCertificateService {
      * Retrieves {@code GiftCertificate} from persistence layer
      * using one of non null fields of {@code CertificateRequestBody}.
      *
-     * @param requestBody max amount and from which position in a data source of {@code GiftCertificate} to return.
+     * @param requestBody object containing search criteria.
+     * @param page from which position in a data source.
+     * @param size max amount of {@code GiftCertificate} to return.
+     * @param sortType type of a sort.
+     * @param sortBy by witch field to sort.
      * @throws ServiceException when failed to get {@code GiftCertificate} from persistence layer.
      * @return List<GiftCertificate> - certificates from persistence layer.
      */
-    List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria requestBody, int page, int size)
-            throws ServiceException;
+    List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria requestBody, int page, int size,
+                                                    SortType sortType, SortBy sortBy) throws ServiceException;
 
     /**
      * Retrieves number of pages from persistence layer if every page
@@ -62,7 +68,7 @@ public interface GiftCertificateService {
      *
      * @param giftCertificate {@code GiftCertificate} which to add to persistence layer.
      * @throws ServiceException when failed to add {@code GiftCertificate} to persistence layer.
-     * @return {@code GiftCertificate} from persistence layer.
+     * @return {@code GiftCertificate} from persistence layer with generated id.
      */
     GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) throws ServiceException;
 

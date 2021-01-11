@@ -22,7 +22,7 @@ public class User implements BaseModel {
     @Column(name = "Password")
     private String password;
 
-    @OneToMany(mappedBy = "user",
+    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER,
             cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Order> orders = new HashSet<>();
 

@@ -24,6 +24,7 @@ public interface GiftCertificateDAO {
      *
      * @param name certificate name.
      * @return {@code GiftCertificate}.
+     * @throws NoResultException if failed to get result.
      */
     GiftCertificate getGiftCertificateByName(String name) throws NoResultException;
 
@@ -40,8 +41,9 @@ public interface GiftCertificateDAO {
     /**
      * Retrieves all {@code GiftCertificate} from data source.
      *
+     * @param requestBody object containing search criteria.
+     * @param page from which position in a data source.
      * @param size max amount of {@code GiftCertificate} to return.
-     * @param page from which position in a data source
      * @return List<GiftCertificate> - all existing certificates in data source.
      */
     List<GiftCertificate> getGiftCertificatesByRequestBody(CertificateSearchCriteria requestBody, int page, int size) throws ServiceException;
@@ -72,10 +74,9 @@ public interface GiftCertificateDAO {
 
     /**
      * Updates {@code GiftCertificate} in data source.
-     * Null or default values in {@code GiftCertificate} are not updated.
      *
      * @param giftCertificate {@code ServiceException} which to update in data source.
-     * @return whether transaction was successful.
+     * @return updated {@code GiftCertificate}.
      */
     GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate);
 }

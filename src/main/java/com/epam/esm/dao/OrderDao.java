@@ -21,10 +21,14 @@ public interface OrderDao {
      * data source by name
      * which equals to {@code String name}.
      *
-     * @param id userId.
-     * @return {@code Order}.
+     * @param userId user id.
+     * @param requestBody object containing search criteria like sorting, tag number etc.
+     * @param page from which position in a data source
+     * @param size max amount of {@code GiftCertificate} to return.
+     * @return {@code Order}s.
+     * @throws NoResultException if failed to get result.
      */
-    List<Order> getTagByUserId(int id, OrderSearchCriteria requestBody, int page, int size)
+    List<Order> getOrdersByUserId(int userId, OrderSearchCriteria requestBody, int page, int size)
             throws NoResultException;
 
     /**
@@ -47,6 +51,7 @@ public interface OrderDao {
     /**
      * Retrieves certain number of {@code Order} from data source.
      *
+     * @param requestBody object containing search criteria.
      * @param page page number of {@code Order} to return.
      * @param size page size of {@code Order} to return from data source.
      * @return List<Order> - certain number of existing orders in data source.

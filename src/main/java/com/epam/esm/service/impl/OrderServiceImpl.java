@@ -2,6 +2,8 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.request.OrderSearchCriteria;
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.OrderService;
@@ -14,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
@@ -38,20 +41,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getTagByUserId(int id, OrderSearchCriteria requestBody, int page, int size) throws ServiceException {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public List<Order> getOrdersByUserId(int id, OrderSearchCriteria requestBody, int page, int size,
+                                         SortType sortType, SortBy sortBy) throws ServiceException {
         paginationValidator.validatePagination(size, page);
 
         if (requestBody == null) {
             requestBody = OrderSearchCriteria.getDefaultUserRequestBody();
         }
+        requestBody.setSortType(sortType);
+        requestBody.setSortBy(sortBy);
         orderValidator.validateOrderSearchCriteria(requestBody);
 
         try {
-            return orderDao.getTagByUserId(id, requestBody, page, size);
+            return orderDao.getOrdersByUserId(id, requestBody, page, size);
         } catch (DataAccessException e) {
             LOGGER.error(String.format("Failed to get order by user id = {%s}", id));
             throw new ServiceException(String.format("Failed to get order by user id = {%s}", id),
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+                    ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
         }
     }
 
@@ -63,14 +70,14 @@ public class OrderServiceImpl implements OrderService {
             Order order = orderDao.getOrderById(id);
             if (order == null) {
                 throw new ServiceException(String.format("Failed to get order by user id = {%s}", id),
-                        ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+                        ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
             }
 
             return order;
         } catch (DataAccessException e) {
             LOGGER.error(String.format("Failed to get order by user id = {%s}", id));
             throw new ServiceException(String.format("Failed to get order by user id = {%s}", id),
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+                    ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
         }
     }
 
@@ -81,24 +88,27 @@ public class OrderServiceImpl implements OrderService {
         } catch (DataAccessException e) {
             LOGGER.error("Failed to get most frequent tag");
             throw new ServiceException("Failed to get most frequent tag",
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+                    ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
         }
     }
 
     @Override
-    public List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size) throws ServiceException {
+    public List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size,
+                                          SortType sortType, SortBy sortBy) throws ServiceException {
         paginationValidator.validatePagination(size, page);
 
         if (requestBody == null) {
             requestBody = OrderSearchCriteria.getDefaultUserRequestBody();
         }
+        requestBody.setSortType(sortType);
+        requestBody.setSortBy(sortBy);
         orderValidator.validateOrderSearchCriteria(requestBody);
 
         try {
             return orderDao.getAllOrdersByPage(requestBody, page, size);
         } catch (DataAccessException e) {
             LOGGER.error("Failed to get orders by page");
-            throw new ServiceException("Failed to get orders by page", ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+            throw new ServiceException("Failed to get orders by page", ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
         }
     }
 
@@ -113,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
             return orderDao.getLastPage(size);
         } catch (DataAccessException e) {
             LOGGER.error("Failed to get last page");
-            throw new ServiceException("Failed to get last page", ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+            throw new ServiceException("Failed to get last page", ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
         }
     }
 
@@ -136,8 +146,8 @@ public class OrderServiceImpl implements OrderService {
         try {
             orderDao.deleteOrder(orderId);
         } catch (DataAccessException | NoResultException | IllegalArgumentException e) {
-            LOGGER.error("Failed to add order");
-            throw new ServiceException("Failed to add order", ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
+            LOGGER.error("Failed to delete order");
+            throw new ServiceException("Failed to delete order", ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
         }
     }
 }

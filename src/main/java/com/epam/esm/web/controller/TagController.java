@@ -1,11 +1,14 @@
 package com.epam.esm.web.controller;
 
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.dao.request.TagSearchCriteria;
 import com.epam.esm.web.dto.TagDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
+import com.epam.esm.web.hateoas.RepresentationModel;
 import com.epam.esm.web.hateoas.TagLinkBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -38,14 +41,16 @@ public class TagController {
     @GetMapping
     public CollectionModel<EntityModel<TagDto>> getTags(
             @RequestBody(required = false) TagSearchCriteria requestBody,
-            @RequestParam int page, @RequestParam int size) throws ServiceException {
+            @RequestParam int page, @RequestParam int size,
+            @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
         int lastPage = tagService.getLastPage(size);
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
                 size, page, (long) lastPage * size, lastPage);
-        modelAssembler.setMetadata(pageMetadata);
+        RepresentationModel model = new RepresentationModel(pageMetadata, sortType, sortBy);
+        modelAssembler.setRepresentationModel(model);
 
         return modelAssembler.toCollectionModel(
-                TagDto.of(tagService.getAllTagsByPage(requestBody, page, size)));
+                TagDto.of(tagService.getAllTagsByPage(requestBody, page, size, sortType, sortBy)));
     }
 
     @GetMapping("/{id}")

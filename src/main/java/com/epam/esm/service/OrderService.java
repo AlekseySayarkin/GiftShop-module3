@@ -1,12 +1,21 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dao.request.OrderSearchCriteria;
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.exception.ServiceException;
 
 import java.util.List;
 
+/**
+ * This interface provides with ability to create
+ * transactions with {@code Order} in and out
+ * of persistence layer.
+ *
+ * @author Aleksey Sayarkin
+ */
 public interface OrderService {
 
     /**
@@ -15,11 +24,16 @@ public interface OrderService {
      * which equals to {@code String name}.
      *
      * @param id userId.
+     * @param requestBody object containing search criteria.
+     * @param page from which position in a data source.
+     * @param size max amount of {@code GiftCertificate} to return.
+     * @param sortType type of a sort.
+     * @param sortBy by witch field to sort.
      * @throws ServiceException when failed to get {@code Order} from persistence layer.
      * @return {@code Order}.
      */
-    List<Order> getTagByUserId(int id, OrderSearchCriteria requestBody, int page, int size)
-            throws ServiceException;
+    List<Order> getOrdersByUserId(int id, OrderSearchCriteria requestBody, int page, int size,
+                                  SortType sortType, SortBy sortBy) throws ServiceException;
 
     /**
      * Retrieves data of {@code Order} from
@@ -42,13 +56,16 @@ public interface OrderService {
     /**
      * Retrieves certain number of {@code Order} from persistence layer.
      *
-     * @param requestBody sort type and sort by.
-     * @param page page of {@code Order} to return.
-     * @param size amount of {@code Order} in one page.
+     * @param requestBody object containing search criteria.
+     * @param page from which position in a data source.
+     * @param size max amount of {@code GiftCertificate} to return.
+     * @param sortType type of a sort.
+     * @param sortBy by witch field to sort.
      * @throws ServiceException when failed to get {@code Order} from persistence layer.
      * @return List<Order> - certain number of existing tags in persistence layer.
      */
-    List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size) throws ServiceException;
+    List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size,
+                                   SortType sortType, SortBy sortBy) throws ServiceException;
 
     /**
      * Retrieves number of pages from persistence layer if every page

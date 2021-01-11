@@ -3,11 +3,9 @@ package com.epam.esm.dao.request;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 
-public class UserSearchCriteria {
+public class UserSearchCriteria extends SortingSearchCriteria {
 
     private String login;
-    private SortType sortType;
-    private SortBy sortBy;
 
     public static UserSearchCriteria getDefaultUserRequestBody() {
         UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
@@ -23,21 +21,5 @@ public class UserSearchCriteria {
 
     public void setLogin(String login) {
         this.login = login;
-    }
-
-    public SortType getSortType() {
-        return sortType;
-    }
-
-    public void setSortType(SortType sortType) {
-        this.sortType = sortType;
-    }
-
-    public SortBy getSortBy() {
-        return sortBy;
-    }
-
-    public void setSortBy(SortBy sortBy) {
-        this.sortBy = sortBy;
     }
 }

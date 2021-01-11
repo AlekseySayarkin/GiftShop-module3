@@ -37,9 +37,10 @@ public interface UserDao {
     /**
      * Retrieves certain number of {@code User} from data source.
      *
-     * @param size max amount of {@code Tag} to return.
+     * @param requestBody object containing search criteria.
      * @param page from which position in a data source
      * to start returning.
+     * @param size max amount of {@code Tag} to return.
      * @return List<Tag> - certain number of  existing tags in data source.
      */
     List<User> getAllUsersByPage(UserSearchCriteria requestBody, int page, int size);

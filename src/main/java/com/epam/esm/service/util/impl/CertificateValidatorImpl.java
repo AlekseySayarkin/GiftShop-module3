@@ -7,7 +7,6 @@ import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.util.CertificateValidator;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 
@@ -55,7 +54,7 @@ public class CertificateValidatorImpl implements CertificateValidator {
 
     @Override
     public void validateCertificateSearchCriteria(CertificateSearchCriteria searchCriteria) throws ServiceException {
-        if (!searchCriteria.getSortBy().equals(SortBy.NAME) && !searchCriteria.getSortBy().equals(SortBy.DATE)) {
+        if (!searchCriteria.getSortBy().equals(SortBy.NAME) && !searchCriteria.getSortBy().equals(SortBy.CREATE_DATE)) {
             throw new ServiceException("Cant sort certificates by " + searchCriteria.getSortBy(),
                     ErrorCodeEnum.CERTIFICATE_VALIDATION_ERROR);
         }

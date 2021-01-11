@@ -1,5 +1,6 @@
 package com.epam.esm.model;
 
+import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "tags", schema = "GiftShop")
 @Audited
+@Where(clause = "Active = true")
 public class Tag implements BaseModel {
 
     @Id
@@ -16,6 +18,9 @@ public class Tag implements BaseModel {
 
     @Column(unique = true, nullable = false)
     private String name;
+
+    @Column(name = "Active")
+    private boolean isActive;
 
     public Tag() {
     }
@@ -43,6 +48,14 @@ public class Tag implements BaseModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     @Override

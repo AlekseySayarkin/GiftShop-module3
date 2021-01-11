@@ -1,12 +1,15 @@
 package com.epam.esm.web.controller;
 
 import com.epam.esm.dao.request.OrderSearchCriteria;
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.Order;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.dto.OrderDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
 import com.epam.esm.web.hateoas.OrderLinkBuilder;
+import com.epam.esm.web.hateoas.RepresentationModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -37,14 +40,16 @@ public class OrderController {
     @GetMapping
     public CollectionModel<EntityModel<OrderDto>> getOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
-            @RequestParam int page, @RequestParam int size) throws ServiceException {
+            @RequestParam int page, @RequestParam int size,
+            @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
         int lastPage = orderService.getLastPage(size);
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
                 size, page, (long) lastPage * size, lastPage);
-        modelAssembler.setMetadata(pageMetadata);
+        RepresentationModel model = new RepresentationModel(pageMetadata, sortType, sortBy);
+        modelAssembler.setRepresentationModel(model);
 
         return modelAssembler.toCollectionModel(
-                OrderDto.of(orderService.getAllOrdersByPage(requestBody, page, size)));
+                OrderDto.of(orderService.getAllOrdersByPage(requestBody, page, size, sortType, sortBy)));
     }
 
     @GetMapping("/{id}")

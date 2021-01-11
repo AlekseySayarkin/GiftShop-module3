@@ -9,6 +9,7 @@ import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.service.exception.ServiceException;
+import com.google.common.base.CaseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.stereotype.Repository;
@@ -18,7 +19,6 @@ import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Repository
 @EntityScan(basePackages = "com.epam.esm.model")
@@ -27,10 +27,15 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private static final boolean ACTIVE_CERTIFICATE = true;
+    private static final boolean DELETED_CERTIFICATE = false;
+
     private final PersistenceService<GiftCertificate> persistenceService;
 
-    private static final String GET_CERTIFICATE_BY_NAME = "SELECT g FROM GiftCertificate g WHERE g.name=:name";
-    private static final String GET_CERTIFICATE_COUNT = "SELECT count(g.id) FROM GiftCertificate g ";
+    private static final String GET_CERTIFICATE_BY_NAME =
+            "SELECT g FROM GiftCertificate g WHERE g.name=:name AND g.isActive=true ";
+    private static final String GET_CERTIFICATE_COUNT =
+            "SELECT count(g.id) FROM GiftCertificate g WHERE g.isActive=true ";
 
     @Autowired
     public HibernateGiftCertificateDaoImpl(PersistenceService<GiftCertificate> persistenceService) {
@@ -58,12 +63,15 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
         if (requestBody == null) {
             requestBody = CertificateSearchCriteria.getDefaultCertificateRequestBody();
         }
-        if (!requestBody.getSortBy().equals(SortBy.NAME) && !requestBody.getSortBy().equals(SortBy.DATE)) {
+        if (!requestBody.getSortBy().equals(SortBy.NAME) && !requestBody.getSortBy().equals(SortBy.CREATE_DATE)) {
             throw new ServiceException("Cant sort users by " + requestBody.getSortBy(),
                     ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
         }
 
-        return getGiftCertificatesFromQuery(requestBody, page, size);
+        List<GiftCertificate> giftCertificates =  getGiftCertificatesFromQuery(requestBody, page, size);
+        removeDeletedTags(giftCertificates);
+        
+        return giftCertificates;
     }
 
     private List<GiftCertificate> getGiftCertificatesFromQuery(
@@ -75,10 +83,13 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
         query.select(root).distinct(true);
         buildQuery(root, query, requestBody);
 
+        CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, requestBody.getSortBy().toString());
         if (requestBody.getSortType().equals(SortType.ASC)) {
-            query.orderBy(builder.asc(root.get(requestBody.getSortBy().toString().toLowerCase(Locale.ROOT))));
+            query.orderBy(builder.asc(root.get(CaseFormat.LOWER_UNDERSCORE
+                    .to(CaseFormat.LOWER_CAMEL, requestBody.getSortBy().toString()))));
         } else {
-            query.orderBy(builder.desc(root.get(requestBody.getSortBy().toString().toLowerCase(Locale.ROOT))));
+            query.orderBy(builder.desc(root.get(CaseFormat.LOWER_UNDERSCORE
+                    .to(CaseFormat.LOWER_CAMEL, requestBody.getSortBy().toString()))));
         }
 
         TypedQuery<GiftCertificate> typedQuery = entityManager.createQuery(query);
@@ -95,6 +106,8 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
         Join<GiftCertificate, Tag> tags = root.join("tags");
         List<Predicate> predicates = new ArrayList<>();
 
+        Predicate predicateForActive = builder.isTrue(root.get("isActive"));
+        predicates.add(predicateForActive);
         if (requestBody.getContent() != null) {
             Predicate predicateForDescription =
                     builder.like(root.get("name"), "%" + requestBody.getContent() + "%");
@@ -118,6 +131,12 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
         query.where(predArray);
     }
 
+    private void removeDeletedTags(List<GiftCertificate> giftCertificates) {
+        for (GiftCertificate giftCertificate: giftCertificates) {
+            giftCertificate.getTags().removeIf(tag -> !tag.isActive());
+        }
+    }
+
     @Override
     public int getLastPage(int size) {
         return persistenceService.getLastPage(GET_CERTIFICATE_COUNT, size);
@@ -125,16 +144,23 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
 
     @Override
     public GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException {
+        giftCertificate.setActive(ACTIVE_CERTIFICATE);
         return persistenceService.add(giftCertificate);
     }
 
     @Override
     public void deleteGiftCertificate(int id) {
-        persistenceService.delete(id);
+        GiftCertificate giftCertificate = persistenceService.getModelById(id);
+        if (giftCertificate == null) {
+            throw new NoResultException("Failed to find certificate to delete by id:" + id);
+        }
+        giftCertificate.setActive(DELETED_CERTIFICATE);
+        updateGiftCertificate(giftCertificate);
     }
 
     @Override
     public GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate) {
+        giftCertificate.setActive(ACTIVE_CERTIFICATE);
         return persistenceService.update(giftCertificate);
     }
 }

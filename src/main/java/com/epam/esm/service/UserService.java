@@ -1,6 +1,8 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dao.request.UserSearchCriteria;
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.User;
 import com.epam.esm.service.exception.ServiceException;
 
@@ -40,13 +42,17 @@ public interface UserService {
     /**
      * Retrieves certain number of {@code User} from persistence layer.
      *
-     * @param limit max amount of {@code Tag} to return.
-     * @param offset from which position in a persistence layer
+     * @param requestBody object containing search criteria.
+     * @param page from which position in a data source.
+     * @param size max amount of {@code GiftCertificate} to return.
+     * @param sortType type of a sort.
+     * @param sortBy by witch field to sort.
      * to start returning.
      * @throws ServiceException when failed to get {@code User} from persistence layer.
      * @return List<Tag> - certain number of  existing tags in persistence layer.
      */
-    List<User> getAllUsersByPage(UserSearchCriteria requestBody, int limit, int offset) throws ServiceException;
+    List<User> getAllUsersByPage(UserSearchCriteria requestBody, int page, int size,
+                                 SortType sortType, SortBy sortBy) throws ServiceException;
 
     /**
      * Retrieves number of pages from persistence layer if every page

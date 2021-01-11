@@ -1,5 +1,7 @@
 package com.epam.esm.web.hateoas;
 
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.dao.request.TagSearchCriteria;
 import com.epam.esm.web.controller.TagController;
@@ -18,7 +20,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class TagLinkBuilder implements ModelLinkBuilder<TagDto> {
 
     private static final String ALL_TAGS = "tags";
-    private static final String CURRENT_TAG = "tag";
+    private static final String CURRENT_TAG = "self";
 
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
@@ -31,29 +33,37 @@ public class TagLinkBuilder implements ModelLinkBuilder<TagDto> {
     }
 
     @Override
-    public void linkToModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int page, int size)
-            throws ServiceException {
-        collectionModel.add(getLinkToTagsPage(page, size, ALL_TAGS));
+    public void linkToModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int page, int size,
+                                SortType sortType, SortBy sortBy) throws ServiceException {
+        collectionModel.add(getLinkToTagsPage(page, size, ALL_TAGS, sortType, sortBy));
     }
 
     @Override
-    public void linkToFirstModelPage(EntityModel<TagDto> tagDto) throws ServiceException {
-        tagDto.add(getLinkToTagsPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_TAGS));
+    public void linkToFirstModelPage(EntityModel<TagDto> tagDto, SortType sortType, SortBy sortBy)
+            throws ServiceException {
+        tagDto.add(getLinkToTagsPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_TAGS, sortType, sortBy));
     }
 
     @Override
-    public void linkToNextModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int page, int size)
-            throws ServiceException {
-        collectionModel.add(getLinkToTagsPage(page + 1, size, "next"));
+    public void linkToNextModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int page, int size,
+                                    SortType sortType, SortBy sortBy) throws ServiceException {
+        collectionModel.add(getLinkToTagsPage(page + 1, size, "next", sortType, sortBy));
     }
 
     @Override
-    public void linkToPrevModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int page, int size)
-            throws ServiceException {
-        collectionModel.add(getLinkToTagsPage(page - 1, size, "prev"));
+    public void linkToPrevModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int page, int size,
+                                    SortType sortType, SortBy sortBy) throws ServiceException {
+        collectionModel.add(getLinkToTagsPage(page - 1, size, "prev", sortType, sortBy));
     }
 
-    private Link getLinkToTagsPage(int page, int size, String rel) throws ServiceException {
-        return linkTo(methodOn(TagController.class).getTags(defaultRequestBody, page, size)).withRel(rel);
+    @Override
+    public void linkToLastModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int lastPage, int size, SortType sortType, SortBy sortBy) throws ServiceException {
+        collectionModel.add(getLinkToTagsPage(lastPage, size, "last", sortType, sortBy));
+    }
+
+    private Link getLinkToTagsPage(int page, int size, String rel, SortType sortType, SortBy sortBy)
+            throws ServiceException {
+        return linkTo(methodOn(TagController.class).getTags(defaultRequestBody, page, size,
+                sortType, sortBy)).withRel(rel);
     }
 }

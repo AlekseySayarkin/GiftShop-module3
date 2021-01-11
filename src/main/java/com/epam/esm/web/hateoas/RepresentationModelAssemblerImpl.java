@@ -1,5 +1,7 @@
 package com.epam.esm.web.hateoas;
 
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ServiceException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.hateoas.CollectionModel;
@@ -12,39 +14,44 @@ import org.springframework.stereotype.Component;
 public class RepresentationModelAssemblerImpl<T> implements ModelAssembler<T> {
 
     private ModelLinkBuilder<T> modelLinkBuilder;
-    private PagedModel.PageMetadata metadata;
+    private RepresentationModel representationModel;
 
+    @Override
     public void setModelLinkBuilder(ModelLinkBuilder<T> modelLinkBuilder) {
         this.modelLinkBuilder = modelLinkBuilder;
     }
 
-    public void setMetadata(PagedModel.PageMetadata metadata) {
-        this.metadata = metadata;
+    @Override
+    public void setRepresentationModel(RepresentationModel representationModel) {
+        this.representationModel = representationModel;
     }
 
     @Override
     public void addLinks(EntityModel<T> resource) {
         try {
             modelLinkBuilder.linkToModel(resource);
-            modelLinkBuilder.linkToFirstModelPage(resource);
         } catch (ServiceException ignored) {
         }
     }
 
     @Override
     public void addLinks(CollectionModel<EntityModel<T>> resources) {
-        if (metadata != null) {
+        if (representationModel != null) {
+            PagedModel.PageMetadata metadata = representationModel.getPageMetadata();
             int size = (int) metadata.getSize();
             int page = (int) metadata.getNumber();
             int lastPage = (int) metadata.getTotalPages();
+            SortType sortType = representationModel.getSortType();
+            SortBy sortBy = representationModel.getSortBy();
 
             try {
-                modelLinkBuilder.linkToModelPage(resources, page, size);
+                modelLinkBuilder.linkToModelPage(resources, page, size, sortType, sortBy);
                 if (hasNext(page, lastPage)) {
-                    modelLinkBuilder.linkToNextModelPage(resources, page, size);
+                    modelLinkBuilder.linkToNextModelPage(resources, page, size, sortType, sortBy);
+                    modelLinkBuilder.linkToLastModelPage(resources, lastPage, size, sortType, sortBy);
                 }
                 if (hasPrevious(page)) {
-                    modelLinkBuilder.linkToPrevModelPage(resources, page, size);
+                    modelLinkBuilder.linkToPrevModelPage(resources, page, size, sortType, sortBy);
                 }
             } catch (ServiceException ignored) {
             }

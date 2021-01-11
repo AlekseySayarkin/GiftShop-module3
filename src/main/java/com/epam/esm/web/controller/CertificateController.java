@@ -1,5 +1,7 @@
 package com.epam.esm.web.controller;
 
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.dao.request.CertificateSearchCriteria;
@@ -7,6 +9,7 @@ import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.dto.GiftCertificateDto;
 import com.epam.esm.web.hateoas.CertificateLinkBuilder;
 import com.epam.esm.web.hateoas.ModelAssembler;
+import com.epam.esm.web.hateoas.RepresentationModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -37,14 +40,17 @@ public class CertificateController {
     @GetMapping("/certificates")
     public CollectionModel<EntityModel<GiftCertificateDto>> getGiftCertificates(
             @RequestBody(required = false) CertificateSearchCriteria request,
-            @RequestParam int page, @RequestParam int size) throws ServiceException {
+            @RequestParam int page, @RequestParam int size,
+            @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
         int lastPage = giftCertificateService.getLastPage(size);
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
                 size, page, (long) lastPage * size, lastPage);
-        modelAssembler.setMetadata(pageMetadata);
+        RepresentationModel model = new RepresentationModel(pageMetadata, sortType, sortBy);
+        modelAssembler.setRepresentationModel(model);
 
         return modelAssembler.toCollectionModel(
-                GiftCertificateDto.of(giftCertificateService.getGiftCertificatesByPage(request, page, size)));
+                GiftCertificateDto.of(giftCertificateService.getGiftCertificatesByPage(
+                        request, page, size, sortType, sortBy)));
     }
 
     @GetMapping("/certificates/{id}")

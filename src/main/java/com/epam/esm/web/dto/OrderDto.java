@@ -7,23 +7,22 @@ import org.springframework.hateoas.RepresentationModel;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class OrderDto extends RepresentationModel<OrderDto> {
 
     private int id;
-    private double cost;
+    private double totalCost;
     private ZonedDateTime createDate;
-    private EntityModel<UserDto> user;
     private Set<EntityModel<GiftCertificateDto>> giftCertificateList = new HashSet<>();
 
     public static OrderDto of(Order order) {
         OrderDto orderDto = new OrderDto();
         orderDto.setId(order.getId());
-        orderDto.setCost(order.getCost());
+        orderDto.setTotalCost(order.getTotalCost());
         orderDto.setCreateDate(order.getCreateDate());
-        orderDto.setUser(EntityModel.of(UserDto.of(order.getUser())));
         Set<EntityModel<GiftCertificateDto>> giftCertificateDto = new HashSet<>();
         order.getGiftCertificateList().forEach(g ->
                 giftCertificateDto.add(EntityModel.of(GiftCertificateDto.of(g))));
@@ -44,12 +43,12 @@ public class OrderDto extends RepresentationModel<OrderDto> {
         this.id = id;
     }
 
-    public double getCost() {
-        return cost;
+    public double getTotalCost() {
+        return totalCost;
     }
 
-    public void setCost(double cost) {
-        this.cost = cost;
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
     }
 
     public ZonedDateTime getCreateDate() {
@@ -60,19 +59,26 @@ public class OrderDto extends RepresentationModel<OrderDto> {
         this.createDate = createDate;
     }
 
-    public EntityModel<UserDto> getUser() {
-        return user;
-    }
-
-    public void setUser(EntityModel<UserDto> user) {
-        this.user = user;
-    }
-
     public Set<EntityModel<GiftCertificateDto>> getGiftCertificateList() {
         return giftCertificateList;
     }
 
     public void setGiftCertificateList(Set<EntityModel<GiftCertificateDto>> giftCertificateList) {
         this.giftCertificateList = giftCertificateList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        OrderDto orderDto = (OrderDto) o;
+        return id == orderDto.id && Double.compare(orderDto.totalCost, totalCost) == 0 && createDate.equals(orderDto.createDate)
+                && giftCertificateList.equals(orderDto.giftCertificateList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, totalCost, createDate, giftCertificateList);
     }
 }

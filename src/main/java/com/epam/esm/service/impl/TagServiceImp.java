@@ -1,6 +1,8 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
@@ -23,6 +25,7 @@ import java.util.List;
 public class TagServiceImp implements TagService {
 
     private static final Logger LOGGER = LogManager.getLogger(TagServiceImp.class);
+
     private static final int MAX_PAGE_SIZE = 50;
 
     private final TagDao tagDao;
@@ -76,12 +79,15 @@ public class TagServiceImp implements TagService {
     }
 
     @Override
-    public List<Tag> getAllTagsByPage(TagSearchCriteria requestBody, int page, int size) throws ServiceException {
+    public List<Tag> getAllTagsByPage(TagSearchCriteria requestBody, int page, int size,
+                                      SortType sortType, SortBy sortBy) throws ServiceException {
         paginationValidator.validatePagination(size, page);
 
         if (requestBody == null) {
             requestBody = TagSearchCriteria.getDefaultTagRequestBody();
         }
+        requestBody.setSortType(sortType);
+        requestBody.setSortBy(sortBy);
         tagValidator.validateTagSearchCriteria(requestBody);
 
         try {

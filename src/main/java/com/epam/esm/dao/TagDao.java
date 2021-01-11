@@ -5,7 +5,6 @@ import com.epam.esm.model.Tag;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 /**
@@ -24,6 +23,7 @@ public interface TagDao {
      *
      * @param name tag name.
      * @return {@code Tag}.
+     * @throws NoResultException if failed to get result.
      */
     Tag getTagByName(String name) throws NoResultException;
 
@@ -47,6 +47,7 @@ public interface TagDao {
     /**
      * Retrieves certain number of {@code Tag} from data source.
      *
+     * @param requestBody object containing search criteria.
      * @param page page number of {@code Tag} to return.
      * @param size page size of {@code Tag} to return from data source.
      * @return List<Tag> - certain number of  existing tags in data source.
