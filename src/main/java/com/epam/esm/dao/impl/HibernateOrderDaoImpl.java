@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -141,11 +140,5 @@ public class HibernateOrderDaoImpl implements OrderDao {
         }
         order.setActive(DELETED_ORDER);
         persistenceService.update(order);
-    }
-
-    @Transactional
-    public void updateMethodToBeDeleted(Order order) {
-        entityManager.merge(order);
-        entityManager.flush();
     }
 }

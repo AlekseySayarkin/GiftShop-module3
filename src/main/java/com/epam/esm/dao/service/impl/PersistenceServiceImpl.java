@@ -45,8 +45,8 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
     }
 
     @Override
-    public List<T> getAllModelsByPage(String query, int page, int size, SortType sortType, SortBy by) {
-        query += "order by " + by + " " + sortType;
+    public List<T> getAllModelsByPage(String query, int page, int size, SortType sortType, SortBy sortBy) {
+        query += "order by " + sortBy + " " + sortType;
         TypedQuery<T> typedQuery = entityManager.createQuery(query, type);
         typedQuery.setFirstResult((page - 1) * size);
         typedQuery.setMaxResults(size);
@@ -58,7 +58,7 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
         Query typedQuery = entityManager.createQuery(query);
         Long count = (Long) typedQuery.getSingleResult();
 
-        int pages = count.intValue()/size;
+        int pages = count.intValue() / size;
         if (count % size > 0) {
             pages++;
         }
