@@ -5,17 +5,23 @@ import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.controller.UserController;
+import com.epam.esm.web.dto.OrderDto;
 import com.epam.esm.web.dto.UserDto;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Objects;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@Component
 public class UserLinkBuilder implements ModelLinkBuilder<UserDto> {
+
+    private static ModelLinkBuilder<OrderDto> orderLinkBuilder;
 
     private static final String ALL_USERS = "users";
     private static final String CURRENT_USERS = "self";
@@ -24,10 +30,19 @@ public class UserLinkBuilder implements ModelLinkBuilder<UserDto> {
     private static final int DEFAULT_SIZE = 10;
     private static final UserSearchCriteria defaultRequestBody = UserSearchCriteria.getDefaultUserRequestBody();
 
+    @PostConstruct
+    public void init() {
+        UserLinkBuilder.orderLinkBuilder = new OrderLinkBuilder();
+    }
+
     @Override
     public void linkToModel(EntityModel<UserDto> modelDto) throws ServiceException {
         modelDto.add(linkTo(methodOn(UserController.class).getUser(
                 Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_USERS));
+
+        for (EntityModel<OrderDto> order: modelDto.getContent().getOrders()) {
+            orderLinkBuilder.linkToModel(order);
+        }
     }
 
     @Override
@@ -37,9 +52,9 @@ public class UserLinkBuilder implements ModelLinkBuilder<UserDto> {
     }
 
     @Override
-    public void linkToFirstModelPage(EntityModel<UserDto> tagDto, SortType sortType, SortBy sortBy)
+    public void linkToFirstModelPage(EntityModel<UserDto> entityModel, SortType sortType, SortBy sortBy)
             throws ServiceException {
-        tagDto.add(getLinkToUsersPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_USERS, sortType, sortBy));
+        entityModel.add(getLinkToUsersPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_USERS, sortType, sortBy));
     }
 
     @Override
