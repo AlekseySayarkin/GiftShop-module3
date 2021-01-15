@@ -13,7 +13,6 @@ public class UserDto extends RepresentationModel<UserDto> {
 
     private int id;
     private String login;
-    private String password;
     private Set<EntityModel<OrderDto>> orders;
 
     public UserDto() {
@@ -27,7 +26,6 @@ public class UserDto extends RepresentationModel<UserDto> {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setLogin(user.getLogin());
-        userDto.setPassword(user.getPassword());
         Set<EntityModel<OrderDto>> orderDto = new HashSet<>();
         user.getOrders().forEach(o ->
                 orderDto.add(EntityModel.of(OrderDto.of(o))));
@@ -50,14 +48,6 @@ public class UserDto extends RepresentationModel<UserDto> {
 
     public void setLogin(String login) {
         this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Set<EntityModel<OrderDto>> getOrders() {

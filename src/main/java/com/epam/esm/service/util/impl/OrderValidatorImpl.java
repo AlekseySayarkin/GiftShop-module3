@@ -2,12 +2,15 @@ package com.epam.esm.service.util.impl;
 
 import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.User;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.util.OrderValidator;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 @Component
 public class OrderValidatorImpl implements OrderValidator {
@@ -20,7 +23,7 @@ public class OrderValidatorImpl implements OrderValidator {
         }
 
         validateId(order.getId());
-        validateCost(order.getTotalCost());
+        validateCost(order.getGiftCertificateList(), order.getTotalCost());
         validateUser(order.getUser());
     }
 
@@ -52,9 +55,14 @@ public class OrderValidatorImpl implements OrderValidator {
         }
     }
 
-    private void validateCost(double cost) throws ServiceException {
+    private void validateCost(Set<GiftCertificate> certificates, double cost) throws ServiceException {
+        double totalCost = certificates.stream().mapToDouble(GiftCertificate::getPrice).sum();
         if (cost <= 0) {
             throw new ServiceException("Failed to validate: cost must be positive",
+                    ErrorCodeEnum.ORDER_VALIDATION_ERROR);
+        }
+        if (totalCost != cost) {
+            throw new ServiceException("Failed to validate: cost must be sum of prices of certificate",
                     ErrorCodeEnum.ORDER_VALIDATION_ERROR);
         }
     }

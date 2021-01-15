@@ -142,4 +142,10 @@ public class HibernateOrderDaoImpl implements OrderDao {
         order.setActive(DELETED_ORDER);
         persistenceService.update(order);
     }
+
+    @Transactional
+    public void updateMethodToBeDeleted(Order order) {
+        entityManager.merge(order);
+        entityManager.flush();
+    }
 }
