@@ -11,7 +11,7 @@ public class PaginationValidatorImpl implements PaginationValidator {
     private static final int MAX_AMOUNT_OF_ITEMS = 100;
 
     @Override
-    public void validatePagination(int size, int page) throws ServiceException {
+    public void validatePagination(int page, int size) throws ServiceException {
         if (size <= 0) {
             throw new ServiceException("Failed to validate: size must be positive",
                     ErrorCodeEnum.PAGINATION_VALIDATION_ERROR);

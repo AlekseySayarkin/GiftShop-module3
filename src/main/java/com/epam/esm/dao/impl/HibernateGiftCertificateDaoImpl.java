@@ -132,9 +132,7 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     }
 
     private void removeDeletedTags(List<GiftCertificate> giftCertificates) {
-        for (GiftCertificate giftCertificate: giftCertificates) {
-            giftCertificate.getTags().removeIf(tag -> !tag.isActive());
-        }
+        giftCertificates.forEach(g -> g.getTags().removeIf(tag -> !tag.isActive()));
     }
 
     @Override

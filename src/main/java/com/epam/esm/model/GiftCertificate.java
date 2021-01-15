@@ -40,7 +40,6 @@ public class GiftCertificate implements BaseModel {
     @Column(name = "Active")
     private boolean isActive;
 
-    @Where(clause = "Active = true")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "CertificateTag",
