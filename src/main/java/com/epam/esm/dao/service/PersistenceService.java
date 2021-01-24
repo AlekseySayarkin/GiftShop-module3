@@ -18,16 +18,17 @@ public interface PersistenceService<T extends BaseModel> {
     /**
      * Sets type of {@code BaseModel}.
      *
-     * @param type type of  {@code BaseModel}.
+     * @param type type of {@code BaseModel}.
      */
     void setType(Class<T> type);
 
     /**
      * Retrieves data of {@code BaseModel} from
      * data source by name
-     * which equals to {@code String name}.
+     * which equals to {@code String name} using HQL query.
      *
      * @param name BaseModel name.
+     * @param query HQL query.
      * @return {@code BaseModel}.
      */
     T getModelByName(String query, String name);
@@ -35,17 +36,18 @@ public interface PersistenceService<T extends BaseModel> {
     /**
      * Retrieves data of {@code BaseModel} from
      * data source by id
-     * which equals to {@code int id}.
+     * which equals to {@code int modelId}.
      *
-     * @param id BaseModel id.
+     * @param modelId BaseModel id.
      * @return {@code BaseModel}.
      */
-    T getModelById(int id);
+    T getModelById(int modelId);
 
     /**
-     * Retrieves all {@code BaseModel} from data source.
+     * Retrieves all {@code BaseModel} from data source
+     * using HQL query.
      *
-     * @param query hql query.
+     * @param query HQL query.
      * @return List<BaseModel> - all existing BaseModel in data source.
      */
     List<T> getAllModels(String query);
@@ -53,7 +55,7 @@ public interface PersistenceService<T extends BaseModel> {
     /**
      * Retrieves all {@code GiftCertificate} from data source.
      *
-     * @param query hql query.
+     * @param query HQL query.
      * @param page from which position in a data source.
      * @param size max amount of {@code GiftCertificate} to return.
      * @param sortType sort type.
@@ -63,8 +65,10 @@ public interface PersistenceService<T extends BaseModel> {
     List<T> getAllModelsByPage(String query, int page, int size, SortType sortType, SortBy sortBy);
 
     /**
-     * Retrieves last page of {@code BaseModel} from data source.
+     * Retrieves last page of {@code BaseModel} from data source
+     * using HQL query.
      *
+     * @param query HQL query.
      * @param size size of a page.
      * @return last page of {@code BaseModel}.
      */
@@ -74,7 +78,7 @@ public interface PersistenceService<T extends BaseModel> {
      * Adds new {@code BaseModel} to data source.
      *
      * @param model {@code BaseModel} which to be added to data source.
-     * @return id of a {@code BaseModel} from data source.
+     * @return added {@code BaseModel} from data source.
      */
     T add(T model);
 
@@ -89,7 +93,7 @@ public interface PersistenceService<T extends BaseModel> {
      * Updates {@code BaseModel} in data source.
      *
      * @param model {@code BaseModel} which to update in data source.
-     * @return updated {@code BaseModel}.
+     * @return updated {@code BaseModel} from data source.
      */
     T update(T model);
 }

@@ -16,14 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
-
-    private static final int MAX_PAGE_SIZE = 50;
 
     private final UserDao userDao;
     private final UserValidator userValidator;
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         userValidator.validateLogin(login);
         try {
             return userDao.getUserByLogin(login);
-        } catch (DataAccessException e) {
+        } catch (NoResultException e) {
             LOGGER.error("Following exception was thrown in getUser(String login): " + e.getMessage());
             throw new ServiceException("Failed to get user by it login: " + login,
                     ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
@@ -49,35 +49,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(int id) throws ServiceException {
-        userValidator.validateId(id);
+    public User getUserById(int userId) throws ServiceException {
+        userValidator.validateId(userId);
         try {
-            User user = userDao.getUserById(id);
+            User user = userDao.getUserById(userId);
             if (user == null) {
-                throw new ServiceException("Failed to get user by it id: " + id, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
+                LOGGER.error("Failed to get user by it id: " + userId);
+                throw new ServiceException("Failed to get user by it id: " + userId, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
             }
 
             return user;
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getUser(int id): " + e.getMessage());
-            throw new ServiceException("Failed to get user by it id: " + id, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
+            throw new ServiceException("Failed to get user by it id: " + userId, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
         }
     }
 
     @Override
-    public List<User> getAllUsersByPage(UserSearchCriteria requestBody, int page, int size,
+    public List<User> getAllUsersByPage(UserSearchCriteria searchCriteria, int page, int size,
                                         SortType sortType, SortBy sortBy) throws ServiceException {
         paginationValidator.validatePagination(page, size);
 
-        if (requestBody == null) {
-            requestBody = UserSearchCriteria.getDefaultUserRequestBody();
+        if (searchCriteria == null) {
+            searchCriteria = UserSearchCriteria.getDefaultUserRequestBody();
         }
-        requestBody.setSortType(sortType);
-        requestBody.setSortBy(sortBy);
-        userValidator.validateUserSearchCriteria(requestBody);
+        searchCriteria.setSortType(sortType);
+        searchCriteria.setSortBy(sortBy);
+        userValidator.validateUserSearchCriteria(searchCriteria);
 
         try {
-            return userDao.getAllUsersByPage(requestBody, page, size);
+            return userDao.getAllUsersByPage(searchCriteria, page, size);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getAllUsersByPage(): " + e.getMessage());
             throw new ServiceException("Failed to get users", ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
@@ -86,10 +87,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int getLastPage(int size) throws ServiceException {
-        if (size <= 0 || size > MAX_PAGE_SIZE) {
-            throw new ServiceException("Failed to get last page: size is negative",
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_PAGE);
+        paginationValidator.validateSize(size);
+        try {
+            return userDao.getLastPage(size);
+        } catch (DataAccessException | PersistenceException e) {
+            LOGGER.error("Failed to get last page");
+            throw new ServiceException("Failed to get last page", ErrorCodeEnum.FAILED_TO_RETRIEVE_PAGE);
         }
-        return userDao.getLastPage(size);
     }
 }

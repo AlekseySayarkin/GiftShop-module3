@@ -27,7 +27,6 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = LogManager.getLogger(OrderServiceImpl.class);
-    private static final int MAX_PAGE_SIZE = 50;
 
     private final OrderDao orderDao;
     private final OrderValidator orderValidator;
@@ -42,41 +41,42 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public List<Order> getOrdersByUserId(int id, OrderSearchCriteria requestBody, int page, int size,
+    public List<Order> getOrdersByUserId(int userId, OrderSearchCriteria searchCriteria, int page, int size,
                                          SortType sortType, SortBy sortBy) throws ServiceException {
         paginationValidator.validatePagination(size, page);
 
-        if (requestBody == null) {
-            requestBody = OrderSearchCriteria.getDefaultUserRequestBody();
+        if (searchCriteria == null) {
+            searchCriteria = OrderSearchCriteria.getDefaultOrderRequestBody();
         }
-        requestBody.setSortType(sortType);
-        requestBody.setSortBy(sortBy);
-        orderValidator.validateOrderSearchCriteria(requestBody);
+        searchCriteria.setSortType(sortType);
+        searchCriteria.setSortBy(sortBy);
+        orderValidator.validateOrderSearchCriteria(searchCriteria);
 
         try {
-            return orderDao.getOrdersByUserId(id, requestBody, page, size);
+            return orderDao.getOrdersByUserId(userId, searchCriteria, page, size);
         } catch (DataAccessException e) {
-            LOGGER.error(String.format("Failed to get order by user id = {%s}", id));
-            throw new ServiceException(String.format("Failed to get order by user id = {%s}", id),
+            LOGGER.error(String.format("Failed to get order by user id = {%s}", userId));
+            throw new ServiceException(String.format("Failed to get order by user id = {%s}", userId),
                     ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
         }
     }
 
     @Override
-    public Order getOrderById(int id) throws ServiceException {
-        orderValidator.validateId(id);
+    public Order getOrderById(int orderId) throws ServiceException {
+        orderValidator.validateId(orderId);
 
         try {
-            Order order = orderDao.getOrderById(id);
+            Order order = orderDao.getOrderById(orderId);
             if (order == null) {
-                throw new ServiceException(String.format("Failed to get order by user id = {%s}", id),
+                LOGGER.error(String.format("Failed to get order by user id = {%s}", orderId));
+                throw new ServiceException(String.format("Failed to get order by user id = {%s}", orderId),
                         ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
             }
 
             return order;
         } catch (DataAccessException e) {
-            LOGGER.error(String.format("Failed to get order by user id = {%s}", id));
-            throw new ServiceException(String.format("Failed to get order by user id = {%s}", id),
+            LOGGER.error(String.format("Failed to get order by user id = {%s}", orderId));
+            throw new ServiceException(String.format("Failed to get order by user id = {%s}", orderId),
                     ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
         }
     }
@@ -93,19 +93,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size,
+    public List<Order> getAllOrdersByPage(OrderSearchCriteria searchCriteria, int page, int size,
                                           SortType sortType, SortBy sortBy) throws ServiceException {
         paginationValidator.validatePagination(size, page);
 
-        if (requestBody == null) {
-            requestBody = OrderSearchCriteria.getDefaultUserRequestBody();
+        if (searchCriteria == null) {
+            searchCriteria = OrderSearchCriteria.getDefaultOrderRequestBody();
         }
-        requestBody.setSortType(sortType);
-        requestBody.setSortBy(sortBy);
-        orderValidator.validateOrderSearchCriteria(requestBody);
+        searchCriteria.setSortType(sortType);
+        searchCriteria.setSortBy(sortBy);
+        orderValidator.validateOrderSearchCriteria(searchCriteria);
 
         try {
-            return orderDao.getAllOrdersByPage(requestBody, page, size);
+            return orderDao.getAllOrdersByPage(searchCriteria, page, size);
         } catch (DataAccessException e) {
             LOGGER.error("Failed to get orders by page");
             throw new ServiceException("Failed to get orders by page", ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
@@ -114,16 +114,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public int getLastPage(int size) throws ServiceException {
-        if (size <= 0 || size > MAX_PAGE_SIZE) {
-            throw new ServiceException("Failed to get last page: size is negative",
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_PAGE);
-        }
-
+        paginationValidator.validateSize(size);
         try {
             return orderDao.getLastPage(size);
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | PersistenceException e) {
             LOGGER.error("Failed to get last page");
-            throw new ServiceException("Failed to get last page", ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
+            throw new ServiceException("Failed to get last page", ErrorCodeEnum.FAILED_TO_RETRIEVE_PAGE);
         }
     }
 

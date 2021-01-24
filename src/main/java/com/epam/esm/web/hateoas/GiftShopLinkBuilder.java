@@ -24,7 +24,7 @@ public class GiftShopLinkBuilder {
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
     private static final UserSearchCriteria userRequestBody = UserSearchCriteria.getDefaultUserRequestBody();
-    private static final OrderSearchCriteria orderRequestBody = OrderSearchCriteria.getDefaultUserRequestBody();
+    private static final OrderSearchCriteria orderRequestBody = OrderSearchCriteria.getDefaultOrderRequestBody();
     private static final TagSearchCriteria tagRequestBody = TagSearchCriteria.getDefaultTagRequestBody();
     private static final CertificateSearchCriteria certificateRequestBody = CertificateSearchCriteria.getDefaultCertificateRequestBody();
 

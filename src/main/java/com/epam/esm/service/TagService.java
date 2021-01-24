@@ -19,46 +19,38 @@ public interface TagService {
 
     /**
      * Retrieves data of {@code Tag} from
-     * persistence layer by name
+     * persistence layer by it name
      * which equals to {@code String name}.
      *
      * @param name tag name.
-     * @throws ServiceException when failed to get {@code Tag} from persistence layer.
+     * @throws ServiceException when failed to get {@code Tag}.
      * @return {@code Tag}.
      */
     Tag getTagByName(String name) throws ServiceException;
 
     /**
      * Retrieves data of {@code Tag} from
-     * persistence layer by id
-     * which equals to {@code int id}.
+     * persistence layer by it id
+     * which equals to {@code int tagId}.
      *
-     * @param id tag id.
-     * @throws ServiceException when failed to get {@code Tag} from persistence layer.
+     * @param tagId tag id.
+     * @throws ServiceException when failed to get {@code Tag}.
      * @return {@code Tag}.
      */
-    Tag getTagById(int id) throws ServiceException;
+    Tag getTagById(int tagId) throws ServiceException;
 
     /**
-     * Retrieves all {@code Tag} from persistence layer.
+     * Retrieves {@code Tag} from persistence layer.
      *
-     * @throws ServiceException when failed to get {@code Tag} from persistence layer.
-     * @return List<Tag> - all existing tags in persistence layer.
-     */
-    List<Tag> getAllTags() throws ServiceException;
-
-    /**
-     * Retrieves certain number of {@code Tag} from persistence layer.
-     *
-     * @param requestBody object containing search criteria.
-     * @param page from which position in a data source.
-     * @param size max amount of {@code GiftCertificate} to return.
+     * @param searchCriteria object containing search criteria.
+     * @param page from which position to start.
+     * @param size max amount of {@code Tag} to return.
      * @param sortType type of a sort.
      * @param sortBy by witch field to sort.
-     * @throws ServiceException when failed to get {@code Tag} from persistence layer.
-     * @return List<Tag> - certain number of existing tags in persistence layer.
+     * @throws ServiceException when failed to get {@code Tag}.
+     * @return List<Tag> - tags from persistence layer.
      */
-    List<Tag> getAllTagsByPage(TagSearchCriteria requestBody, int page, int size,
+    List<Tag> getAllTagsByPage(TagSearchCriteria searchCriteria, int page, int size,
                                SortType sortType, SortBy sortBy) throws ServiceException;
 
     /**

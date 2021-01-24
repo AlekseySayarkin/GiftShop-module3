@@ -29,14 +29,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private static final Logger LOGGER = LogManager.getLogger(GiftCertificateServiceImpl.class);
 
-    private final GiftCertificateDAO giftCertificateDAO;
+    private final GiftCertificateDAO giftCertificateDao;
     private final CertificateValidator certificateValidator;
     private final PaginationValidator paginationValidator;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDAO,
+    public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDao,
             CertificateValidator certificateValidator, PaginationValidator paginationValidator) {
-        this.giftCertificateDAO = giftCertificateDAO;
+        this.giftCertificateDao = giftCertificateDao;
         this.certificateValidator = certificateValidator;
         this.paginationValidator = paginationValidator;
     }
@@ -45,7 +45,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificate getGiftCertificateByName(String name) throws ServiceException {
         certificateValidator.validateName(name);
         try {
-            return giftCertificateDAO.getGiftCertificateByName(name);
+            return giftCertificateDao.getGiftCertificateByName(name);
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getGiftCertificate(String name): " + e.getMessage());
             throw new ServiceException("Failed to get certificate by it name: " + name,
@@ -54,41 +54,48 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public GiftCertificate getGiftCertificateById(int id) throws ServiceException {
-        certificateValidator.validateId(id);
+    public GiftCertificate getGiftCertificateById(int certificateId) throws ServiceException {
+        certificateValidator.validateId(certificateId);
         try {
-            GiftCertificate giftCertificate = giftCertificateDAO.getGiftCertificateById(id);
+            GiftCertificate giftCertificate = giftCertificateDao.getGiftCertificateById(certificateId);
             if (giftCertificate == null) {
-                throw new ServiceException("Failed to get certificate by it id: " + id,
+                LOGGER.error("Failed to get certificate by it id: " + certificateId);
+                throw new ServiceException("Failed to get certificate by it id: " + certificateId,
                         ErrorCodeEnum.FAILED_TO_RETRIEVE_CERTIFICATE);
             }
 
             return giftCertificate;
         } catch (DataAccessException e) {
             LOGGER.error("Following exception was thrown in getGiftCertificate(int id): " + e.getMessage());
-            throw new ServiceException("Failed to get certificate by it id: " + id,
+            throw new ServiceException("Failed to get certificate by it id: " + certificateId,
                     ErrorCodeEnum.FAILED_TO_RETRIEVE_CERTIFICATE);
         }
     }
 
     @Override
-    public List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria requestBody, int page, int size,
+    public List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria searchCriteria, int page, int size,
                                                            SortType sortType, SortBy sortBy) throws ServiceException {
         paginationValidator.validatePagination(size, page);
 
-        if (requestBody == null) {
-            requestBody = CertificateSearchCriteria.getDefaultCertificateRequestBody();
+        if (searchCriteria == null) {
+            searchCriteria = CertificateSearchCriteria.getDefaultCertificateRequestBody();
         }
-        requestBody.setSortType(sortType);
-        requestBody.setSortBy(sortBy);
-        certificateValidator.validateCertificateSearchCriteria(requestBody);
+        searchCriteria.setSortType(sortType);
+        searchCriteria.setSortBy(sortBy);
+        certificateValidator.validateCertificateSearchCriteria(searchCriteria);
 
-        return giftCertificateDAO.getGiftCertificatesByRequestBody(requestBody, page, size);
+        return giftCertificateDao.getGiftCertificatesByRequestBody(searchCriteria, page, size);
     }
 
     @Override
     public int getLastPage(int size) throws ServiceException {
-        return giftCertificateDAO.getLastPage(size);
+        paginationValidator.validateSize(size);
+        try {
+            return giftCertificateDao.getLastPage(size);
+        } catch (DataAccessException | PersistenceException e) {
+            LOGGER.error("Failed to get last page");
+            throw new ServiceException("Failed to get last page", ErrorCodeEnum.FAILED_TO_RETRIEVE_PAGE);
+        }
     }
 
     @Override
@@ -99,7 +106,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificate.setCreateDate(ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
             giftCertificate.setLastUpdateDate(giftCertificate.getCreateDate());
 
-            return giftCertificateDAO.addGiftCertificate(giftCertificate);
+            return giftCertificateDao.addGiftCertificate(giftCertificate);
         } catch (DataAccessException | PersistenceException e) {
             LOGGER.error("Following exception was thrown in addGiftCertificate(): " + e.getMessage());
             throw new ServiceException("Failed to add certificate: certificate already exist",
@@ -109,14 +116,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional(rollbackFor = ServiceException.class)
-    public void deleteGiftCertificate(int id) throws ServiceException {
-        GiftCertificate giftCertificate = getGiftCertificateById(id);
+    public void deleteGiftCertificate(int certificateId) throws ServiceException {
+        GiftCertificate giftCertificate = getGiftCertificateById(certificateId);
         if (giftCertificate == null) {
+            LOGGER.error("Failed to delete certificate: certificate not found");
             throw new ServiceException("Failed to delete certificate: certificate not found",
                     ErrorCodeEnum.FAILED_TO_DELETE_CERTIFICATE);
         }
         try {
-            giftCertificateDAO.deleteGiftCertificate(giftCertificate.getId());
+            giftCertificateDao.deleteGiftCertificate(giftCertificate.getId());
         } catch (DataAccessException | NoResultException | IllegalArgumentException e) {
             LOGGER.error("Following exception was thrown in deleteGiftCertificate(): " + e.getMessage());
             throw new ServiceException("Failed to delete certificate", ErrorCodeEnum.FAILED_TO_DELETE_CERTIFICATE);
@@ -131,7 +139,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         try {
             giftCertificate.setLastUpdateDate(ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
 
-            giftCertificate = giftCertificateDAO.updateGiftCertificate(giftCertificate);
+            giftCertificate = giftCertificateDao.updateGiftCertificate(giftCertificate);
             if (giftCertificate == null) {
                 LOGGER.error("Failed to update certificate");
                 throw new ServiceException("Failed to update certificate",

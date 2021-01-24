@@ -34,8 +34,8 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
     }
 
     @Override
-    public T getModelById(int id) {
-        return entityManager.find(type, id);
+    public T getModelById(int modelId) {
+        return entityManager.find(type, modelId);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
     public void delete(int modelId) {
         T model = getModelById(modelId);
         if (model == null) {
-            throw new NoResultException("Failed to find model to delete by id:" + modelId);
+            throw new NoResultException("Failed to find model to delete by id: " + modelId);
         }
         entityManager.remove(model);
     }

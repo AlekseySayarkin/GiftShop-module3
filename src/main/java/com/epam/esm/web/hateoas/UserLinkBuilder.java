@@ -36,42 +36,57 @@ public class UserLinkBuilder implements ModelLinkBuilder<UserDto> {
     }
 
     @Override
-    public void linkToModel(EntityModel<UserDto> modelDto) throws ServiceException {
-        modelDto.add(linkTo(methodOn(UserController.class).getUser(
-                Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_USERS));
-
-        for (EntityModel<OrderDto> order: modelDto.getContent().getOrders()) {
-            orderLinkBuilder.linkToModel(order);
+    public void linkToModel(EntityModel<UserDto> modelDto) {
+        try {
+            modelDto.add(linkTo(methodOn(UserController.class).getUser(
+                    Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_USERS));
+            modelDto.getContent().getOrders().forEach(o -> orderLinkBuilder.linkToModel(o));
+        } catch (ServiceException ignored) {
         }
     }
 
     @Override
-    public void linkToModelPage(CollectionModel<EntityModel<UserDto>> collectionModel, int page, int size,
-                                SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToUsersPage(page, size, ALL_USERS, sortType, sortBy));
+    public void linkToModelPage(CollectionModel<EntityModel<UserDto>> collectionModel,
+                                int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToUsersPage(page, size, ALL_USERS, sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToFirstModelPage(EntityModel<UserDto> entityModel, SortType sortType, SortBy sortBy)
-            throws ServiceException {
-        entityModel.add(getLinkToUsersPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_USERS, sortType, sortBy));
+    public void linkToFirstModelPage(EntityModel<UserDto> entityModel, SortType sortType, SortBy sortBy) {
+        try {
+            entityModel.add(getLinkToUsersPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_USERS, sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToNextModelPage(CollectionModel<EntityModel<UserDto>> collectionModel, int page, int size,
-                                    SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToUsersPage(page + 1, size, "next", sortType, sortBy));
+    public void linkToNextModelPage(CollectionModel<EntityModel<UserDto>> collectionModel,
+                                    int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToUsersPage(page + 1, size, "next", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToPrevModelPage(CollectionModel<EntityModel<UserDto>> collectionModel, int page, int size,
-                                    SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToUsersPage(page - 1, size, "prev", sortType, sortBy));
+    public void linkToPrevModelPage(CollectionModel<EntityModel<UserDto>> collectionModel,
+                                    int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToUsersPage(page - 1, size, "prev", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToLastModelPage(CollectionModel<EntityModel<UserDto>> collectionModel, int lastPage, int size, SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToUsersPage(lastPage, size, "last", sortType, sortBy));
+    public void linkToLastModelPage(CollectionModel<EntityModel<UserDto>> collectionModel,
+                                    int lastPage, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToUsersPage(lastPage, size, "last", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     private Link getLinkToUsersPage(int page, int size, String rel,

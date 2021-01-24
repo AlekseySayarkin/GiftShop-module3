@@ -15,9 +15,6 @@ public class UserDto extends RepresentationModel<UserDto> {
     private String login;
     private Set<EntityModel<OrderDto>> orders;
 
-    public UserDto() {
-    }
-
     public static List<UserDto> of(List<User> users) {
         return users.stream().map(UserDto::of).collect(Collectors.toList());
     }

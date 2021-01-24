@@ -4,7 +4,6 @@ import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
 
-import javax.persistence.NoResultException;
 import java.util.List;
 
 /**
@@ -18,28 +17,26 @@ public interface OrderDao {
 
     /**
      * Retrieves data of {@code Order} from
-     * data source by name
-     * which equals to {@code String name}.
+     * data source by user
+     * which id equals to {@code int userId}.
      *
-     * @param userId user id.
-     * @param requestBody object containing search criteria like sorting, tag number etc.
-     * @param page from which position in a data source
-     * @param size max amount of {@code GiftCertificate} to return.
+     * @param userId user id which orders to return.
+     * @param searchCriteria object containing search criteria.
+     * @param page page number of {@code Order} to return.
+     * @param size page size of {@code Order} to return from data source.
      * @return {@code Order}s.
-     * @throws NoResultException if failed to get result.
      */
-    List<Order> getOrdersByUserId(int userId, OrderSearchCriteria requestBody, int page, int size)
-            throws NoResultException;
+    List<Order> getOrdersByUserId(int userId, OrderSearchCriteria searchCriteria, int page, int size);
 
     /**
      * Retrieves data of {@code Order} from
-     * data source by id
-     * which equals to {@code int id}.
+     * data source by it id
+     * which equals to {@code int orderId}.
      *
-     * @param id order id.
+     * @param orderId order id.
      * @return {@code Order}.
      */
-    Order getOrderById(int id);
+    Order getOrderById(int orderId);
 
     /**
      * Get the most widely used tag of a user with the highest cost of all orders.
@@ -51,19 +48,19 @@ public interface OrderDao {
     /**
      * Retrieves certain number of {@code Order} from data source.
      *
-     * @param requestBody object containing search criteria.
+     * @param searchCriteria object containing search criteria.
      * @param page page number of {@code Order} to return.
      * @param size page size of {@code Order} to return from data source.
      * @return List<Order> - certain number of existing orders in data source.
      */
-    List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size);
+    List<Order> getAllOrdersByPage(OrderSearchCriteria searchCriteria, int page, int size);
 
     /**
-     * Retrieves number of pages from data source if every page
+     * Retrieves number of a last page from data source if every page
      * contains certain number of {@code Order}.
      *
      * @param size size of a page.
-     * @return number of pages.
+     * @return number of a last page.
      */
     int getLastPage(int size);
 
@@ -71,12 +68,13 @@ public interface OrderDao {
      * Adds new {@code Order} to data source.
      *
      * @param order {@code Order} which to be added to data source.
-     * @return id of a {@code Order} from data source.
+     * @return added {@code User} from data source.
      */
     Order addOrder(Order order);
 
     /**
-     * Deletes {@code Order} from data source.
+     * Deletes {@code Order} from data source by it id
+     * which equals to {@code int orderId}.
      *
      * @param orderId id of a {@code Order} which to delete from data source.
      */

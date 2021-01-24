@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.NoResultException;
 import java.util.List;
 
 @Repository
@@ -31,22 +32,28 @@ public class HibernateUserDaoImpl implements UserDao {
 
     @Override
     public User getUserByLogin(String login) {
-        User user =  persistenceService.getModelByName(GET_USER_BY_NAME, login);
+        User user = persistenceService.getModelByName(GET_USER_BY_NAME, login);
+        if (user == null) {
+            throw new NoResultException();
+        }
         removeDeletedOrdersFromUser(user);
         return user;
     }
 
     @Override
-    public User getUserById(int id) {
-        User user =  persistenceService.getModelById(id);
+    public User getUserById(int userId) {
+        User user = persistenceService.getModelById(userId);
+        if (user == null) {
+            throw new NoResultException();
+        }
         removeDeletedOrdersFromUser(user);
         return user;
     }
 
     @Override
-    public List<User> getAllUsersByPage(UserSearchCriteria requestBody, int page, int size) {
-        List<User> users =  persistenceService.getAllModelsByPage(
-                GET_ALL_USERS, page, size, requestBody.getSortType(), requestBody.getSortBy());
+    public List<User> getAllUsersByPage(UserSearchCriteria searchCriteria, int page, int size) {
+        List<User> users = persistenceService.getAllModelsByPage(
+                GET_ALL_USERS, page, size, searchCriteria.getSortType(), searchCriteria.getSortBy());
         removeDeletedOrdersFromUsers(users);
 
         return users;

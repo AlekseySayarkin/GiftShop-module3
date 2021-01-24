@@ -3,12 +3,9 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.dao.service.PersistenceService;
-import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
-import com.epam.esm.service.exception.ErrorCodeEnum;
-import com.epam.esm.service.exception.ServiceException;
 import com.google.common.base.CaseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -53,43 +50,35 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public GiftCertificate getGiftCertificateById(int id) {
-        return persistenceService.getModelById(id);
+    public GiftCertificate getGiftCertificateById(int certificateId) {
+        return persistenceService.getModelById(certificateId);
     }
 
     @Override
     public List<GiftCertificate> getGiftCertificatesByRequestBody(
-            CertificateSearchCriteria requestBody, int page, int size) throws ServiceException {
-        if (requestBody == null) {
-            requestBody = CertificateSearchCriteria.getDefaultCertificateRequestBody();
-        }
-        if (!requestBody.getSortBy().equals(SortBy.NAME) && !requestBody.getSortBy().equals(SortBy.CREATE_DATE)) {
-            throw new ServiceException("Cant sort users by " + requestBody.getSortBy(),
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_TAG);
-        }
-
-        List<GiftCertificate> giftCertificates =  getGiftCertificatesFromQuery(requestBody, page, size);
+            CertificateSearchCriteria searchCriteria, int page, int size) {
+        List<GiftCertificate> giftCertificates = getGiftCertificatesFromQuery(searchCriteria, page, size);
         removeDeletedTags(giftCertificates);
         
         return giftCertificates;
     }
 
     private List<GiftCertificate> getGiftCertificatesFromQuery(
-            CertificateSearchCriteria requestBody, int page, int size) {
+            CertificateSearchCriteria searchCriteria, int page, int size) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> query = builder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = query.from(GiftCertificate.class);
 
         query.select(root).distinct(true);
-        buildQuery(root, query, requestBody);
+        buildQuery(root, query, searchCriteria);
 
-        CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, requestBody.getSortBy().toString());
-        if (requestBody.getSortType().equals(SortType.ASC)) {
+        CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, searchCriteria.getSortBy().toString());
+        if (searchCriteria.getSortType().equals(SortType.ASC)) {
             query.orderBy(builder.asc(root.get(CaseFormat.LOWER_UNDERSCORE
-                    .to(CaseFormat.LOWER_CAMEL, requestBody.getSortBy().toString()))));
+                    .to(CaseFormat.LOWER_CAMEL, searchCriteria.getSortBy().toString()))));
         } else {
             query.orderBy(builder.desc(root.get(CaseFormat.LOWER_UNDERSCORE
-                    .to(CaseFormat.LOWER_CAMEL, requestBody.getSortBy().toString()))));
+                    .to(CaseFormat.LOWER_CAMEL, searchCriteria.getSortBy().toString()))));
         }
 
         TypedQuery<GiftCertificate> typedQuery = entityManager.createQuery(query);
@@ -101,30 +90,30 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     }
 
     private <T extends AbstractQuery<GiftCertificate>> void buildQuery(
-            Root<GiftCertificate> root, T query, CertificateSearchCriteria requestBody) {
+            Root<GiftCertificate> root, T query, CertificateSearchCriteria searchCriteria) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         Join<GiftCertificate, Tag> tags = root.join("tags");
         List<Predicate> predicates = new ArrayList<>();
 
         Predicate predicateForActive = builder.isTrue(root.get("isActive"));
         predicates.add(predicateForActive);
-        if (requestBody.getContent() != null) {
+        if (searchCriteria.getContent() != null) {
             Predicate predicateForDescription =
-                    builder.like(root.get("name"), "%" + requestBody.getContent() + "%");
+                    builder.like(root.get("name"), "%" + searchCriteria.getContent() + "%");
             predicates.add(predicateForDescription);
             predicateForDescription =
-                    builder.like(root.get("description"), "%" + requestBody.getContent() + "%");
+                    builder.like(root.get("description"), "%" + searchCriteria.getContent() + "%");
             predicates.add(predicateForDescription);
         }
 
-        if (requestBody.getTagNames() != null) {
+        if (searchCriteria.getTagNames() != null) {
             CriteriaBuilder.In<String> inTags = builder.in(tags.get("name"));
-            for (String tagName : requestBody.getTagNames()) {
+            for (String tagName : searchCriteria.getTagNames()) {
                 inTags.value(tagName);
             }
             predicates.add(inTags);
             query.groupBy(root.get("id"));
-            query.having(builder.equal(builder.count(root.get("id")), requestBody.getTagNames().size()));
+            query.having(builder.equal(builder.count(root.get("id")), searchCriteria.getTagNames().size()));
         }
         Predicate[] predArray = new Predicate[predicates.size()];
         predicates.toArray(predArray);
@@ -147,10 +136,10 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public void deleteGiftCertificate(int id) {
-        GiftCertificate giftCertificate = persistenceService.getModelById(id);
+    public void deleteGiftCertificate(int certificateId) {
+        GiftCertificate giftCertificate = persistenceService.getModelById(certificateId);
         if (giftCertificate == null) {
-            throw new NoResultException("Failed to find certificate to delete by id:" + id);
+            throw new NoResultException("Failed to find certificate to delete by id: " + certificateId);
         }
         giftCertificate.setActive(DELETED_CERTIFICATE);
         updateGiftCertificate(giftCertificate);

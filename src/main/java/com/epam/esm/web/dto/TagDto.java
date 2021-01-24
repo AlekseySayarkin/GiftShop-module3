@@ -12,18 +12,6 @@ public class TagDto extends RepresentationModel<TagDto> {
     private int id;
     private String name;
 
-    public TagDto() {
-    }
-
-    public TagDto(String name) {
-        this.name = name;
-    }
-
-    public TagDto(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     public static List<TagDto> of(List<Tag> tags) {
         return tags.stream().map(TagDto::of).collect(Collectors.toList());
     }

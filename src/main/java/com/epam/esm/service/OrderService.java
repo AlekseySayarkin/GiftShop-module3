@@ -19,32 +19,30 @@ import java.util.List;
 public interface OrderService {
 
     /**
-     * Retrieves data of {@code Order} from
-     * persistence layer by name
-     * which equals to {@code String name}.
+     * Retrieves {@code Order} from persistence layer.
      *
-     * @param id userId.
-     * @param requestBody object containing search criteria.
+     * @param userId id of a user which orders to retrieve.
+     * @param searchCriteria object containing search criteria.
      * @param page from which position in a data source.
-     * @param size max amount of {@code GiftCertificate} to return.
+     * @param size max amount of {@code Order} to return.
      * @param sortType type of a sort.
      * @param sortBy by witch field to sort.
-     * @throws ServiceException when failed to get {@code Order} from persistence layer.
-     * @return {@code Order}.
+     * @throws ServiceException when failed to get {@code Order}.
+     * @return List<Order> - orders from persistence layer.
      */
-    List<Order> getOrdersByUserId(int id, OrderSearchCriteria requestBody, int page, int size,
+    List<Order> getOrdersByUserId(int userId, OrderSearchCriteria searchCriteria, int page, int size,
                                   SortType sortType, SortBy sortBy) throws ServiceException;
 
     /**
      * Retrieves data of {@code Order} from
-     * persistence layer by id
-     * which equals to {@code int id}.
+     * persistence layer by it id
+     * which equals to {@code int orderId}.
      *
-     * @param id order id.
-     * @throws ServiceException when failed to get {@code Order} from persistence layer.
+     * @param orderId order id.
+     * @throws ServiceException when failed to get {@code Order}.
      * @return {@code Order}.
      */
-    Order getOrderById(int id) throws ServiceException;
+    Order getOrderById(int orderId) throws ServiceException;
 
     /**
      * Get the most widely used tag of a user with the highest cost of all orders.
@@ -54,42 +52,42 @@ public interface OrderService {
     Tag getMostFrequentTagFromHighestCostUser() throws ServiceException;
 
     /**
-     * Retrieves certain number of {@code Order} from persistence layer.
+     * Retrieves {@code Order} from persistence layer.
      *
-     * @param requestBody object containing search criteria.
-     * @param page from which position in a data source.
+     * @param searchCriteria object containing search criteria.
+     * @param page from which position to start.
      * @param size max amount of {@code GiftCertificate} to return.
      * @param sortType type of a sort.
      * @param sortBy by witch field to sort.
-     * @throws ServiceException when failed to get {@code Order} from persistence layer.
-     * @return List<Order> - certain number of existing tags in persistence layer.
+     * @throws ServiceException when failed to get {@code Order}.
+     * @return List<Order> - orders from persistence layer.
      */
-    List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size,
+    List<Order> getAllOrdersByPage(OrderSearchCriteria searchCriteria, int page, int size,
                                    SortType sortType, SortBy sortBy) throws ServiceException;
 
     /**
-     * Retrieves number of pages from persistence layer if every page
+     * Retrieves number of a last page from persistence layer if every page
      * contains certain number of {@code Order}.
      *
      * @param size size of a page.
-     * @return number of pages.
+     * @return number of a last page.
      */
     int getLastPage(int size) throws ServiceException;
 
     /**
      * Adds new {@code Order} to persistence layer.
      *
-     * @param order {@code Order} which to be added to persistence layer.
-     * @throws ServiceException when failed to add {@code Order} to persistence layer.
-     * @return newly created {@code Order} from persistence layer.
+     * @param order {@code Order} which to add to persistence layer.
+     * @throws ServiceException when failed to add {@code Order}.
+     * @return added {@code Order} from persistence layer.
      */
     Order addOrder(Order order) throws ServiceException;
 
     /**
      * Deletes {@code Order} from persistence layer.
      *
-     * @param orderId id of a {@code Order} which to delete from persistence layer.
-     * @throws ServiceException when failed to delete {@code Tag} from persistence layer.
+     * @param orderId id of {@code Order} which to delete from persistence layer.
+     * @throws ServiceException when failed to delete {@code Order}.
      */
     void deleteOrder(int orderId) throws ServiceException;
 }

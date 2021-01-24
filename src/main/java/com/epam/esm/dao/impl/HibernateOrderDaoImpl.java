@@ -63,24 +63,22 @@ public class HibernateOrderDaoImpl implements OrderDao {
 
     @Override
     public List<Order> getOrdersByUserId(
-            int userId, OrderSearchCriteria requestBody, int page, int size) throws NoResultException {
-        List<Order> orders = getNotAuditedOrdersByUserId(userId, requestBody, page, size);
+            int userId, OrderSearchCriteria searchCriteria, int page, int size) throws NoResultException {
+        List<Order> orders = getNotAuditedOrdersByUserId(userId, searchCriteria, page, size);
         List<GiftCertificate> giftCertificateList = getFirstVersionOfOrders(orders);
 
-        for (Order order: orders) {
-            List<GiftCertificate> temp = new ArrayList<>(order.getGiftCertificateList());
-            for (GiftCertificate giftCertificate: giftCertificateList) {
-                temp.replaceAll(t -> t.getId() == giftCertificate.getId() ? giftCertificate : t);
-            }
-            order.setGiftCertificateList(new HashSet<>(temp));
-        }
+        orders.forEach(o -> {
+            List<GiftCertificate> temp = new ArrayList<>(o.getGiftCertificateList());
+            giftCertificateList.forEach(c -> temp.replaceAll(t -> t.getId() == c.getId() ? c : t));
+            o.setGiftCertificateList(new HashSet<>(temp));
+        });
 
         return orders;
     }
 
-    private List<Order> getNotAuditedOrdersByUserId(int id, OrderSearchCriteria requestBody, int page, int size) {
+    private List<Order> getNotAuditedOrdersByUserId(int id, OrderSearchCriteria searchCriteria, int page, int size) {
         String query = GET_ORDER_BY_USER_ID +
-                "order by " + requestBody.getSortBy() + " " + requestBody.getSortType();
+                "order by " + searchCriteria.getSortBy() + " " + searchCriteria.getSortType();
         TypedQuery<Order> typedQuery = entityManager.createQuery(query, Order.class);
         typedQuery.setParameter("userId", id);
         typedQuery.setFirstResult((page - 1) * size);
@@ -94,18 +92,14 @@ public class HibernateOrderDaoImpl implements OrderDao {
                 .createQuery().forRevisionsOfEntity(GiftCertificate.class, true, true);
         auditQuery.add(AuditEntity.revisionNumber().minimize().computeAggregationInInstanceContext());
 
-        for (Order order: orders) {
-            for (GiftCertificate giftCertificate: order.getGiftCertificateList()) {
-                auditQuery.add(AuditEntity.id().eq(giftCertificate.getId()));
-            }
-        }
+        orders.forEach(o -> o.getGiftCertificateList().forEach(c -> auditQuery.add(AuditEntity.id().eq(c.getId()))));
 
         return auditQuery.getResultList();
     }
 
     @Override
-    public Order getOrderById(int id) {
-        return persistenceService.getModelById(id);
+    public Order getOrderById(int orderId) {
+        return persistenceService.getModelById(orderId);
     }
 
     @Override
@@ -116,9 +110,9 @@ public class HibernateOrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> getAllOrdersByPage(OrderSearchCriteria requestBody, int page, int size) {
+    public List<Order> getAllOrdersByPage(OrderSearchCriteria searchCriteria, int page, int size) {
         return persistenceService.getAllModelsByPage(
-                GET_ALL_ORDERS, page, size, requestBody.getSortType(), requestBody.getSortBy());
+                GET_ALL_ORDERS, page, size, searchCriteria.getSortType(), searchCriteria.getSortBy());
     }
 
     @Override
@@ -136,7 +130,7 @@ public class HibernateOrderDaoImpl implements OrderDao {
     public void deleteOrder(int orderId) {
         Order order = persistenceService.getModelById(orderId);
         if (order == null) {
-            throw new NoResultException("Failed to find order to delete by id:" + orderId);
+            throw new NoResultException("Failed to find order to delete by id: " + orderId);
         }
         order.setActive(DELETED_ORDER);
         persistenceService.update(order);

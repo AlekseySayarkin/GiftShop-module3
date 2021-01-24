@@ -7,13 +7,16 @@ import java.util.List;
 
 public class CertificateSearchCriteria extends SortingSearchCriteria {
 
+    private final static SortBy DEFAULT_SORT_BY = SortBy.NAME;
+    private final static SortType DEFAULT_SORT_TYPE = SortType.ASC;
+
     private String content;
     private List<String> tagNames;
 
     public static CertificateSearchCriteria getDefaultCertificateRequestBody() {
         CertificateSearchCriteria certificateSearchCriteria = new CertificateSearchCriteria();
-        certificateSearchCriteria.setSortBy(SortBy.NAME);
-        certificateSearchCriteria.setSortType(SortType.ASC);
+        certificateSearchCriteria.setSortBy(DEFAULT_SORT_BY);
+        certificateSearchCriteria.setSortType(DEFAULT_SORT_TYPE);
 
         return certificateSearchCriteria;
     }

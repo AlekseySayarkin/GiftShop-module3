@@ -15,7 +15,15 @@ public interface PaginationValidator {
      *
      * @param page given page number.
      * @param size given page size.
-     * @throws ServiceException if {@code Order} is incorrect.
+     * @throws ServiceException if validation is incorrect.
      */
     void validatePagination(int page, int size) throws ServiceException;
+
+    /**
+     * Validates page size.
+     *
+     * @param size given page size.
+     * @throws ServiceException if validation is incorrect.
+     */
+    void validateSize(int size) throws ServiceException;
 }

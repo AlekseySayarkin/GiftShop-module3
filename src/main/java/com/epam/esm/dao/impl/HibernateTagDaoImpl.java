@@ -39,19 +39,14 @@ public class HibernateTagDaoImpl implements TagDao {
     }
 
     @Override
-    public Tag getTagById(int id) {
-        return persistenceService.getModelById(id);
+    public Tag getTagById(int tagId) {
+        return persistenceService.getModelById(tagId);
     }
 
     @Override
-    public List<Tag> getAllTags() {
-        return persistenceService.getAllModels(GET_ALL_TAGS);
-    }
-
-    @Override
-    public List<Tag> getAllTagsByPage(TagSearchCriteria requestBody, int page, int size) {
+    public List<Tag> getAllTagsByPage(TagSearchCriteria searchCriteria, int page, int size) {
         return persistenceService.getAllModelsByPage(
-                GET_ALL_TAGS, page, size, requestBody.getSortType(), requestBody.getSortBy());
+                GET_ALL_TAGS, page, size, searchCriteria.getSortType(), searchCriteria.getSortBy());
     }
 
     @Override
@@ -60,16 +55,16 @@ public class HibernateTagDaoImpl implements TagDao {
     }
 
     @Override
-    public Tag addTag(Tag tag) throws PersistenceException {
+    public Tag addTag(Tag tag) {
         tag.setActive(ACTIVE_TAG);
         return persistenceService.add(tag);
     }
 
     @Override
-    public void deleteTag(int tagId) {
+    public void deleteTagById(int tagId) {
         Tag tag = persistenceService.getModelById(tagId);
         if (tag == null) {
-            throw new NoResultException("Failed to find tag to delete by id:" + tagId);
+            throw new NoResultException("Failed to find tag to delete by id: " + tagId);
         }
         tag.setActive(DELETED_TAG);
         persistenceService.update(tag);

@@ -27,38 +27,56 @@ public class TagLinkBuilder implements ModelLinkBuilder<TagDto> {
     private static final TagSearchCriteria defaultRequestBody = TagSearchCriteria.getDefaultTagRequestBody();
 
     @Override
-    public void linkToModel(EntityModel<TagDto> modelDto) throws ServiceException {
-        modelDto.add(linkTo(methodOn(TagController.class).getTag(
-                Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_TAG));
+    public void linkToModel(EntityModel<TagDto> modelDto) {
+        try {
+            modelDto.add(linkTo(methodOn(TagController.class).getTag(
+                    Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_TAG));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int page, int size,
-                                SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToTagsPage(page, size, ALL_TAGS, sortType, sortBy));
+    public void linkToModelPage(CollectionModel<EntityModel<TagDto>> collectionModel,
+                                int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToTagsPage(page, size, ALL_TAGS, sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToFirstModelPage(EntityModel<TagDto> tagDto, SortType sortType, SortBy sortBy)
-            throws ServiceException {
-        tagDto.add(getLinkToTagsPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_TAGS, sortType, sortBy));
+    public void linkToFirstModelPage(EntityModel<TagDto> tagDto, SortType sortType, SortBy sortBy) {
+        try {
+            tagDto.add(getLinkToTagsPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_TAGS, sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToNextModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int page, int size,
-                                    SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToTagsPage(page + 1, size, "next", sortType, sortBy));
+    public void linkToNextModelPage(CollectionModel<EntityModel<TagDto>> collectionModel,
+                                    int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToTagsPage(page + 1, size, "next", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToPrevModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int page, int size,
-                                    SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToTagsPage(page - 1, size, "prev", sortType, sortBy));
+    public void linkToPrevModelPage(CollectionModel<EntityModel<TagDto>> collectionModel,
+                                    int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToTagsPage(page - 1, size, "prev", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToLastModelPage(CollectionModel<EntityModel<TagDto>> collectionModel, int lastPage, int size, SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToTagsPage(lastPage, size, "last", sortType, sortBy));
+    public void linkToLastModelPage(CollectionModel<EntityModel<TagDto>> collectionModel,
+                                    int lastPage, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToTagsPage(lastPage, size, "last", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     private Link getLinkToTagsPage(int page, int size, String rel, SortType sortType, SortBy sortBy)

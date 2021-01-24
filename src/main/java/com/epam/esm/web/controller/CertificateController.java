@@ -48,9 +48,8 @@ public class CertificateController {
         RepresentationModel model = new RepresentationModel(pageMetadata, sortType, sortBy);
         modelAssembler.setRepresentationModel(model);
 
-        return modelAssembler.toCollectionModel(
-                GiftCertificateDto.of(giftCertificateService.getGiftCertificatesByPage(
-                        request, page, size, sortType, sortBy)));
+        return modelAssembler.toCollectionModel(GiftCertificateDto.of(
+                giftCertificateService.getGiftCertificatesByPage(request, page, size, sortType, sortBy)));
     }
 
     @GetMapping("/certificates/{id}")

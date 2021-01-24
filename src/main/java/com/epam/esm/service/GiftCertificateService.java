@@ -19,39 +19,38 @@ public interface GiftCertificateService {
 
     /**
      * Retrieves data of {@code GiftCertificate} from
-     * persistence layer by name
+     * persistence layer by it name
      * which equals to {@code String name}.
      *
      * @param name certificate name.
-     * @throws ServiceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws ServiceException when failed to get {@code GiftCertificate}.
      * @return {@code GiftCertificate}.
      */
     GiftCertificate getGiftCertificateByName(String name) throws ServiceException;
 
     /**
      * Retrieves data of {@code GiftCertificate} from
-     * persistence layer by id
-     * which equals to {@code int id}.
+     * persistence layer by it id
+     * which equals to {@code int certificateId}.
      *
-     * @param id certificate id.
-     * @throws ServiceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @param certificateId certificate id.
+     * @throws ServiceException when failed to get {@code GiftCertificate}.
      * @return {@code GiftCertificate}.
      */
-    GiftCertificate getGiftCertificateById(int id) throws ServiceException;
+    GiftCertificate getGiftCertificateById(int certificateId) throws ServiceException;
 
     /**
-     * Retrieves {@code GiftCertificate} from persistence layer
-     * using one of non null fields of {@code CertificateRequestBody}.
+     * Retrieves {@code GiftCertificate} from persistence layer.
      *
-     * @param requestBody object containing search criteria.
-     * @param page from which position in a data source.
+     * @param searchCriteria object containing search criteria.
+     * @param page from which position to start.
      * @param size max amount of {@code GiftCertificate} to return.
      * @param sortType type of a sort.
      * @param sortBy by witch field to sort.
-     * @throws ServiceException when failed to get {@code GiftCertificate} from persistence layer.
+     * @throws ServiceException when failed to get {@code GiftCertificate}.
      * @return List<GiftCertificate> - certificates from persistence layer.
      */
-    List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria requestBody, int page, int size,
+    List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria searchCriteria, int page, int size,
                                                     SortType sortType, SortBy sortBy) throws ServiceException;
 
     /**
@@ -66,28 +65,26 @@ public interface GiftCertificateService {
     /**
      * Adds new {@code GiftCertificate} to persistence layer.
      *
-     * @param giftCertificate {@code GiftCertificate} which to add to persistence layer.
+     * @param giftCertificate {@code GiftCertificate} which to be added to persistence layer.
      * @throws ServiceException when failed to add {@code GiftCertificate} to persistence layer.
-     * @return {@code GiftCertificate} from persistence layer with generated id.
+     * @return id of a {@code GiftCertificate} from persistence layer.
      */
     GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) throws ServiceException;
 
     /**
      * Deletes {@code GiftCertificate} from persistence layer.
      *
-     * @param id id of {@code GiftCertificate} which to delete from persistence layer.
+     * @param certificateId id of a {@code GiftCertificate} which to delete from persistence layer.
      * @throws ServiceException when failed to delete {@code GiftCertificate} from persistence layer.
      */
-    void deleteGiftCertificate(int id) throws ServiceException;
+    void deleteGiftCertificate(int certificateId) throws ServiceException;
 
     /**
      * Updates {@code GiftCertificate} in persistence layer.
-     * Null or default values in {@code GiftCertificate} are not updated.
      *
-     * @param giftCertificate {@code GiftCertificate} which to update in persistence layer.
-     * @param id id of {@code GiftCertificate} which to update in persistence layer.
-     * @throws ServiceException when failed to update {@code GiftCertificate} in persistence layer.
-     * @return updated {@code GiftCertificate}
+     * @param id id of giftCertificate  which to update in persistence layer.
+     * @param giftCertificate {@code ServiceException} which to update persistence layer.
+     * @return updated {@code GiftCertificate} from persistence layer.
      */
     GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate, int id) throws ServiceException;
 }

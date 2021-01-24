@@ -37,45 +37,61 @@ public class CertificateLinkBuilder implements ModelLinkBuilder<GiftCertificateD
     }
 
     @Override
-    public void linkToModel(EntityModel<GiftCertificateDto> modelDto)
-            throws ServiceException {
-        for (EntityModel<TagDto> tag: Objects.requireNonNull(modelDto.getContent()).getTags()) {
-            tagLinkBuilder.linkToModel(tag);
+    public void linkToModel(EntityModel<GiftCertificateDto> modelDto) {
+        Objects.requireNonNull(modelDto.getContent()).getTags().forEach(t -> tagLinkBuilder.linkToModel(t));
+        try {
+            modelDto.add(linkTo(methodOn(CertificateController.class).getGiftCertificate(
+                    Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_CERTIFICATE));
+        } catch (ServiceException ignored) {
         }
-        
-        modelDto.add(linkTo(methodOn(CertificateController.class).getGiftCertificate(
-                Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_CERTIFICATE));
     }
 
     @Override
-    public void linkToModelPage(CollectionModel<EntityModel<GiftCertificateDto>> collectionModel, int page, int size,
-                                SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToCertificatesPage(page, size, ALL_CERTIFICATES, sortType, sortBy));
+    public void linkToModelPage(CollectionModel<EntityModel<GiftCertificateDto>> collectionModel,
+                                int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToCertificatesPage(page, size, ALL_CERTIFICATES, sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToFirstModelPage(EntityModel<GiftCertificateDto> model, SortType sortType, SortBy sortBy) throws ServiceException {
-        model.add(getLinkToCertificatesPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_CERTIFICATES, sortType, sortBy));
+    public void linkToFirstModelPage(EntityModel<GiftCertificateDto> model, SortType sortType, SortBy sortBy) {
+        try {
+            model.add(getLinkToCertificatesPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_CERTIFICATES, sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToNextModelPage(CollectionModel<EntityModel<GiftCertificateDto>> collectionModel, int page, int size,
-                                    SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToCertificatesPage(page + 1, size, "next", sortType, sortBy));
+    public void linkToNextModelPage(CollectionModel<EntityModel<GiftCertificateDto>> collectionModel,
+                                    int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToCertificatesPage(page + 1, size, "next", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToPrevModelPage(CollectionModel<EntityModel<GiftCertificateDto>> collectionModel, int page, int size,
-                                    SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToCertificatesPage(page - 1, size, "prev", sortType, sortBy));
+    public void linkToPrevModelPage(CollectionModel<EntityModel<GiftCertificateDto>> collectionModel,
+                                    int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToCertificatesPage(page - 1, size, "prev", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToLastModelPage(CollectionModel<EntityModel<GiftCertificateDto>> collectionModel, int lastPage, int size, SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToCertificatesPage(lastPage, size, "last", sortType, sortBy));
+    public void linkToLastModelPage(CollectionModel<EntityModel<GiftCertificateDto>> collectionModel,
+                                    int lastPage, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToCertificatesPage(lastPage, size, "last", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
-    private Link getLinkToCertificatesPage(int page, int size, String rel, SortType sortType, SortBy sortBy) throws ServiceException {
+    private Link getLinkToCertificatesPage(int page, int size, String rel, SortType sortType, SortBy sortBy)
+            throws ServiceException {
         return linkTo(methodOn(CertificateController.class)
                 .getGiftCertificates(defaultRequestBody, page, size, sortType, sortBy)).withRel(rel);
     }

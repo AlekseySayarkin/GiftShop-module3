@@ -2,7 +2,6 @@ package com.epam.esm.web.hateoas;
 
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
-import com.epam.esm.service.exception.ServiceException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -28,10 +27,7 @@ public class RepresentationModelAssemblerImpl<T> implements ModelAssembler<T> {
 
     @Override
     public void addLinks(EntityModel<T> resource) {
-        try {
-            modelLinkBuilder.linkToModel(resource);
-        } catch (ServiceException ignored) {
-        }
+        modelLinkBuilder.linkToModel(resource);
     }
 
     @Override
@@ -44,16 +40,13 @@ public class RepresentationModelAssemblerImpl<T> implements ModelAssembler<T> {
             SortType sortType = representationModel.getSortType();
             SortBy sortBy = representationModel.getSortBy();
 
-            try {
-                modelLinkBuilder.linkToModelPage(resources, page, size, sortType, sortBy);
-                if (hasPrevious(page)) {
-                    modelLinkBuilder.linkToPrevModelPage(resources, page, size, sortType, sortBy);
-                }
-                if (resources.getContent().size() == size && hasNext(page, lastPage)) {
-                    modelLinkBuilder.linkToLastModelPage(resources, lastPage, size, sortType, sortBy);
-                    modelLinkBuilder.linkToNextModelPage(resources, page, size, sortType, sortBy);
-                }
-            } catch (ServiceException ignored) {
+            modelLinkBuilder.linkToModelPage(resources, page, size, sortType, sortBy);
+            if (hasPrevious(page)) {
+                modelLinkBuilder.linkToPrevModelPage(resources, page, size, sortType, sortBy);
+            }
+            if (resources.getContent().size() == size && hasNext(page, lastPage)) {
+                modelLinkBuilder.linkToLastModelPage(resources, lastPage, size, sortType, sortBy);
+                modelLinkBuilder.linkToNextModelPage(resources, page, size, sortType, sortBy);
             }
         }
     }

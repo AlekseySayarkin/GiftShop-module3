@@ -30,7 +30,7 @@ public class OrderLinkBuilder implements ModelLinkBuilder<OrderDto> {
 
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
-    private static final OrderSearchCriteria defaultRequestBody = OrderSearchCriteria.getDefaultUserRequestBody();
+    private static final OrderSearchCriteria defaultRequestBody = OrderSearchCriteria.getDefaultOrderRequestBody();
 
     @PostConstruct
     public void init() {
@@ -39,45 +39,61 @@ public class OrderLinkBuilder implements ModelLinkBuilder<OrderDto> {
     }
 
     @Override
-    public void linkToModel(EntityModel<OrderDto> modelDto) throws ServiceException {
-        modelDto.add(linkTo(methodOn(OrderController.class).getOrder(
-                Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_ORDER));
+    public void linkToModel(EntityModel<OrderDto> modelDto) {
+        try {
+            modelDto.add(linkTo(methodOn(OrderController.class).getOrder(
+                    Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_ORDER));
 
-        for (EntityModel<GiftCertificateDto> certificate: modelDto.getContent().getGiftCertificateList()) {
-            for (EntityModel<TagDto> tag: Objects.requireNonNull(certificate.getContent()).getTags()) {
-                tagLinkBuilder.linkToModel(tag);
-            }
-            certificateLinkBuilder.linkToModel(certificate);
+            modelDto.getContent().getGiftCertificateList().forEach(c -> {
+                Objects.requireNonNull(c.getContent()).getTags().forEach(t -> tagLinkBuilder.linkToModel(t));
+                certificateLinkBuilder.linkToModel(c);
+            });
+        } catch (ServiceException ignored) {
         }
     }
 
     @Override
-    public void linkToModelPage(CollectionModel<EntityModel<OrderDto>> collectionModel, int page, int size,
-                                SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToOrdersPage(page, size, ALL_ORDERS, sortType, sortBy));
+    public void linkToModelPage(CollectionModel<EntityModel<OrderDto>> collectionModel,
+                                int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToOrdersPage(page, size, ALL_ORDERS, sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToFirstModelPage(EntityModel<OrderDto> tagDto, SortType sortType, SortBy sortBy)
-            throws ServiceException {
-        tagDto.add(getLinkToOrdersPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_ORDERS, sortType, sortBy));
+    public void linkToFirstModelPage(EntityModel<OrderDto> tagDto, SortType sortType, SortBy sortBy) {
+        try {
+            tagDto.add(getLinkToOrdersPage(DEFAULT_PAGE, DEFAULT_SIZE, ALL_ORDERS, sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToNextModelPage(CollectionModel<EntityModel<OrderDto>> collectionModel, int page, int size,
-                                    SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToOrdersPage(page + 1, size, "next", sortType, sortBy));
+    public void linkToNextModelPage(CollectionModel<EntityModel<OrderDto>> collectionModel,
+                                    int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToOrdersPage(page + 1, size, "next", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToPrevModelPage(CollectionModel<EntityModel<OrderDto>> collectionModel, int page, int size,
-                                    SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToOrdersPage(page - 1, size, "prev", sortType, sortBy));
+    public void linkToPrevModelPage(CollectionModel<EntityModel<OrderDto>> collectionModel,
+                                    int page, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToOrdersPage(page - 1, size, "prev", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     @Override
-    public void linkToLastModelPage(CollectionModel<EntityModel<OrderDto>> collectionModel, int lastPage, int size, SortType sortType, SortBy sortBy) throws ServiceException {
-        collectionModel.add(getLinkToOrdersPage(lastPage, size, "last", sortType, sortBy));
+    public void linkToLastModelPage(CollectionModel<EntityModel<OrderDto>> collectionModel,
+                                    int lastPage, int size, SortType sortType, SortBy sortBy) {
+        try {
+            collectionModel.add(getLinkToOrdersPage(lastPage, size, "last", sortType, sortBy));
+        } catch (ServiceException ignored) {
+        }
     }
 
     private Link getLinkToOrdersPage(int page, int size, String rel, SortType sortType, SortBy sortBy)

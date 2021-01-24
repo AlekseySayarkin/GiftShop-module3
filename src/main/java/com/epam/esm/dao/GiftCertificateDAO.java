@@ -2,9 +2,7 @@ package com.epam.esm.dao;
 
 import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.model.GiftCertificate;
-import com.epam.esm.service.exception.ServiceException;
 
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import java.util.List;
 
@@ -19,40 +17,40 @@ public interface GiftCertificateDAO {
 
     /**
      * Retrieves data of {@code GiftCertificate} from
-     * data source by name
+     * data source by it name
      * which equals to {@code String name}.
      *
      * @param name certificate name.
      * @return {@code GiftCertificate}.
-     * @throws NoResultException if failed to get result.
      */
-    GiftCertificate getGiftCertificateByName(String name) throws NoResultException;
+    GiftCertificate getGiftCertificateByName(String name);
 
     /**
      * Retrieves data of {@code GiftCertificate} from
-     * data source by id
-     * which equals to {@code int id}.
+     * data source by it id
+     * which equals to {@code int certificateId}.
      *
-     * @param id certificate id.
-     * @return {@code GiftCertificate}.
+     * @param certificateId certificate id.
+     * @return {@code Order}.
      */
-    GiftCertificate getGiftCertificateById(int id);
+    GiftCertificate getGiftCertificateById(int certificateId);
 
     /**
-     * Retrieves all {@code GiftCertificate} from data source.
+     * Retrieves certain number of {@code GiftCertificate} from data source.
      *
-     * @param requestBody object containing search criteria.
-     * @param page from which position in a data source.
-     * @param size max amount of {@code GiftCertificate} to return.
-     * @return List<GiftCertificate> - all existing certificates in data source.
+     * @param searchCriteria object containing search criteria.
+     * @param page page number of {@code GiftCertificate} to return.
+     * @param size page size of {@code GiftCertificate} to return from data source.
+     * @return List<GiftCertificate> - certain number of existing gift certificates in data source.
      */
-    List<GiftCertificate> getGiftCertificatesByRequestBody(CertificateSearchCriteria requestBody, int page, int size) throws ServiceException;
+    List<GiftCertificate> getGiftCertificatesByRequestBody(CertificateSearchCriteria searchCriteria, int page, int size);
 
     /**
-     * Retrieves count of {@code GiftCertificate} from data source.
+     * Retrieves number of a last page from data source if every page
+     * contains certain number of {@code GiftCertificate}.
      *
      * @param size size of a page.
-     * @return count of {@code GiftCertificate}.
+     * @return number of a last page.
      */
     int getLastPage(int size);
 
@@ -60,23 +58,23 @@ public interface GiftCertificateDAO {
      * Adds new {@code GiftCertificate} to data source.
      *
      * @param giftCertificate {@code GiftCertificate} which to be added to data source.
-     * @return id of a {@code GiftCertificate} from data source.
-     * @throws PersistenceException when failed to add {@code GiftCertificate} to data source.
+     * @return added {@code GiftCertificate} from data source.
      */
     GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException;
 
     /**
-     * Deletes {@code GiftCertificate} from data source.
+     * Deletes {@code GiftCertificate} from data source by it id
+     * which equals to {@code int orderId}.
      *
-     * @param id id of {@code GiftCertificate} which to deleted from data source.
+     * @param certificateId  id of a {@code GiftCertificate} which to delete from data source.
      */
-    void deleteGiftCertificate(int id);
+    void deleteGiftCertificate(int certificateId);
 
     /**
      * Updates {@code GiftCertificate} in data source.
      *
      * @param giftCertificate {@code ServiceException} which to update in data source.
-     * @return updated {@code GiftCertificate}.
+     * @return updated {@code GiftCertificate} from data source.
      */
     GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate);
 }

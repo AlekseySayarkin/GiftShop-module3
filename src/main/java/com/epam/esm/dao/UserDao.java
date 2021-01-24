@@ -16,8 +16,8 @@ public interface UserDao {
 
     /**
      * Retrieves data of {@code User} from
-     * data source by name
-     * which equals to {@code String name}.
+     * data source by it login
+     * which equals to {@code String login}.
      *
      * @param login user login.
      * @return {@code User}.
@@ -26,31 +26,32 @@ public interface UserDao {
 
     /**
      * Retrieves data of {@code User} from
-     * data source by id
-     * which equals to {@code int id}.
+     * data source by it id
+     * which equals to {@code int userId}.
      *
-     * @param id user id.
+     * @param userId user userId.
      * @return {@code User}.
      */
-    User getUserById(int id);
+    User getUserById(int userId);
 
     /**
-     * Retrieves certain number of {@code User} from data source.
+     * Retrieves certain number of {@code User} from data source
+     * filtered by {@code UserSearchCriteria}.
      *
-     * @param requestBody object containing search criteria.
+     * @param searchCriteria object containing search criteria.
      * @param page from which position in a data source
      * to start returning.
      * @param size max amount of {@code Tag} to return.
-     * @return List<Tag> - certain number of  existing tags in data source.
+     * @return List<User> - certain number of users from data source.
      */
-    List<User> getAllUsersByPage(UserSearchCriteria requestBody, int page, int size);
+    List<User> getAllUsersByPage(UserSearchCriteria searchCriteria, int page, int size);
 
     /**
-     * Retrieves number of pages from data source if every page
+     * Retrieves number of a last page from data source if every page
      * contains certain number of {@code User}.
      *
      * @param size size of a page.
-     * @return number of pages.
+     * @return number of a last page.
      */
     int getLastPage(int size);
 }
