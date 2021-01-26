@@ -1,6 +1,6 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.dao.request.TagSearchCriteria;
 import com.epam.esm.model.Tag;
 
 import java.util.List;
@@ -16,45 +16,57 @@ public interface TagDao {
 
     /**
      * Retrieves data of {@code Tag} from
-     * data source by name
+     * data source by it name
      * which equals to {@code String name}.
      *
      * @param name tag name.
      * @return {@code Tag}.
      */
-    Tag getTag(String name);
+    Tag getTagByName(String name);
 
     /**
      * Retrieves data of {@code Tag} from
-     * data source by id
-     * which equals to {@code int id}.
+     * data source by it id
+     * which equals to {@code int tagId}.
      *
-     * @param id tag id.
+     * @param tagId tag id.
      * @return {@code Tag}.
      */
-    Tag getTag(int id);
+    Tag getTagById(int tagId);
 
     /**
-     * Retrieves all {@code Tag} from data source.
+     * Retrieves certain number of {@code Tag} from data source
+     * filtered by {@code TagSearchCriteria}.
      *
-     * @return List<Tag> - all existing tags in data source.
+     * @param searchCriteria object containing search criteria.
+     * @param page page number of {@code Tag} to return.
+     * @param size page size of {@code Tag} to return from data source.
+     * @return List<Tag> - certain number of tags in data source.
      */
-    List<Tag> getAllTags();
+    List<Tag> getAllTagsByPage(TagSearchCriteria searchCriteria, int page, int size);
+
+    /**
+     * Retrieves number of a last page from data source if every page
+     * contains certain number of {@code Tag}.
+     *
+     * @param size size of a page.
+     * @return number of a last page.
+     */
+    int getLastPage(int size);
 
     /**
      * Adds new {@code Tag} to data source.
      *
      * @param tag {@code Tag} which to be added to data source.
-     * @return id of a {@code Tag} from data source.
-     * @throws PersistenceException when failed to add {@code Tag} to data source.
+     * @return added {@code Tag} from data source.
      */
-    int addTag(Tag tag) throws PersistenceException;
+    Tag addTag(Tag tag);
 
     /**
-     * Deletes {@code Tag} from data source.
+     * Deletes {@code Tag} from data source by it id
+     * which equals to {@code int tagId}.
      *
      * @param tagId id of a {@code Tag} which to delete from data source.
-     * @return whether transaction was successful.
      */
-    boolean deleteTag(int tagId);
+    void deleteTagById(int tagId);
 }

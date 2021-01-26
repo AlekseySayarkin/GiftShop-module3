@@ -1,19 +1,51 @@
 package com.epam.esm.model;
 
+import org.hibernate.annotations.Where;
+import org.hibernate.envers.Audited;
+
+import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class GiftCertificate {
+@Entity
+@Table(name = "GiftCertificates", schema = "GiftShop")
+@Audited
+@Where(clause = "Active = true")
+public class GiftCertificate implements BaseModel {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "Name")
     private String name;
+
+    @Column(name = "Description")
     private String description;
+
+    @Column(name = "Price")
     private double price;
+
+    @Column(name = "CreateDate", updatable=false)
     private ZonedDateTime createDate;
+
+    @Column(name = "LastUpdateDate")
     private ZonedDateTime lastUpdateDate;
+
+    @Column(name = "Duration")
     private int duration;
+
+    @Column(name = "Active")
+    private boolean isActive;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "CertificateTag",
+            joinColumns = @JoinColumn(name = "CertificateId"),
+            inverseJoinColumns = @JoinColumn(name = "TagId")
+    )
     private Set<Tag> tags = new HashSet<>();
 
     public int getId() {
@@ -78,6 +110,14 @@ public class GiftCertificate {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     @Override

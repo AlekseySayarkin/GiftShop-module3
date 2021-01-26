@@ -1,11 +1,26 @@
 package com.epam.esm.model;
 
+import org.hibernate.annotations.Where;
+import org.hibernate.envers.Audited;
+
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Tag {
+@Entity
+@Table(name = "tags", schema = "GiftShop")
+@Audited
+@Where(clause = "Active = true")
+public class Tag implements BaseModel {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(unique = true, nullable = false)
     private String name;
+
+    @Column(name = "Active")
+    private boolean isActive;
 
     public Tag() {
     }
@@ -35,6 +50,14 @@ public class Tag {
         this.name = name;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -53,6 +76,7 @@ public class Tag {
         return "Tag{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", isActive=" + isActive +
                 '}';
     }
 }

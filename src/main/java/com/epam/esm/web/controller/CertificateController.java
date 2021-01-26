@@ -1,50 +1,79 @@
 package com.epam.esm.web.controller;
 
+import com.epam.esm.dao.sort.SortBy;
+import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.dao.exception.PersistenceException;
-import com.epam.esm.service.request.CertificateRequestBody;
+import com.epam.esm.dao.request.CertificateSearchCriteria;
+import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.util.PaginationValidator;
+import com.epam.esm.web.dto.GiftCertificateDto;
+import com.epam.esm.web.hateoas.CertificateLinkBuilder;
+import com.epam.esm.web.hateoas.ModelAssembler;
+import com.epam.esm.web.hateoas.pagination.PaginationConfigurer;
+import com.epam.esm.web.hateoas.pagination.impl.PaginationConfigurerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.annotation.PostConstruct;
 
 @RestController
 public class CertificateController {
 
     private final GiftCertificateService giftCertificateService;
+    private final ModelAssembler<GiftCertificateDto> modelAssembler;
+    private final PaginationConfigurer<GiftCertificateDto> paginationConfigurer;
 
     @Autowired
-    public CertificateController(GiftCertificateService giftCertificateService) {
+    public CertificateController(
+            GiftCertificateService giftCertificateService, ModelAssembler<GiftCertificateDto> modelAssembler,
+            PaginationValidator paginationValidator) {
         this.giftCertificateService = giftCertificateService;
+        this.modelAssembler = modelAssembler;
+        this.paginationConfigurer = new PaginationConfigurerImpl<>(modelAssembler, paginationValidator);
+    }
+
+    @PostConstruct
+    public void init() {
+        modelAssembler.setModelLinkBuilder(new CertificateLinkBuilder());
     }
 
     @GetMapping("/certificates")
-    public List<GiftCertificate> getGiftCertificates(
-            @RequestBody(required = false) CertificateRequestBody request) throws PersistenceException {
-           return giftCertificateService.getGiftCertificates(request);
+    public CollectionModel<EntityModel<GiftCertificateDto>> getGiftCertificates(
+            @RequestBody(required = false) CertificateSearchCriteria request,
+            @RequestParam int page, @RequestParam int size,
+            @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
+        paginationConfigurer.configure(page, size, giftCertificateService.getLastPage(size), sortType, sortBy);
+
+        return modelAssembler.toCollectionModel(GiftCertificateDto.of(
+                giftCertificateService.getGiftCertificatesByPage(request, page, size, sortType, sortBy)));
     }
 
     @GetMapping("/certificates/{id}")
-    public GiftCertificate getGiftCertificate(@PathVariable int id) throws PersistenceException {
-        return giftCertificateService.getGiftCertificate(id);
+    public EntityModel<GiftCertificateDto> getGiftCertificate(@PathVariable int id) throws ServiceException {
+        return modelAssembler.toModel(GiftCertificateDto.of(giftCertificateService.getGiftCertificateById(id)));
     }
 
     @PostMapping("/certificates")
-    public GiftCertificate addGiftCertificate(@RequestBody GiftCertificate giftCertificate) throws PersistenceException {
-        return giftCertificateService.addGiftCertificate(giftCertificate);
+    public EntityModel<GiftCertificateDto> addGiftCertificate(@RequestBody GiftCertificate giftCertificate)
+            throws ServiceException {
+        return modelAssembler.toModel(
+                GiftCertificateDto.of(giftCertificateService.addGiftCertificate(giftCertificate)));
     }
 
     @DeleteMapping("/certificates/{id}")
-    public HttpStatus deleteGiftCertificate( @PathVariable int id) throws PersistenceException {
+    public HttpStatus deleteGiftCertificate(@PathVariable int id) throws ServiceException {
         giftCertificateService.deleteGiftCertificate(id);
         return HttpStatus.OK;
     }
 
     @PutMapping("/certificates/{id}")
-    public GiftCertificate updateGiftCertificate(
-            @RequestBody GiftCertificate giftCertificate, @PathVariable int id) throws PersistenceException {
-        return giftCertificateService.updateGiftCertificate(giftCertificate, id);
+    public EntityModel<GiftCertificateDto> updateGiftCertificate(
+            @RequestBody GiftCertificate giftCertificate, @PathVariable int id) throws ServiceException {
+        return modelAssembler.toModel(
+                GiftCertificateDto.of(giftCertificateService.updateGiftCertificate(giftCertificate, id)));
     }
 }

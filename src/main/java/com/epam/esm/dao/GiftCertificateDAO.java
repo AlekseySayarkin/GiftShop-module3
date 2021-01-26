@@ -1,8 +1,9 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.dao.exception.PersistenceException;
+import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.model.GiftCertificate;
 
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 /**
@@ -16,108 +17,64 @@ public interface GiftCertificateDAO {
 
     /**
      * Retrieves data of {@code GiftCertificate} from
-     * data source by name
+     * data source by it name
      * which equals to {@code String name}.
      *
      * @param name certificate name.
      * @return {@code GiftCertificate}.
      */
-    GiftCertificate getGiftCertificate(String name);
+    GiftCertificate getGiftCertificateByName(String name);
 
     /**
      * Retrieves data of {@code GiftCertificate} from
-     * data source by id
-     * which equals to {@code int id}.
+     * data source by it id
+     * which equals to {@code int certificateId}.
      *
-     * @param id certificate id.
-     * @return {@code GiftCertificate}.
+     * @param certificateId certificate id.
+     * @return {@code Order}.
      */
-    GiftCertificate getGiftCertificate(int id);
+    GiftCertificate getGiftCertificateById(int certificateId);
 
     /**
-     * Retrieves all {@code GiftCertificate} from data source.
+     * Retrieves certain number of {@code GiftCertificate} from data source.
      *
-     * @return List<GiftCertificate> - all existing certificates in data source.
+     * @param searchCriteria object containing search criteria.
+     * @param page page number of {@code GiftCertificate} to return.
+     * @param size page size of {@code GiftCertificate} to return from data source.
+     * @return List<GiftCertificate> - certain number of existing gift certificates in data source.
      */
-    List<GiftCertificate> getAllGiftCertificates();
+    List<GiftCertificate> getGiftCertificatesByRequestBody(CertificateSearchCriteria searchCriteria, int page, int size);
 
     /**
-     * Retrieves {@code GiftCertificate} from data source
-     * by content which this {@code GiftCertificate} contains
-     * in it name or description.
+     * Retrieves number of a last page from data source if every page
+     * contains certain number of {@code GiftCertificate}.
      *
-     * @param content {@code GiftCertificate} name or description.
-     * @return List<GiftCertificate> - existing certificates in data source.
+     * @param size size of a page.
+     * @return number of a last page.
      */
-    List<GiftCertificate> getAllGiftCertificates(String content);
-
-    /**
-     * Retrieves {@code GiftCertificate} from data source
-     * by name of a {@code Tag} which this {@code GiftCertificate} has.
-     *
-     * @param tagName name of a {@code Tag}.
-     * @return List<GiftCertificate> - existing certificates in data source.
-     */
-    List<GiftCertificate> getGiftCertificateByTagName(String tagName);
-
-    /**
-     * Retrieves all {@code GiftCertificate} from data source
-     * and sorts it by name according to {@code isAscending}.
-     *
-     * @param isAscending asc or desc sort.
-     * @return List<GiftCertificate> - sorted certificates in data source.
-     */
-    List<GiftCertificate> getAllGiftCertificatesSortedByName(boolean isAscending);
-
-    /**
-     * Retrieves all {@code GiftCertificate} from data source
-     * and sorts it by date according to {@code isAscending}.
-     *
-     * @param isAscending asc or desc sort.
-     * @return List<GiftCertificate> - sorted certificates in data source.
-     */
-    List<GiftCertificate> getAllGiftCertificatesSortedByDate(boolean isAscending);
+    int getLastPage(int size);
 
     /**
      * Adds new {@code GiftCertificate} to data source.
      *
      * @param giftCertificate {@code GiftCertificate} which to be added to data source.
-     * @return id of a {@code GiftCertificate} from data source.
-     * @throws PersistenceException when failed to add {@code GiftCertificate} to data source.
+     * @return added {@code GiftCertificate} from data source.
      */
-    int addGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException;
+    GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException;
 
     /**
-     * Deletes {@code GiftCertificate} from data source.
+     * Deletes {@code GiftCertificate} from data source by it id
+     * which equals to {@code int orderId}.
      *
-     * @param id id of {@code GiftCertificate} which to deleted from data source.
-     * @return whether transaction was successful.
+     * @param certificateId  id of a {@code GiftCertificate} which to delete from data source.
      */
-    boolean deleteGiftCertificate(int id);
+    void deleteGiftCertificate(int certificateId);
 
     /**
      * Updates {@code GiftCertificate} in data source.
-     * Null or default values in {@code GiftCertificate} are not updated.
      *
      * @param giftCertificate {@code ServiceException} which to update in data source.
-     * @return whether transaction was successful.
+     * @return updated {@code GiftCertificate} from data source.
      */
-    boolean updateGiftCertificate(GiftCertificate giftCertificate) throws PersistenceException;
-
-    /**
-     * Creates many to many relation with {@code GiftCertificate} and {@code Tag}.
-     *
-     * @param certificateId {@code GiftCertificate} id which to create a many to many relation with.
-     * @param tagId {@code Tag} id  which to create a many to many relation with.
-     * @return whether transaction was successful.
-     */
-    boolean createCertificateTagRelation(int certificateId, int tagId);
-
-    /**
-     * Deletes many to many relation with {@code GiftCertificate} and {@code Tag}.
-     *
-     * @param certificateId {@code GiftCertificate} id which to delete a many to many relation with.
-     * @return whether transaction was successful.
-     */
-    boolean deleteAllCertificateTagRelations(int certificateId);
+    GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate);
 }
