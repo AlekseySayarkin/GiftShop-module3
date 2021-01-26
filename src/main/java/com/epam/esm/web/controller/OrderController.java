@@ -6,14 +6,15 @@ import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.Order;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.web.dto.OrderDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
 import com.epam.esm.web.hateoas.OrderLinkBuilder;
-import com.epam.esm.web.hateoas.RepresentationModel;
+import com.epam.esm.web.hateoas.pagination.PaginationConfigurer;
+import com.epam.esm.web.hateoas.pagination.impl.PaginationConfigurerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,11 +26,14 @@ public class OrderController {
 
     private final OrderService orderService;
     private final ModelAssembler<OrderDto> modelAssembler;
+    private final PaginationConfigurer<OrderDto> paginationConfigurer;
 
     @Autowired
-    public OrderController(OrderService orderService, ModelAssembler<OrderDto> modelAssembler) {
+    public OrderController(OrderService orderService, ModelAssembler<OrderDto> modelAssembler,
+                           PaginationValidator paginationValidator) {
         this.orderService = orderService;
         this.modelAssembler = modelAssembler;
+        this.paginationConfigurer = new PaginationConfigurerImpl<>(modelAssembler, paginationValidator);
     }
 
     @PostConstruct
@@ -42,11 +46,7 @@ public class OrderController {
             @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size,
             @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
-        int lastPage = orderService.getLastPage(size);
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
-                size, page, (long) lastPage * size, lastPage);
-        RepresentationModel model = new RepresentationModel(pageMetadata, sortType, sortBy);
-        modelAssembler.setRepresentationModel(model);
+        paginationConfigurer.configure(page, size, orderService.getLastPage(size), sortType, sortBy);
 
         return modelAssembler.toCollectionModel(
                 OrderDto.of(orderService.getAllOrdersByPage(requestBody, page, size, sortType, sortBy)));

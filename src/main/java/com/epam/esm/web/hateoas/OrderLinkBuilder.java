@@ -98,7 +98,7 @@ public class OrderLinkBuilder implements ModelLinkBuilder<OrderDto> {
 
     private Link getLinkToOrdersPage(int page, int size, String rel, SortType sortType, SortBy sortBy)
             throws ServiceException {
-        return linkTo(methodOn(OrderController.class).getOrders(defaultRequestBody, page, size,
-                sortType, sortBy)).withRel(rel);
+        return linkTo(methodOn(OrderController.class)
+                .getOrders(defaultRequestBody, page, size, sortType, sortBy)).withRel(rel);
     }
 }

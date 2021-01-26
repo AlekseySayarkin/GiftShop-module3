@@ -70,7 +70,7 @@ public class TagServiceImp implements TagService {
     @Override
     public List<Tag> getAllTagsByPage(TagSearchCriteria searchCriteria, int page, int size,
                                       SortType sortType, SortBy sortBy) throws ServiceException {
-        paginationValidator.validatePagination(size, page);
+        paginationValidator.validatePagination(page, size);
 
         if (searchCriteria == null) {
             searchCriteria = TagSearchCriteria.getDefaultTagRequestBody();

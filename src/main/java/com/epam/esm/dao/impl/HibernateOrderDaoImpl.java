@@ -9,6 +9,7 @@ import com.epam.esm.model.Tag;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
+import org.hibernate.envers.query.criteria.AuditDisjunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -84,7 +85,7 @@ public class HibernateOrderDaoImpl implements OrderDao {
         typedQuery.setFirstResult((page - 1) * size);
         typedQuery.setMaxResults(size);
 
-        return  typedQuery.getResultList();
+        return typedQuery.getResultList();
     }
 
     private List<GiftCertificate> getFirstVersionOfOrders(List<Order> orders) {
@@ -92,7 +93,10 @@ public class HibernateOrderDaoImpl implements OrderDao {
                 .createQuery().forRevisionsOfEntity(GiftCertificate.class, true, true);
         auditQuery.add(AuditEntity.revisionNumber().minimize().computeAggregationInInstanceContext());
 
-        orders.forEach(o -> o.getGiftCertificateList().forEach(c -> auditQuery.add(AuditEntity.id().eq(c.getId()))));
+        orders.forEach(o -> {
+            AuditDisjunction disjunction = AuditEntity.disjunction();
+            o.getGiftCertificateList().forEach(c -> auditQuery.add(disjunction.add(AuditEntity.id().eq(c.getId()))));
+        });
 
         return auditQuery.getResultList();
     }

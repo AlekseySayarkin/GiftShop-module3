@@ -43,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public List<Order> getOrdersByUserId(int userId, OrderSearchCriteria searchCriteria, int page, int size,
                                          SortType sortType, SortBy sortBy) throws ServiceException {
-        paginationValidator.validatePagination(size, page);
+        paginationValidator.validatePagination(page, size);
 
         if (searchCriteria == null) {
             searchCriteria = OrderSearchCriteria.getDefaultOrderRequestBody();
@@ -95,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getAllOrdersByPage(OrderSearchCriteria searchCriteria, int page, int size,
                                           SortType sortType, SortBy sortBy) throws ServiceException {
-        paginationValidator.validatePagination(size, page);
+        paginationValidator.validatePagination(page, size);
 
         if (searchCriteria == null) {
             searchCriteria = OrderSearchCriteria.getDefaultOrderRequestBody();

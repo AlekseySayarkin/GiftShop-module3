@@ -6,19 +6,19 @@ import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.dao.request.TagSearchCriteria;
+import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.web.dto.TagDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
-import com.epam.esm.web.hateoas.RepresentationModel;
 import com.epam.esm.web.hateoas.TagLinkBuilder;
+import com.epam.esm.web.hateoas.pagination.PaginationConfigurer;
+import com.epam.esm.web.hateoas.pagination.impl.PaginationConfigurerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-
 
 @RestController
 @RequestMapping("/tags")
@@ -26,11 +26,14 @@ public class TagController {
 
     private final TagService tagService;
     private final ModelAssembler<TagDto> modelAssembler;
+    private final PaginationConfigurer<TagDto> paginationConfigurer;
 
     @Autowired
-    public TagController(TagService tagService, ModelAssembler<TagDto> modelAssembler) {
+    public TagController(TagService tagService, ModelAssembler<TagDto> modelAssembler,
+                         PaginationValidator paginationValidator) {
         this.tagService = tagService;
         this.modelAssembler = modelAssembler;
+        this.paginationConfigurer = new PaginationConfigurerImpl<>(modelAssembler, paginationValidator);
     }
 
     @PostConstruct
@@ -43,11 +46,7 @@ public class TagController {
             @RequestBody(required = false) TagSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size,
             @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
-        int lastPage = tagService.getLastPage(size);
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
-                size, page, (long) lastPage * size, lastPage);
-        RepresentationModel model = new RepresentationModel(pageMetadata, sortType, sortBy);
-        modelAssembler.setRepresentationModel(model);
+        paginationConfigurer.configure(page, size, tagService.getLastPage(size), sortType, sortBy);
 
         return modelAssembler.toCollectionModel(
                 TagDto.of(tagService.getAllTagsByPage(requestBody, page, size, sortType, sortBy)));

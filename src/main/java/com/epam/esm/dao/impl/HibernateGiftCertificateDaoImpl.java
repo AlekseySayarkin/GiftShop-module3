@@ -92,11 +92,8 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
     private <T extends AbstractQuery<GiftCertificate>> void buildQuery(
             Root<GiftCertificate> root, T query, CertificateSearchCriteria searchCriteria) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        Join<GiftCertificate, Tag> tags = root.join("tags");
         List<Predicate> predicates = new ArrayList<>();
 
-        Predicate predicateForActive = builder.isTrue(root.get("isActive"));
-        predicates.add(predicateForActive);
         if (searchCriteria.getContent() != null) {
             Predicate predicateForDescription =
                     builder.like(root.get("name"), "%" + searchCriteria.getContent() + "%");
@@ -107,6 +104,7 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
         }
 
         if (searchCriteria.getTagNames() != null) {
+            Join<GiftCertificate, Tag> tags = root.join("tags");
             CriteriaBuilder.In<String> inTags = builder.in(tags.get("name"));
             for (String tagName : searchCriteria.getTagNames()) {
                 inTags.value(tagName);
@@ -115,6 +113,7 @@ public class HibernateGiftCertificateDaoImpl implements GiftCertificateDAO {
             query.groupBy(root.get("id"));
             query.having(builder.equal(builder.count(root.get("id")), searchCriteria.getTagNames().size()));
         }
+
         Predicate[] predArray = new Predicate[predicates.size()];
         predicates.toArray(predArray);
         query.where(predArray);

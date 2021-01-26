@@ -7,16 +7,17 @@ import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.web.dto.OrderDto;
 import com.epam.esm.web.dto.UserDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
 import com.epam.esm.web.hateoas.OrderLinkBuilder;
-import com.epam.esm.web.hateoas.RepresentationModel;
 import com.epam.esm.web.hateoas.UserLinkBuilder;
+import com.epam.esm.web.hateoas.pagination.PaginationConfigurer;
+import com.epam.esm.web.hateoas.pagination.impl.PaginationConfigurerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -28,14 +29,17 @@ public class UserController {
     private final OrderService orderService;
     private final ModelAssembler<UserDto> modelAssembler;
     private final ModelAssembler<OrderDto> orderModelAssembler;
+    private final PaginationConfigurer<UserDto> paginationConfigurer;
 
     @Autowired
     public UserController(UserService userService, ModelAssembler<UserDto> modelAssembler,
-                          ModelAssembler<OrderDto> orderModelAssembler, OrderService orderService) {
+                          ModelAssembler<OrderDto> orderModelAssembler, OrderService orderService,
+                          PaginationValidator paginationValidator) {
         this.userService = userService;
         this.modelAssembler = modelAssembler;
         this.orderModelAssembler = orderModelAssembler;
         this.orderService = orderService;
+        this.paginationConfigurer = new PaginationConfigurerImpl<>(modelAssembler, paginationValidator);
     }
 
     @PostConstruct
@@ -49,11 +53,7 @@ public class UserController {
             @RequestBody(required = false) UserSearchCriteria request,
             @RequestParam int page, @RequestParam int size,
             @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
-        int lastPage = userService.getLastPage(size);
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
-                size, page, (long) lastPage * size, lastPage);
-        RepresentationModel model = new RepresentationModel(pageMetadata, sortType, sortBy);
-        modelAssembler.setRepresentationModel(model);
+        paginationConfigurer.configure(page, size, userService.getLastPage(size), sortType, sortBy);
 
         return modelAssembler.toCollectionModel(
                 UserDto.of(userService.getAllUsersByPage(request, page, size, sortType, sortBy)));

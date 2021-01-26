@@ -75,7 +75,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificate> getGiftCertificatesByPage(CertificateSearchCriteria searchCriteria, int page, int size,
                                                            SortType sortType, SortBy sortBy) throws ServiceException {
-        paginationValidator.validatePagination(size, page);
+        paginationValidator.validatePagination(page, size);
 
         if (searchCriteria == null) {
             searchCriteria = CertificateSearchCriteria.getDefaultCertificateRequestBody();
