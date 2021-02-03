@@ -63,6 +63,13 @@ public interface TagService {
     int getLastPage(int size) throws ServiceException;
 
     /**
+     * Get the most widely used tag of a user with the highest cost of all orders.
+     *
+     * @return {@link Tag}.
+     */
+    Tag getMostFrequentTagFromHighestCostUser() throws ServiceException;
+
+    /**
      * Adds new {@code Tag} to persistence layer.
      *
      * @param tag {@code Tag} which to be added to persistence layer.

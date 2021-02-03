@@ -5,7 +5,6 @@ import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.Order;
-import com.epam.esm.model.Tag;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.service.exception.ServiceException;
@@ -77,17 +76,6 @@ public class OrderServiceImpl implements OrderService {
         } catch (DataAccessException e) {
             LOGGER.error(String.format("Failed to get order by user id = {%s}", orderId));
             throw new ServiceException(String.format("Failed to get order by user id = {%s}", orderId),
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
-        }
-    }
-
-    @Override
-    public Tag getMostFrequentTagFromHighestCostUser() throws ServiceException {
-        try {
-            return orderDao.getMostFrequentTagFromHighestCostUser();
-        } catch (DataAccessException e) {
-            LOGGER.error("Failed to get most frequent tag");
-            throw new ServiceException("Failed to get most frequent tag",
                     ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
         }
     }

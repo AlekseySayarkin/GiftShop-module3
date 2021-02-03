@@ -99,6 +99,17 @@ public class TagServiceImp implements TagService {
     }
 
     @Override
+    public Tag getMostFrequentTagFromHighestCostUser() throws ServiceException {
+        try {
+            return tagDao.getMostFrequentTagFromHighestCostUser();
+        } catch (DataAccessException e) {
+            LOGGER.error("Failed to get most frequent tag");
+            throw new ServiceException("Failed to get most frequent tag",
+                    ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER);
+        }
+    }
+
+    @Override
     @Transactional(rollbackFor = ServiceException.class)
     public Tag addTag(Tag tag) throws ServiceException {
         tagValidator.validateTag(tag);

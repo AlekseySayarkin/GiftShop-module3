@@ -2,7 +2,6 @@ package com.epam.esm.dao;
 
 import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.model.Order;
-import com.epam.esm.model.Tag;
 
 import java.util.List;
 
@@ -37,13 +36,6 @@ public interface OrderDao {
      * @return {@code Order}.
      */
     Order getOrderById(int orderId);
-
-    /**
-     * Get the most widely used tag of a user with the highest cost of all orders.
-     *
-     * @return {@link Tag}.
-     */
-    Tag getMostFrequentTagFromHighestCostUser();
 
     /**
      * Retrieves certain number of {@code Order} from data source.

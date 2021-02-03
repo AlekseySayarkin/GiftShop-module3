@@ -57,6 +57,11 @@ public class TagController {
         return modelAssembler.toModel(TagDto.of(tagService.getTagById(id)));
     }
 
+    @GetMapping("/mostFrequentTag")
+    public EntityModel<TagDto> geMostFrequent() throws ServiceException {
+        return modelAssembler.toModel(TagDto.of(tagService.getMostFrequentTagFromHighestCostUser()));
+    }
+
     @PostMapping
     public EntityModel<TagDto> addTag(@RequestBody Tag tag) throws ServiceException {
         return modelAssembler.toModel(TagDto.of(tagService.addTag(tag)));

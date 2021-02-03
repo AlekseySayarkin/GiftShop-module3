@@ -5,7 +5,6 @@ import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.dao.service.PersistenceService;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Order;
-import com.epam.esm.model.Tag;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
@@ -34,23 +33,6 @@ public class HibernateOrderDaoImpl implements OrderDao {
             "SELECT o FROM Order o WHERE o.user.id=:userId AND o.isActive=true ";
     private static final String GET_ALL_ORDERS = "SELECT o FROM Order o WHERE o.isActive=true ";
     private static final String GET_ORDER_COUNT = "SELECT count(o.id) FROM Order o WHERE o.isActive=true ";
-    private static final String GET_MOST_FREQUENT_TAG =
-            "SELECT tags.ID, tags.Name, count(tags.Name) AS count FROM Orders " +
-            "INNER JOIN OrderCertificate ON OrderCertificate.OrderId = Orders.id " +
-            "INNER JOIN GiftCertificates ON CertificateId = GiftCertificates.id " +
-            "INNER JOIN CertificateTag ON CertificateTag.CertificateId = GiftCertificates.id " +
-            "INNER JOIN tags on CertificateTag.tagId = tags.id " +
-            "WHERE userId IN ( " +
-            "   SELECT userId FROM ( " +
-            "       SELECT Sum(Cost) sumCost, userId " +
-            "       FROM Orders " +
-            "       GROUP BY userId " +
-            "       order by sumCost desc " +
-            "       LIMIT 1 " +
-            "   ) AS ids " +
-            ") " +
-            "GROUP BY tags.ID " +
-            "ORDER BY count DESC LIMIT 1";
 
     @Autowired
     public HibernateOrderDaoImpl(PersistenceService<Order> persistenceService) {
@@ -104,13 +86,6 @@ public class HibernateOrderDaoImpl implements OrderDao {
     @Override
     public Order getOrderById(int orderId) {
         return persistenceService.getModelById(orderId);
-    }
-
-    @Override
-    public Tag getMostFrequentTagFromHighestCostUser() {
-        Query query = entityManager.createNativeQuery(
-                GET_MOST_FREQUENT_TAG, Tag.class);
-        return (Tag) query.getSingleResult();
     }
 
     @Override

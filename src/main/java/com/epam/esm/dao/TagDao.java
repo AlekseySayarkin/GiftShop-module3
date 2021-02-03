@@ -55,6 +55,13 @@ public interface TagDao {
     int getLastPage(int size);
 
     /**
+     * Get the most widely used tag of a user with the highest cost of all orders.
+     *
+     * @return {@link Tag}.
+     */
+    Tag getMostFrequentTagFromHighestCostUser();
+
+    /**
      * Adds new {@code Tag} to data source.
      *
      * @param tag {@code Tag} which to be added to data source.

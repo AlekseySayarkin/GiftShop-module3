@@ -4,7 +4,6 @@ import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.Order;
-import com.epam.esm.model.Tag;
 import com.epam.esm.service.exception.ServiceException;
 
 import java.util.List;
@@ -43,13 +42,6 @@ public interface OrderService {
      * @return {@code Order}.
      */
     Order getOrderById(int orderId) throws ServiceException;
-
-    /**
-     * Get the most widely used tag of a user with the highest cost of all orders.
-     *
-     * @return {@link Tag}.
-     */
-    Tag getMostFrequentTagFromHighestCostUser() throws ServiceException;
 
     /**
      * Retrieves {@code Order} from persistence layer.
