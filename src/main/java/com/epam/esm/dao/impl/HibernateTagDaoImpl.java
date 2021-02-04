@@ -27,21 +27,21 @@ public class HibernateTagDaoImpl implements TagDao {
     private static final String GET_TAG_COUNT = "SELECT count(t.id) FROM Tag t WHERE t.isActive=true ";
     private static final String GET_MOST_FREQUENT_TAG =
             "SELECT tags.ID, tags.Name, tags.Active, count(tags.Name) AS count FROM Orders " +
-                    "INNER JOIN OrderCertificate ON OrderCertificate.OrderId = Orders.id " +
-                    "INNER JOIN GiftCertificates ON CertificateId = GiftCertificates.id " +
-                    "INNER JOIN CertificateTag ON CertificateTag.CertificateId = GiftCertificates.id " +
-                    "INNER JOIN tags on CertificateTag.tagId = tags.id " +
-                    "WHERE userId IN ( " +
-                    "   SELECT userId FROM ( " +
-                    "       SELECT Sum(Cost) sumCost, userId " +
-                    "       FROM Orders " +
-                    "       WHERE Orders.Active = 1 " +
-                    "       GROUP BY userId " +
-                    "       ORDER BY sumCost DESC LIMIT 1" +
-                    "   ) AS ids " +
-                    ") AND tags.Active = 1 " +
-                    "GROUP BY tags.ID "  +
-                    "ORDER BY count DESC LIMIT 1";
+            "INNER JOIN OrderCertificate ON OrderCertificate.OrderId = Orders.id " +
+            "INNER JOIN GiftCertificates ON CertificateId = GiftCertificates.id " +
+            "INNER JOIN CertificateTag ON CertificateTag.CertificateId = GiftCertificates.id " +
+            "INNER JOIN tags on CertificateTag.tagId = tags.id " +
+            "WHERE userId IN ( " +
+            "   SELECT userId FROM ( " +
+            "       SELECT Sum(Cost) sumCost, userId " +
+            "       FROM Orders " +
+            "       WHERE Orders.Active = 1 " +
+            "       GROUP BY userId " +
+            "       ORDER BY sumCost DESC LIMIT 1 " +
+            "   ) AS ids " +
+            ") AND tags.Active = 1 " +
+            "GROUP BY tags.ID "  +
+            "ORDER BY count DESC LIMIT 1 ";
 
     @Autowired
     public HibernateTagDaoImpl(PersistenceService<Tag> persistenceService) {
