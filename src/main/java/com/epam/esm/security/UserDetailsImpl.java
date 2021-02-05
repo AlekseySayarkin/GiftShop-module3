@@ -9,14 +9,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SecurityUser implements UserDetails {
+public class UserDetailsImpl implements UserDetails {
 
+    private final int id;
     private final String username;
     private final String password;
     private final List<SimpleGrantedAuthority> authorities;
     private final boolean isActive;
 
-    public SecurityUser(String username, String password, List<SimpleGrantedAuthority> authorities, boolean isActive) {
+    public UserDetailsImpl(int id, String username, String password, List<SimpleGrantedAuthority> authorities, boolean isActive) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.authorities = authorities;
@@ -24,12 +26,17 @@ public class SecurityUser implements UserDetails {
     }
 
     public static UserDetails of(User user) {
-        return new SecurityUser(
+        return new UserDetailsImpl(
+                user.getId(),
                 user.getLogin(),
                 user.getPassword(),
                 new ArrayList<>(user.getRole().getRoleType().getAuthorities()),
                 true
         );
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
