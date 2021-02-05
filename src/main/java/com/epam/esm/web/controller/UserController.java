@@ -50,6 +50,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/users")
+    @PreAuthorize("hasAuthority('users:read')")
     public CollectionModel<EntityModel<UserDto>> getUsers(
             @RequestBody(required = false) UserSearchCriteria request,
             @RequestParam int page, @RequestParam int size,
@@ -61,11 +62,13 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
+    @PreAuthorize("hasAuthority('users:read')")
     public EntityModel<UserDto> getUser(@PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(UserDto.of(userService.getUserById(id)));
     }
 
     @GetMapping("/users/{id}/orders")
+    @PreAuthorize("hasAuthority('tags:write') and @userSecurity.hasUserId(authentication, #id)")
     public CollectionModel<EntityModel<OrderDto>> getUserOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size, @PathVariable int id,

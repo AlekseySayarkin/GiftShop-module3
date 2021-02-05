@@ -104,7 +104,6 @@ public class UserServiceImpl implements UserService {
         try {
             return userDao.addUser(user);
         } catch (DataAccessException | NoResultException | IllegalArgumentException e) {
-            e.printStackTrace();
             LOGGER.error("Following exception was thrown in addUser(): " + e.getMessage());
             throw new ServiceException("Failed to add user", ErrorCodeEnum.FAILED_TO_ADD_USER);
         }

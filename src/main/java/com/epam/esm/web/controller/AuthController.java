@@ -65,9 +65,11 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
+    public HttpStatus logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         securityContextLogoutHandler.logout(request, response, null);
+
+        return HttpStatus.OK;
     }
 
     private Map<String, Object> getResponse(AuthRequestDto requestDto, User user) {

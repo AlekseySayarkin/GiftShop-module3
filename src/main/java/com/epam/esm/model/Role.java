@@ -36,7 +36,6 @@ public class Role {
 
     public enum RoleType {
         USER(Set.of(
-                Permission.USERS_READ,
                 Permission.TAGS_READ,
                 Permission.CERTIFICATES_READ,
                 Permission.ORDERS_READ,

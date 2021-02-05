@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
-            return SecurityUser.of(userService.getUserByLogin(username));
+            return UserDetailsImpl.of(userService.getUserByLogin(username));
         } catch (ServiceException e) {
             throw new UsernameNotFoundException(e.getMessage());
         }
