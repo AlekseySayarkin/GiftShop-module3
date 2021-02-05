@@ -29,7 +29,7 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
     @Override
     public T getModelByName(String query, String name) {
         TypedQuery<T> typedQuery = entityManager.createQuery(query, type);
-        typedQuery.setParameter("name", name);
+        typedQuery.setParameter("login", name);
         return typedQuery.getSingleResult();
     }
 

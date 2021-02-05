@@ -26,7 +26,7 @@ public class Order implements BaseModel {
     private ZonedDateTime createDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "UserId")
     private User user;
 
     @ManyToMany(fetch = FetchType.EAGER)

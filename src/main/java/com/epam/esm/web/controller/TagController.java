@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -58,11 +59,13 @@ public class TagController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('tags:write')")
     public EntityModel<TagDto> addTag(@RequestBody Tag tag) throws ServiceException {
         return modelAssembler.toModel(TagDto.of(tagService.addTag(tag)));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('tags:write')")
     public HttpStatus deleteTag(@PathVariable int id) throws ServiceException {
         tagService.deleteTag(id);
         return HttpStatus.OK;

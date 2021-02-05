@@ -54,4 +54,12 @@ public interface UserDao {
      * @return number of a last page.
      */
     int getLastPage(int size);
+
+    /**
+     * Adds new {@code User} to data source.
+     *
+     * @param user {@code User} which to be added to data source.
+     * @return added {@code User} from data source.
+     */
+    User addUser(User user);
 }

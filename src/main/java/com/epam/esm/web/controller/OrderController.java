@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -58,11 +59,13 @@ public class OrderController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('orders:write')")
     public EntityModel<OrderDto> addOrder(@RequestBody Order order) throws ServiceException {
         return modelAssembler.toModel(OrderDto.of(orderService.addOrder(order)));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('orders:write')")
     public HttpStatus deleteOrder(@PathVariable int id) throws ServiceException {
         orderService.deleteOrder(id);
         return HttpStatus.OK;

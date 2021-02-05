@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -58,6 +59,7 @@ public class CertificateController {
     }
 
     @PostMapping("/certificates")
+    @PreAuthorize("hasAuthority('certificates:write')")
     public EntityModel<GiftCertificateDto> addGiftCertificate(@RequestBody GiftCertificate giftCertificate)
             throws ServiceException {
         return modelAssembler.toModel(
@@ -65,12 +67,14 @@ public class CertificateController {
     }
 
     @DeleteMapping("/certificates/{id}")
+    @PreAuthorize("hasAuthority('certificates:write')")
     public HttpStatus deleteGiftCertificate(@PathVariable int id) throws ServiceException {
         giftCertificateService.deleteGiftCertificate(id);
         return HttpStatus.OK;
     }
 
     @PutMapping("/certificates/{id}")
+    @PreAuthorize("hasAuthority('certificates:write')")
     public EntityModel<GiftCertificateDto> updateGiftCertificate(
             @RequestBody GiftCertificate giftCertificate, @PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(

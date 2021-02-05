@@ -61,4 +61,13 @@ public interface UserService {
      * @return number of pages.
      */
     int getLastPage(int size) throws ServiceException;
+
+    /**
+     * Adds new {@code User} to data source.
+     *
+     * @param user {@code User} which to be added to data source.
+     * @throws ServiceException when failed to add {@code User}.
+     * @return added {@code User} from data source.
+     */
+    User addUser(User user)throws ServiceException;
 }

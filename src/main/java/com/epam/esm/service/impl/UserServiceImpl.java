@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
@@ -93,6 +94,19 @@ public class UserServiceImpl implements UserService {
         } catch (DataAccessException | PersistenceException e) {
             LOGGER.error("Failed to get last page");
             throw new ServiceException("Failed to get last page", ErrorCodeEnum.FAILED_TO_RETRIEVE_PAGE);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = ServiceException.class)
+    public User addUser(User user) throws ServiceException {
+        userValidator.validateUser(user);
+        try {
+            return userDao.addUser(user);
+        } catch (DataAccessException | NoResultException | IllegalArgumentException e) {
+            e.printStackTrace();
+            LOGGER.error("Following exception was thrown in addUser(): " + e.getMessage());
+            throw new ServiceException("Failed to add user", ErrorCodeEnum.FAILED_TO_ADD_USER);
         }
     }
 }

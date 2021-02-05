@@ -3,6 +3,7 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dao.request.UserSearchCriteria;
 import com.epam.esm.dao.service.PersistenceService;
+import com.epam.esm.model.Role;
 import com.epam.esm.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -70,5 +71,11 @@ public class HibernateUserDaoImpl implements UserDao {
 
     private void removeDeletedOrdersFromUser(User user) {
         user.getOrders().removeIf(o -> !o.isActive());
+    }
+
+    @Override
+    public User addUser(User user) {
+        user.setRole(Role.getUserRole());
+        return persistenceService.add(user);
     }
 }
