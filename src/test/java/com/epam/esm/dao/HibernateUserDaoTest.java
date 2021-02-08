@@ -50,7 +50,7 @@ public class HibernateUserDaoTest {
     void whenGivenUser_thenCorrectlyReturnItByLogin() {
         User given = initUser();
 
-        Mockito.when(service.getModelByName(GET_USER_BY_NAME, given.getLogin())).thenReturn(given);
+        Mockito.when(service.getModelByField(GET_USER_BY_NAME, "login", given.getLogin())).thenReturn(given);
 
         User actual = userDao.getUserByLogin(given.getLogin());
         Assertions.assertEquals(given, actual);

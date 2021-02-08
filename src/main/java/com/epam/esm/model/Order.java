@@ -51,6 +51,7 @@ public class Order implements BaseModel {
         this.giftCertificateList = giftCertificateList;
     }
 
+    @Override
     public int getId() {
         return id;
     }

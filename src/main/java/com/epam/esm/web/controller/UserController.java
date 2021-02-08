@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}/orders")
-    @PreAuthorize("hasAuthority('tags:write') and @userSecurity.hasUserId(authentication, #id)")
+    @PreAuthorize("hasAuthority('orders:read') or @userSecurity.hasUserId(authentication, #id)")
     public CollectionModel<EntityModel<OrderDto>> getUserOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size, @PathVariable int id,

@@ -33,7 +33,7 @@ public class HibernateUserDaoImpl implements UserDao {
 
     @Override
     public User getUserByLogin(String login) {
-        User user = persistenceService.getModelByName(GET_USER_BY_NAME, login);
+        User user = persistenceService.getModelByField(GET_USER_BY_NAME, "login", login);
         if (user == null) {
             throw new NoResultException();
         }

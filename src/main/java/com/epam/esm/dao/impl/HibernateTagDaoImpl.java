@@ -35,7 +35,7 @@ public class HibernateTagDaoImpl implements TagDao {
 
     @Override
     public Tag getTagByName(String name) throws NoResultException {
-        return persistenceService.getModelByName(GET_TAG_BY_NAME, name);
+        return persistenceService.getModelByField(GET_TAG_BY_NAME, "name", name);
     }
 
     @Override

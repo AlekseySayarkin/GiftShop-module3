@@ -27,11 +27,12 @@ public interface PersistenceService<T extends BaseModel> {
      * data source by name
      * which equals to {@code String name} using HQL query.
      *
-     * @param name BaseModel name.
      * @param query HQL query.
+     * @param fieldParam field param.
+     * @param field BaseModel field.
      * @return {@code BaseModel}.
      */
-    T getModelByName(String query, String name);
+    T getModelByField(String query, String fieldParam, String field);
 
     /**
      * Retrieves data of {@code BaseModel} from
@@ -42,15 +43,6 @@ public interface PersistenceService<T extends BaseModel> {
      * @return {@code BaseModel}.
      */
     T getModelById(int modelId);
-
-    /**
-     * Retrieves all {@code BaseModel} from data source
-     * using HQL query.
-     *
-     * @param query HQL query.
-     * @return List<BaseModel> - all existing BaseModel in data source.
-     */
-    List<T> getAllModels(String query);
 
     /**
      * Retrieves all {@code GiftCertificate} from data source.

@@ -34,6 +34,7 @@ public class Tag implements BaseModel {
         this.name = name;
     }
 
+    @Override
     public int getId() {
         return id;
     }

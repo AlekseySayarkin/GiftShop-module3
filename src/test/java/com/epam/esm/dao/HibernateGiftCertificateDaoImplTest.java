@@ -65,7 +65,9 @@ class HibernateGiftCertificateDaoImplTest {
     void whenGivenGiftCertificate_thenCorrectlyReturnItByName() {
         GiftCertificate given = initCertificate();
 
-        Mockito.when(service.getModelByName(GET_CERTIFICATE_BY_NAME, given.getName())).thenReturn(given);
+        Mockito.when(service.getModelByField(
+                GET_CERTIFICATE_BY_NAME, "name", given.getName())
+        ).thenReturn(given);
 
         GiftCertificate actual = giftCertificateDAO.getGiftCertificateByName(given.getName());
         Assertions.assertEquals(given, actual);

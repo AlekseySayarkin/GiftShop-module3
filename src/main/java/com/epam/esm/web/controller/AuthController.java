@@ -5,19 +5,21 @@ import com.epam.esm.security.JwtTokenProvider;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.dto.AuthRequestDto;
+import com.epam.esm.web.dto.JwtTokenResponseObject;
 import com.epam.esm.web.dto.UserDto;
+import com.epam.esm.web.hateoas.ModelAssembler;
+import com.epam.esm.web.hateoas.UserLinkBuilder;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,41 +29,41 @@ public class AuthController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final ModelAssembler<UserDto> modelAssembler;
 
     public AuthController(AuthenticationManager authenticationManager, UserService userService,
-                          JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
+                          JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder,
+                          ModelAssembler<UserDto> modelAssembler) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
+        this.modelAssembler = modelAssembler;
+    }
+
+    @PostConstruct
+    public void init() {
+        modelAssembler.setModelLinkBuilder(new UserLinkBuilder());
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody AuthRequestDto requestDto) {
-        try {
-            User user = new User();
-            user.setLogin(requestDto.getLogin());
-            user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-            user = userService.addUser(user);
+    public EntityModel<JwtTokenResponseObject> signup(@RequestBody AuthRequestDto requestDto) throws ServiceException {
+        User user = new User();
+        user.setLogin(requestDto.getLogin());
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user = userService.addUser(user);
 
-            return ResponseEntity.ok(getResponse(requestDto, user));
-        } catch (ServiceException e) {
-            return new ResponseEntity<>("Invalid email or password", HttpStatus.FORBIDDEN);
-        }
+        return EntityModel.of(getResponse(requestDto, user));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequestDto requestDto) {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    requestDto.getLogin(), requestDto.getPassword())
-            );
-            User user = userService.getUserByLogin(requestDto.getLogin());
+    public EntityModel<JwtTokenResponseObject> login(@RequestBody AuthRequestDto requestDto) throws ServiceException {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                requestDto.getLogin(), requestDto.getPassword())
+        );
+        User user = userService.getUserByLogin(requestDto.getLogin());
 
-            return ResponseEntity.ok(getResponse(requestDto, user));
-        } catch (ServiceException e) {
-            return new ResponseEntity<>("Invalid email or password", HttpStatus.FORBIDDEN);
-        }
+        return EntityModel.of(getResponse(requestDto, user));
     }
 
     @PostMapping("/logout")
@@ -72,14 +74,11 @@ public class AuthController {
         return HttpStatus.OK;
     }
 
-    private Map<String, Object> getResponse(AuthRequestDto requestDto, User user) {
+    private JwtTokenResponseObject getResponse(AuthRequestDto requestDto, User user) {
         String token = jwtTokenProvider.createJwtToken(
                 requestDto.getLogin(), user.getRole().getRoleType().toString()
         );
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", token);
-        response.put("user", UserDto.of(user));
 
-        return response;
+        return new JwtTokenResponseObject(token, modelAssembler.toModel(UserDto.of(user)));
     }
 }

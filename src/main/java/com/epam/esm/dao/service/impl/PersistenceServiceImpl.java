@@ -27,21 +27,15 @@ public class PersistenceServiceImpl<T extends BaseModel> implements PersistenceS
     }
 
     @Override
-    public T getModelByName(String query, String name) {
+    public T getModelByField(String query, String fieldParam, String field) {
         TypedQuery<T> typedQuery = entityManager.createQuery(query, type);
-        typedQuery.setParameter("login", name);
+        typedQuery.setParameter(fieldParam, field);
         return typedQuery.getSingleResult();
     }
 
     @Override
     public T getModelById(int modelId) {
         return entityManager.find(type, modelId);
-    }
-
-    @Override
-    public List<T> getAllModels(String query) {
-        TypedQuery<T> typedQuery = entityManager.createQuery(query, type);
-        return typedQuery.getResultList();
     }
 
     @Override

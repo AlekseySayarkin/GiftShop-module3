@@ -47,6 +47,7 @@ public class User implements BaseModel {
         this.role = role;
     }
 
+    @Override
     public int getId() {
         return id;
     }

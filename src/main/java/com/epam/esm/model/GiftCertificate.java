@@ -48,6 +48,7 @@ public class GiftCertificate implements BaseModel {
     )
     private Set<Tag> tags = new HashSet<>();
 
+    @Override
     public int getId() {
         return id;
     }

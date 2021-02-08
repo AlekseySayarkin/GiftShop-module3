@@ -39,7 +39,7 @@ class HibernateTagDaoImpTest {
     void whenGivenTag_thenCorrectlyReturnItByName() {
         Tag given = new Tag(1, "Tag to return by name");
 
-        Mockito.when(service.getModelByName(GET_TAG_BY_NAME, given.getName())).thenReturn(given);
+        Mockito.when(service.getModelByField(GET_TAG_BY_NAME, "name", given.getName())).thenReturn(given);
 
         Tag actual = tagDao.getTagByName(given.getName());
         Assertions.assertEquals(given, actual);
