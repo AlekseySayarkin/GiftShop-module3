@@ -66,6 +66,9 @@ public class HibernateOrderDaoImpl implements OrderDao {
     public List<Order> getOrdersByUserId(
             int userId, OrderSearchCriteria searchCriteria, int page, int size) throws NoResultException {
         List<Order> orders = getNotAuditedOrdersByUserId(userId, searchCriteria, page, size);
+        if (orders.isEmpty()) {
+            return orders;
+        }
         List<GiftCertificate> giftCertificateList = getFirstVersionOfOrders(orders);
 
         orders.forEach(o -> {

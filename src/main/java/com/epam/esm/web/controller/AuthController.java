@@ -13,7 +13,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,22 +23,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final PasswordEncoder passwordEncoder;
+
     private final ModelAssembler<UserDto> modelAssembler;
 
     public AuthController(AuthenticationManager authenticationManager, UserService userService,
-                          JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder,
-                          ModelAssembler<UserDto> modelAssembler) {
+                          JwtTokenProvider jwtTokenProvider, ModelAssembler<UserDto> modelAssembler) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordEncoder = passwordEncoder;
         this.modelAssembler = modelAssembler;
     }
 
@@ -46,17 +45,17 @@ public class AuthController {
         modelAssembler.setModelLinkBuilder(new UserLinkBuilder());
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public EntityModel<JwtTokenResponseObject> signup(@RequestBody AuthRequestDto requestDto) throws ServiceException {
         User user = new User();
         user.setLogin(requestDto.getLogin());
-        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user.setPassword(requestDto.getPassword());
         user = userService.addUser(user);
 
         return EntityModel.of(getResponse(requestDto, user));
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public EntityModel<JwtTokenResponseObject> login(@RequestBody AuthRequestDto requestDto) throws ServiceException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 requestDto.getLogin(), requestDto.getPassword())
@@ -66,12 +65,24 @@ public class AuthController {
         return EntityModel.of(getResponse(requestDto, user));
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/auth/logout")
     public HttpStatus logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         securityContextLogoutHandler.logout(request, response, null);
 
         return HttpStatus.OK;
+    }
+
+    @GetMapping("/user/info")
+    public EntityModel<JwtTokenResponseObject> oAuth2Login(@AuthenticationPrincipal OAuth2User user)
+            throws ServiceException {
+        User returnedUser = userService.getOrAddByLogin(user);
+
+        String token = jwtTokenProvider.createJwtToken(
+                returnedUser.getLogin(), returnedUser.getRole().getRoleType().toString()
+        );
+
+        return EntityModel.of(new JwtTokenResponseObject(token, modelAssembler.toModel(UserDto.of(returnedUser))));
     }
 
     private JwtTokenResponseObject getResponse(AuthRequestDto requestDto, User user) {

@@ -38,7 +38,6 @@ public class Role implements BaseModel {
         USER(Set.of(
                 Permission.TAGS_READ,
                 Permission.CERTIFICATES_READ,
-                Permission.ORDERS_READ,
                 Permission.ORDERS_WRITE
             )
         ),

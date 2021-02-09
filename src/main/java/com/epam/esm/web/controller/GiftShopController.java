@@ -19,7 +19,7 @@ public class GiftShopController {
         this.giftShopLinkBuilder = giftShopLinkBuilder;
     }
 
-    @GetMapping()
+    @GetMapping
     public List<Link> home() throws ServiceException {
         return giftShopLinkBuilder.getRestApi();
     }

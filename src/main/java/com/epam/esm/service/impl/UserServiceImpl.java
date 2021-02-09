@@ -14,6 +14,9 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +32,15 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final UserValidator userValidator;
     private final PaginationValidator paginationValidator;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, UserValidator userValidator, PaginationValidator paginationValidator) {
+    public UserServiceImpl(UserDao userDao, UserValidator userValidator,
+                           PaginationValidator paginationValidator, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.userValidator = userValidator;
         this.paginationValidator = paginationValidator;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -102,10 +108,31 @@ public class UserServiceImpl implements UserService {
     public User addUser(User user) throws ServiceException {
         userValidator.validateUser(user);
         try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userDao.addUser(user);
         } catch (DataAccessException | NoResultException | IllegalArgumentException e) {
             LOGGER.error("Following exception was thrown in addUser(): " + e.getMessage());
             throw new ServiceException("Failed to add user", ErrorCodeEnum.FAILED_TO_ADD_USER);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = NoResultException.class)
+    public User getOrAddByLogin(OAuth2User user) throws ServiceException {
+        if (user == null) {
+            throw new ServiceException("OAuth2User is null", ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
+        }
+
+        User userToAdd = new User();
+        userToAdd.setLogin(user.getAttribute("login"));
+        userToAdd.setPassword(passwordEncoder.encode(userToAdd.getLogin()));
+
+        try {
+            userToAdd = getUserByLogin(userToAdd.getLogin());
+        } catch (EmptyResultDataAccessException e) {
+            userToAdd = addUser(userToAdd);
+        }
+
+        return userToAdd;
     }
 }
