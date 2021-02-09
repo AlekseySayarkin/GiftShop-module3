@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class UserServiceImplTest {
         userDao = Mockito.mock(HibernateUserDaoImpl.class);
 
         userService = new UserServiceImpl(userDao,
-                new UserValidatorImpl(), new PaginationValidatorImpl());
+                new UserValidatorImpl(), new PaginationValidatorImpl(), new BCryptPasswordEncoder(12));
     }
 
     @Test

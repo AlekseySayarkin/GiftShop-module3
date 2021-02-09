@@ -5,6 +5,7 @@ import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.User;
 import com.epam.esm.service.exception.ServiceException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.List;
 
@@ -70,4 +71,13 @@ public interface UserService {
      * @return added {@code User} from data source.
      */
     User addUser(User user)throws ServiceException;
+
+    /**
+     * Retrieves user or if not found adds new {@code User} to data source.
+     *
+     * @param user {@code OAuth2User} which to be retrieved or added to data source.
+     * @throws ServiceException when failed to add {@code User}.
+     * @return retrieved or added {@code User} from data source.
+     */
+    User getOrAddByLogin(OAuth2User user) throws ServiceException;
 }
