@@ -73,16 +73,23 @@ public class AuthController {
         return HttpStatus.OK;
     }
 
+    @GetMapping("/user/info")
+    public EntityModel<JwtTokenResponseObject> oAuth2Login(@AuthenticationPrincipal OAuth2User user)
+            throws ServiceException {
+        User returnedUser = userService.getOrAddByLogin(user);
+
+        String token = jwtTokenProvider.createJwtToken(
+                returnedUser.getLogin(), returnedUser.getRole().getRoleType().toString()
+        );
+
+        return EntityModel.of(new JwtTokenResponseObject(token, modelAssembler.toModel(UserDto.of(returnedUser))));
+    }
+
     private JwtTokenResponseObject getResponse(AuthRequestDto requestDto, User user) {
         String token = jwtTokenProvider.createJwtToken(
                 requestDto.getLogin(), user.getRole().getRoleType().toString()
         );
 
         return new JwtTokenResponseObject(token, modelAssembler.toModel(UserDto.of(user)));
-    }
-
-    @GetMapping("/user/info")
-    public User oAuth2Login(@AuthenticationPrincipal OAuth2User user) throws ServiceException {
-        return userService.getOrAddByLogin(user);
     }
 }
