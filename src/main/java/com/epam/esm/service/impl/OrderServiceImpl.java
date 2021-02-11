@@ -6,7 +6,9 @@ import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
+import com.epam.esm.model.User;
 import com.epam.esm.service.OrderService;
+import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.util.OrderValidator;
@@ -29,14 +31,17 @@ public class OrderServiceImpl implements OrderService {
     private static final Logger LOGGER = LogManager.getLogger(OrderServiceImpl.class);
 
     private final OrderDao orderDao;
+    private final UserService userService;
     private final OrderValidator orderValidator;
     private final PaginationValidator paginationValidator;
 
     @Autowired
-    public OrderServiceImpl(OrderDao orderDao, OrderValidator orderValidator, PaginationValidator paginationValidator) {
+    public OrderServiceImpl(OrderDao orderDao, OrderValidator orderValidator,
+                            PaginationValidator paginationValidator, UserService userService) {
         this.orderDao = orderDao;
         this.orderValidator = orderValidator;
         this.paginationValidator = paginationValidator;
+        this.userService = userService;
     }
 
     @Override
@@ -125,14 +130,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = ServiceException.class)
-    public Order addOrder(Order order) throws ServiceException {
+    public Order addUserOrder(Order order, int userId) throws ServiceException {
         orderValidator.validateOrder(order);
+        setUserToTheOrderByUserId(order, userId);
         try {
             return orderDao.addOrder(order);
         } catch (DataAccessException | PersistenceException e) {
             LOGGER.error("Failed to add order");
             throw new ServiceException("Failed to add order", ErrorCodeEnum.FAILED_TO_ADD_ORDER);
         }
+    }
+
+    private void setUserToTheOrderByUserId(Order order, int userId) throws ServiceException {
+        User user = userService.getUserById(userId);
+        order.setUser(user);
     }
 
     @Override

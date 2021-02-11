@@ -78,10 +78,11 @@ public interface OrderService {
      * Adds new {@code Order} to persistence layer.
      *
      * @param order {@code Order} which to add to persistence layer.
+     * @param userId id of a user, to whom order belongs.
      * @throws ServiceException when failed to add {@code Order}.
      * @return added {@code Order} from persistence layer.
      */
-    Order addOrder(Order order) throws ServiceException;
+    Order addUserOrder(Order order, int userId) throws ServiceException;
 
     /**
      * Deletes {@code Order} from persistence layer.

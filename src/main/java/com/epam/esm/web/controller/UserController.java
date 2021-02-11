@@ -4,6 +4,7 @@ import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.dao.request.UserSearchCriteria;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
+import com.epam.esm.model.Order;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.ServiceException;
@@ -18,6 +19,7 @@ import com.epam.esm.web.hateoas.pagination.impl.PaginationConfigurerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,5 +77,19 @@ public class UserController {
             @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
         return orderModelAssembler.toCollectionModel(
                 OrderDto.of(orderService.getOrdersByUserId(id, requestBody, page, size, sortType, sortBy)));
+    }
+
+    @PostMapping("/users/{id}/orders")
+    @PreAuthorize("hasAuthority('orders:write') and @userSecurity.hasUserId(authentication, #id)")
+    public EntityModel<OrderDto> addUserOrder(@RequestBody Order order, @PathVariable int id)
+            throws ServiceException {
+        return orderModelAssembler.toModel(OrderDto.of(orderService.addUserOrder(order, id)));
+    }
+
+    @DeleteMapping("users/{id}/orders/{orderId}")
+    @PreAuthorize("hasAuthority('orders:write') and @userSecurity.hasUserId(authentication, #id)")
+    public HttpStatus deleteOrder(@PathVariable int id, @PathVariable int orderId) throws ServiceException {
+        orderService.deleteOrder(orderId);
+        return HttpStatus.OK;
     }
 }

@@ -44,11 +44,7 @@ public class OrderValidatorImpl implements OrderValidator {
     }
 
     private void validateUser(User user) throws ServiceException {
-        if (user == null) {
-            throw new ServiceException("Failed to validate: user is empty",
-                    ErrorCodeEnum.ORDER_VALIDATION_ERROR);
-        }
-        if (user.getId() <= 0) {
+        if (user != null && user.getId() <= 0) {
             throw new ServiceException("Failed to validate: user id is negative",
                     ErrorCodeEnum.ORDER_VALIDATION_ERROR);
         }

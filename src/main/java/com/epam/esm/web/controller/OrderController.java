@@ -3,7 +3,6 @@ package com.epam.esm.web.controller;
 import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.dao.sort.SortBy;
 import com.epam.esm.dao.sort.SortType;
-import com.epam.esm.model.Order;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.util.PaginationValidator;
@@ -15,7 +14,6 @@ import com.epam.esm.web.hateoas.pagination.impl.PaginationConfigurerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -60,18 +58,5 @@ public class OrderController {
     @PostAuthorize("@userSecurity.hasUserId(authentication, returnObject)")
     public EntityModel<OrderDto> getOrder(@PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(OrderDto.of(orderService.getOrderById(id)));
-    }
-
-    @PostMapping
-    @PreAuthorize("hasAuthority('orders:write')")
-    public EntityModel<OrderDto> addOrder(@RequestBody Order order) throws ServiceException {
-        return modelAssembler.toModel(OrderDto.of(orderService.addOrder(order)));
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('orders:write')")
-    public HttpStatus deleteOrder(@PathVariable int id) throws ServiceException {
-        orderService.deleteOrder(id);
-        return HttpStatus.OK;
     }
 }
