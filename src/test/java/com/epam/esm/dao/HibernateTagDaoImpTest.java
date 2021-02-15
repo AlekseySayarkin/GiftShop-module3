@@ -1,6 +1,6 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.dao.impl.HibernateTagDaoImpl;
+import com.epam.esm.dao.impl.CustomizedTagRepositoryImpl;
 import com.epam.esm.dao.service.PersistenceService;
 import com.epam.esm.dao.service.impl.PersistenceServiceImpl;
 import com.epam.esm.model.Tag;
@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 
 class HibernateTagDaoImpTest {
 
-    private TagDao tagDao;
+    private TagRepository tagDao;
     private PersistenceService<Tag> service;
 
     private static final String GET_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name=:name";
@@ -22,7 +22,7 @@ class HibernateTagDaoImpTest {
     public void init() {
         size = 10;
         service = Mockito.mock(PersistenceServiceImpl.class);
-        tagDao = new HibernateTagDaoImpl(service);
+        tagDao = new CustomizedTagRepositoryImpl(service);
     }
 
     @Test

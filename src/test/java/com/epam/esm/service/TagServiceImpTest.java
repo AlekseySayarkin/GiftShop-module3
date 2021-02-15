@@ -1,7 +1,7 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.impl.HibernateTagDaoImpl;
+import com.epam.esm.dao.TagRepository;
+import com.epam.esm.dao.impl.CustomizedTagRepositoryImpl;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.impl.TagServiceImp;
@@ -14,12 +14,12 @@ import org.mockito.Mockito;
 
 class TagServiceImpTest {
 
-    private TagDao tagDao;
+    private TagRepository tagDao;
     private TagService tagService;
 
     @BeforeEach
     public void init() {
-        tagDao = Mockito.mock(HibernateTagDaoImpl.class);
+        tagDao = Mockito.mock(CustomizedTagRepositoryImpl.class);
         tagService = new TagServiceImp(tagDao, new TagValidatorImpl(), new PaginationValidatorImpl());
     }
 
