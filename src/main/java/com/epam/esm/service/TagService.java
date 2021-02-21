@@ -1,10 +1,10 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
+import com.epam.esm.service.criteria.sort.SortBy;
+import com.epam.esm.service.criteria.sort.SortType;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.dao.request.TagSearchCriteria;
+import com.epam.esm.service.criteria.search.TagSearchCriteria;
 
 import java.util.List;
 
@@ -16,17 +16,6 @@ import java.util.List;
  * @author Aleksey Sayarkin
  */
 public interface TagService {
-
-    /**
-     * Retrieves data of {@code Tag} from
-     * persistence layer by it name
-     * which equals to {@code String name}.
-     *
-     * @param name tag name.
-     * @throws ServiceException when failed to get {@code Tag}.
-     * @return {@code Tag}.
-     */
-    Tag getTagByName(String name) throws ServiceException;
 
     /**
      * Retrieves data of {@code Tag} from

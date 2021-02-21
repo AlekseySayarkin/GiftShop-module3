@@ -1,9 +1,13 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.UserDao;
-import com.epam.esm.dao.request.UserSearchCriteria;
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
+import com.epam.esm.repository.UserRepository;
+import com.epam.esm.model.Role;
+import com.epam.esm.service.AuditedOrderService;
+import com.epam.esm.service.criteria.search.OrderSearchCriteria;
+import com.epam.esm.service.criteria.search.UserSearchCriteria;
+import com.epam.esm.service.criteria.sort.SortBy;
+import com.epam.esm.service.criteria.sort.SortType;
+import com.epam.esm.service.util.PaginationUtil;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.User;
 import com.epam.esm.service.UserService;
@@ -15,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -22,36 +27,44 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
+    private final static Logger log = LogManager.getLogger(UserServiceImpl.class);
 
-    private final UserDao userDao;
+    private static final int DEFAULT_PAGE = 1;
+    private static final int DEFAULT_SIZE = 10;
+
+    private final UserRepository userRepository;
     private final UserValidator userValidator;
     private final PaginationValidator paginationValidator;
     private final PasswordEncoder passwordEncoder;
+    private final AuditedOrderService auditedOrderService;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, UserValidator userValidator,
-                           PaginationValidator paginationValidator, PasswordEncoder passwordEncoder) {
-        this.userDao = userDao;
+    public UserServiceImpl(UserRepository userRepository, UserValidator userValidator,
+                           PaginationValidator paginationValidator, PasswordEncoder passwordEncoder,
+                           AuditedOrderService auditedOrderService) {
+        this.userRepository = userRepository;
         this.userValidator = userValidator;
         this.paginationValidator = paginationValidator;
         this.passwordEncoder = passwordEncoder;
+        this.auditedOrderService = auditedOrderService;
     }
 
     @Override
     public User getUserByLogin(String login) throws ServiceException {
         userValidator.validateLogin(login);
         try {
-            return userDao.getUserByLogin(login);
+            return userRepository.getUserByLogin(login);
         } catch (NoResultException e) {
-            LOGGER.error("Following exception was thrown in getUser(String login): " + e.getMessage());
-            throw new ServiceException("Failed to get user by it login: " + login,
-                    ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
+            log.error("Following exception was thrown in getUser(String login): " + e.getMessage());
+            throw new ServiceException(
+                    "Failed to get user by it login: " + login, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER
+            );
         }
     }
 
@@ -59,15 +72,17 @@ public class UserServiceImpl implements UserService {
     public User getUserById(int userId) throws ServiceException {
         userValidator.validateId(userId);
         try {
-            User user = userDao.getUserById(userId);
-            if (user == null) {
-                LOGGER.error("Failed to get user by it id: " + userId);
-                throw new ServiceException("Failed to get user by it id: " + userId, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
-            }
+            var user = userRepository.findById(userId).orElseThrow(() -> {
+                log.error("Failed to get user by it id: " + userId);
+                return new ServiceException("Failed to get user by it id: " + userId,
+                        ErrorCodeEnum.FAILED_TO_RETRIEVE_USER
+                );
+            });
+            setAuditedOrdersToUser(user);
 
             return user;
         } catch (DataAccessException e) {
-            LOGGER.error("Following exception was thrown in getUser(int id): " + e.getMessage());
+            log.error("Following exception was thrown in getUser(int id): " + e.getMessage());
             throw new ServiceException("Failed to get user by it id: " + userId, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
         }
     }
@@ -85,10 +100,31 @@ public class UserServiceImpl implements UserService {
         userValidator.validateUserSearchCriteria(searchCriteria);
 
         try {
-            return userDao.getAllUsersByPage(searchCriteria, page, size);
+            var users = userRepository.findAll(
+                    PageRequest.of(--page, size, searchCriteria.getSort())
+            ).getContent();
+            users.forEach(this::setAuditedOrdersToUser);
+
+            return users;
         } catch (DataAccessException e) {
-            LOGGER.error("Following exception was thrown in getAllUsersByPage(): " + e.getMessage());
+            log.error("Following exception was thrown in getAllUsersByPage(): " + e.getMessage());
             throw new ServiceException("Failed to get users", ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
+        }
+    }
+
+    private void setAuditedOrdersToUser(User user) {
+        var orderSearchCriteria = OrderSearchCriteria.getDefaultOrderRequestBody();
+        try {
+            user.setOrders(
+                    new HashSet<>(
+                            auditedOrderService.getAuditedOrdersByUserId(
+                                    user.getId(), orderSearchCriteria, DEFAULT_PAGE, DEFAULT_SIZE,
+                                    orderSearchCriteria.getSortType(), orderSearchCriteria.getSortBy()
+                            )
+                    )
+            );
+        } catch (ServiceException e) {
+            log.error("Failed to get audited order by user id: " + user.getId());
         }
     }
 
@@ -96,9 +132,9 @@ public class UserServiceImpl implements UserService {
     public int getLastPage(int size) throws ServiceException {
         paginationValidator.validateSize(size);
         try {
-            return userDao.getLastPage(size);
+            return PaginationUtil.getLastPage((int) userRepository.count(), size);
         } catch (DataAccessException | PersistenceException e) {
-            LOGGER.error("Failed to get last page");
+            log.error("Failed to get last page");
             throw new ServiceException("Failed to get last page", ErrorCodeEnum.FAILED_TO_RETRIEVE_PAGE);
         }
     }
@@ -108,10 +144,11 @@ public class UserServiceImpl implements UserService {
     public User addUser(User user) throws ServiceException {
         userValidator.validateUser(user);
         try {
+            user.setRole(Role.getUserRole());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return userDao.addUser(user);
+            return userRepository.save(user);
         } catch (DataAccessException | NoResultException | IllegalArgumentException e) {
-            LOGGER.error("Following exception was thrown in addUser(): " + e.getMessage());
+            log.error("Following exception was thrown in addUser(): " + e.getMessage());
             throw new ServiceException("Failed to add user", ErrorCodeEnum.FAILED_TO_ADD_USER);
         }
     }
@@ -123,7 +160,7 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException("OAuth2User is null", ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
         }
 
-        User userToAdd = new User();
+        var userToAdd = new User();
         userToAdd.setLogin(user.getAttribute("login"));
         userToAdd.setPassword(passwordEncoder.encode(userToAdd.getLogin()));
 

@@ -1,8 +1,8 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.request.UserSearchCriteria;
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
+import com.epam.esm.service.criteria.search.UserSearchCriteria;
+import com.epam.esm.service.criteria.sort.SortBy;
+import com.epam.esm.service.criteria.sort.SortType;
 import com.epam.esm.model.User;
 import com.epam.esm.service.exception.ServiceException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
