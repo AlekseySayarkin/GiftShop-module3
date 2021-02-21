@@ -1,9 +1,10 @@
-package com.epam.esm.web.controller;
+package com.epam.esm.web.api;
 
-import com.epam.esm.dao.request.OrderSearchCriteria;
-import com.epam.esm.dao.request.UserSearchCriteria;
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
+import com.epam.esm.service.AuditedOrderService;
+import com.epam.esm.service.criteria.search.OrderSearchCriteria;
+import com.epam.esm.service.criteria.search.UserSearchCriteria;
+import com.epam.esm.service.criteria.sort.SortBy;
+import com.epam.esm.service.criteria.sort.SortType;
 import com.epam.esm.model.Order;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,16 +31,18 @@ import javax.annotation.PostConstruct;
 public class UserController {
 
     private final UserService userService;
+    private final AuditedOrderService auditedOrderService;
     private final OrderService orderService;
     private final ModelAssembler<UserDto> modelAssembler;
     private final ModelAssembler<OrderDto> orderModelAssembler;
-    private final PaginationConfigurer<UserDto> paginationConfigurer;
+    private final PaginationConfigurer paginationConfigurer;
 
     @Autowired
-    public UserController(UserService userService, ModelAssembler<UserDto> modelAssembler,
-                          ModelAssembler<OrderDto> orderModelAssembler, OrderService orderService,
-                          PaginationValidator paginationValidator) {
+    public UserController(UserService userService, AuditedOrderService auditedOrderService,
+                          ModelAssembler<UserDto> modelAssembler, ModelAssembler<OrderDto> orderModelAssembler,
+                          OrderService orderService, PaginationValidator paginationValidator) {
         this.userService = userService;
+        this.auditedOrderService = auditedOrderService;
         this.modelAssembler = modelAssembler;
         this.orderModelAssembler = orderModelAssembler;
         this.orderService = orderService;
@@ -52,7 +56,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/users")
-    @PreAuthorize("hasAuthority('users:read')")
+    @PreAuthorize("hasAuthority('users:read') and #oauth2.hasScope('read')")
     public CollectionModel<EntityModel<UserDto>> getUsers(
             @RequestBody(required = false) UserSearchCriteria request,
             @RequestParam int page, @RequestParam int size,
@@ -60,34 +64,42 @@ public class UserController {
         paginationConfigurer.configure(page, size, userService.getLastPage(size), sortType, sortBy);
 
         return modelAssembler.toCollectionModel(
-                UserDto.of(userService.getAllUsersByPage(request, page, size, sortType, sortBy)));
+                UserDto.of(userService.getAllUsersByPage(request, page, size, sortType, sortBy))
+        );
     }
 
     @GetMapping("/users/{id}")
-    @PreAuthorize("hasAuthority('users:read')")
+    @PostAuthorize("@userSecurity.hasUserId(authentication, #id) and #oauth2.hasScope('read')")
     public EntityModel<UserDto> getUser(@PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(UserDto.of(userService.getUserById(id)));
     }
 
     @GetMapping("/users/{id}/orders")
-    @PreAuthorize("hasAuthority('orders:read') or @userSecurity.hasUserId(authentication, #id)")
+    @PreAuthorize(
+            "(hasAuthority('orders:read') or @userSecurity.hasUserId(authentication, #id)) and #oauth2.hasScope('read')"
+    )
     public CollectionModel<EntityModel<OrderDto>> getUserOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size, @PathVariable int id,
             @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
         return orderModelAssembler.toCollectionModel(
-                OrderDto.of(orderService.getOrdersByUserId(id, requestBody, page, size, sortType, sortBy)));
+                OrderDto.of(auditedOrderService.getAuditedOrdersByUserId(id, requestBody, page, size, sortType, sortBy))
+        );
     }
 
     @PostMapping("/users/{id}/orders")
-    @PreAuthorize("hasAuthority('orders:write') and @userSecurity.hasUserId(authentication, #id)")
+    @PreAuthorize(
+            "hasAuthority('orders:write') and @userSecurity.hasUserId(authentication, #id) and #oauth2.hasScope('write')"
+    )
     public EntityModel<OrderDto> addUserOrder(@RequestBody Order order, @PathVariable int id)
             throws ServiceException {
         return orderModelAssembler.toModel(OrderDto.of(orderService.addUserOrder(order, id)));
     }
 
     @DeleteMapping("users/{id}/orders/{orderId}")
-    @PreAuthorize("hasAuthority('orders:write') and @userSecurity.hasUserId(authentication, #id)")
+    @PreAuthorize(
+            "hasAuthority('orders:write') and @userSecurity.hasUserId(authentication, #id) and #oauth2.hasScope('write')"
+    )
     public HttpStatus deleteOrder(@PathVariable int id, @PathVariable int orderId) throws ServiceException {
         orderService.deleteOrder(orderId);
         return HttpStatus.OK;

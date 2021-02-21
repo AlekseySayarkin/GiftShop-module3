@@ -1,4 +1,4 @@
-package com.epam.esm.web.controller;
+package com.epam.esm.web.api;
 
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.hateoas.GiftShopLinkBuilder;

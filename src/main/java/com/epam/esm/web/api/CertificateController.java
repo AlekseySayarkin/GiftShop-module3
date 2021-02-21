@@ -1,10 +1,10 @@
-package com.epam.esm.web.controller;
+package com.epam.esm.web.api;
 
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
+import com.epam.esm.service.criteria.sort.SortBy;
+import com.epam.esm.service.criteria.sort.SortType;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.dao.request.CertificateSearchCriteria;
+import com.epam.esm.service.criteria.search.CertificateSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.web.dto.GiftCertificateDto;
@@ -26,7 +26,7 @@ public class CertificateController {
 
     private final GiftCertificateService giftCertificateService;
     private final ModelAssembler<GiftCertificateDto> modelAssembler;
-    private final PaginationConfigurer<GiftCertificateDto> paginationConfigurer;
+    private final PaginationConfigurer paginationConfigurer;
 
     @Autowired
     public CertificateController(
@@ -49,8 +49,11 @@ public class CertificateController {
             @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
         paginationConfigurer.configure(page, size, giftCertificateService.getLastPage(size), sortType, sortBy);
 
-        return modelAssembler.toCollectionModel(GiftCertificateDto.of(
-                giftCertificateService.getGiftCertificatesByPage(request, page, size, sortType, sortBy)));
+        return modelAssembler.toCollectionModel(
+                GiftCertificateDto.of(
+                        giftCertificateService.getGiftCertificatesByPage(request, page, size, sortType, sortBy)
+                )
+        );
     }
 
     @GetMapping("/certificates/{id}")
@@ -59,25 +62,25 @@ public class CertificateController {
     }
 
     @PostMapping("/certificates")
-    @PreAuthorize("hasAuthority('certificates:write')")
+    @PreAuthorize("hasAuthority('certificates:write') and #oauth2.hasScope('write')")
     public EntityModel<GiftCertificateDto> addGiftCertificate(@RequestBody GiftCertificate giftCertificate)
             throws ServiceException {
-        return modelAssembler.toModel(
-                GiftCertificateDto.of(giftCertificateService.addGiftCertificate(giftCertificate)));
+        return modelAssembler.toModel(GiftCertificateDto.of(giftCertificateService.addGiftCertificate(giftCertificate)));
     }
 
     @DeleteMapping("/certificates/{id}")
-    @PreAuthorize("hasAuthority('certificates:write')")
+    @PreAuthorize("hasAuthority('certificates:write') and #oauth2.hasScope('write')")
     public HttpStatus deleteGiftCertificate(@PathVariable int id) throws ServiceException {
         giftCertificateService.deleteGiftCertificate(id);
         return HttpStatus.OK;
     }
 
     @PutMapping("/certificates/{id}")
-    @PreAuthorize("hasAuthority('certificates:write')")
+    @PreAuthorize("hasAuthority('certificates:write') and #oauth2.hasScope('write')")
     public EntityModel<GiftCertificateDto> updateGiftCertificate(
             @RequestBody GiftCertificate giftCertificate, @PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(
-                GiftCertificateDto.of(giftCertificateService.updateGiftCertificate(giftCertificate, id)));
+                GiftCertificateDto.of(giftCertificateService.updateGiftCertificate(giftCertificate, id))
+        );
     }
 }

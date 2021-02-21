@@ -76,8 +76,9 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String toString() {
-        return "SecurityUser{" +
-                "username='" + username + '\'' +
+        return "UserDetailsImpl{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", authorities=" + authorities +
                 ", isActive=" + isActive +

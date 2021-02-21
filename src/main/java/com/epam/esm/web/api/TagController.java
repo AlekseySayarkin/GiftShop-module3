@@ -1,11 +1,11 @@
-package com.epam.esm.web.controller;
+package com.epam.esm.web.api;
 
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
+import com.epam.esm.service.criteria.sort.SortBy;
+import com.epam.esm.service.criteria.sort.SortType;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.dao.request.TagSearchCriteria;
+import com.epam.esm.service.criteria.search.TagSearchCriteria;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.web.dto.TagDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
@@ -27,7 +27,7 @@ public class TagController {
 
     private final TagService tagService;
     private final ModelAssembler<TagDto> modelAssembler;
-    private final PaginationConfigurer<TagDto> paginationConfigurer;
+    private final PaginationConfigurer paginationConfigurer;
 
     @Autowired
     public TagController(TagService tagService, ModelAssembler<TagDto> modelAssembler,
@@ -50,7 +50,8 @@ public class TagController {
         paginationConfigurer.configure(page, size, tagService.getLastPage(size), sortType, sortBy);
 
         return modelAssembler.toCollectionModel(
-                TagDto.of(tagService.getAllTagsByPage(requestBody, page, size, sortType, sortBy)));
+                TagDto.of(tagService.getAllTagsByPage(requestBody, page, size, sortType, sortBy))
+        );
     }
 
     @GetMapping("/{id}")
@@ -59,13 +60,13 @@ public class TagController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('tags:write')")
+    @PreAuthorize("hasAuthority('tags:write') and #oauth2.hasScope('write')")
     public EntityModel<TagDto> addTag(@RequestBody Tag tag) throws ServiceException {
         return modelAssembler.toModel(TagDto.of(tagService.addTag(tag)));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('tags:write')")
+    @PreAuthorize("hasAuthority('tags:write') and #oauth2.hasScope('write')")
     public HttpStatus deleteTag(@PathVariable int id) throws ServiceException {
         tagService.deleteTag(id);
         return HttpStatus.OK;

@@ -1,4 +1,4 @@
-package com.epam.esm.web.controller;
+package com.epam.esm.web.api;
 
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.service.exception.ServiceException;
@@ -18,8 +18,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ServiceException> handleServiceException() {
-        ServiceException exception = new ServiceException("Invalid field type passed in a JSON",
-                ErrorCodeEnum.INVALID_INPUT);
+        var exception = new ServiceException("Invalid field type passed in a JSON", ErrorCodeEnum.INVALID_INPUT);
         return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
     }
 }

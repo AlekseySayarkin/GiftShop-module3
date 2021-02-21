@@ -1,9 +1,9 @@
-package com.epam.esm.web.controller;
+package com.epam.esm.web.api;
 
-import com.epam.esm.dao.request.OrderSearchCriteria;
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
-import com.epam.esm.service.OrderService;
+import com.epam.esm.service.AuditedOrderService;
+import com.epam.esm.service.criteria.search.OrderSearchCriteria;
+import com.epam.esm.service.criteria.sort.SortBy;
+import com.epam.esm.service.criteria.sort.SortType;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.web.dto.OrderDto;
@@ -24,16 +24,16 @@ import javax.annotation.PostConstruct;
 @RequestMapping("/orders")
 public class OrderController {
 
-    private final OrderService orderService;
+    private final AuditedOrderService auditedOrderService;
     private final ModelAssembler<OrderDto> modelAssembler;
-    private final PaginationConfigurer<OrderDto> paginationConfigurer;
+    private final PaginationConfigurer paginationConfigurer;
 
     @Autowired
-    public OrderController(OrderService orderService, ModelAssembler<OrderDto> modelAssembler,
-                           PaginationValidator paginationValidator) {
-        this.orderService = orderService;
+    public OrderController(ModelAssembler<OrderDto> modelAssembler, PaginationValidator paginationValidator,
+                           AuditedOrderService auditedOrderService) {
         this.modelAssembler = modelAssembler;
         this.paginationConfigurer = new PaginationConfigurerImpl<>(modelAssembler, paginationValidator);
+        this.auditedOrderService = auditedOrderService;
     }
 
     @PostConstruct
@@ -42,21 +42,24 @@ public class OrderController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('orders:read')")
+    @PreAuthorize("hasAuthority('orders:read') and #oauth2.hasScope('read')")
     public CollectionModel<EntityModel<OrderDto>> getOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size,
             @RequestParam SortType sortType, @RequestParam SortBy sortBy) throws ServiceException {
-        paginationConfigurer.configure(page, size, orderService.getLastPage(size), sortType, sortBy);
+        paginationConfigurer.configure(page, size, auditedOrderService.getLastPage(size), sortType, sortBy);
 
         return modelAssembler.toCollectionModel(
-                OrderDto.of(orderService.getAllOrdersByPage(requestBody, page, size, sortType, sortBy)));
+                OrderDto.of(auditedOrderService.getAuditedOrdersByPage(requestBody, page, size, sortType, sortBy))
+        );
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('orders:read')")
-    @PostAuthorize("@userSecurity.hasUserId(authentication, returnObject)")
+    @PostAuthorize(
+            "(hasAuthority('orders:read') or @userSecurity.hasUserId(authentication, returnObject))" +
+                    " and #oauth2.hasScope('read')"
+    )
     public EntityModel<OrderDto> getOrder(@PathVariable int id) throws ServiceException {
-        return modelAssembler.toModel(OrderDto.of(orderService.getOrderById(id)));
+        return modelAssembler.toModel(OrderDto.of(auditedOrderService.getAuditedOrderById(id)));
     }
 }
