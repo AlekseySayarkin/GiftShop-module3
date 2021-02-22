@@ -1,27 +1,25 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.repository.UserRepository;
 import com.epam.esm.model.Role;
-import com.epam.esm.service.AuditedOrderService;
-import com.epam.esm.service.criteria.search.OrderSearchCriteria;
-import com.epam.esm.service.criteria.search.UserSearchCriteria;
-import com.epam.esm.service.criteria.sort.SortBy;
-import com.epam.esm.service.criteria.sort.SortType;
-import com.epam.esm.service.util.PaginationUtil;
-import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.User;
+import com.epam.esm.repository.UserRepository;
+import com.epam.esm.service.AuditedOrderService;
 import com.epam.esm.service.UserService;
+import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.criteria.OrderSearchCriteria;
+import com.epam.esm.service.search.criteria.UserSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
+import com.epam.esm.service.util.PaginationUtil;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.service.util.UserValidator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -151,25 +149,5 @@ public class UserServiceImpl implements UserService {
             log.error("Following exception was thrown in addUser(): " + e.getMessage());
             throw new ServiceException("Failed to add user", ErrorCodeEnum.FAILED_TO_ADD_USER);
         }
-    }
-
-    @Override
-    @Transactional(rollbackFor = NoResultException.class)
-    public User getOrAddByLogin(OAuth2User user) throws ServiceException {
-        if (user == null) {
-            throw new ServiceException("OAuth2User is null", ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
-        }
-
-        var userToAdd = new User();
-        userToAdd.setLogin(user.getAttribute("login"));
-        userToAdd.setPassword(passwordEncoder.encode(userToAdd.getLogin()));
-
-        try {
-            userToAdd = getUserByLogin(userToAdd.getLogin());
-        } catch (EmptyResultDataAccessException e) {
-            userToAdd = addUser(userToAdd);
-        }
-
-        return userToAdd;
     }
 }

@@ -1,10 +1,10 @@
 package com.epam.esm.service;
 
 import com.epam.esm.model.Order;
-import com.epam.esm.service.criteria.search.OrderSearchCriteria;
-import com.epam.esm.service.criteria.sort.SortBy;
-import com.epam.esm.service.criteria.sort.SortType;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.criteria.OrderSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
 
 import java.util.List;
 

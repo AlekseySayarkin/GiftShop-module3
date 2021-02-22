@@ -1,10 +1,10 @@
 package com.epam.esm.web.hateoas;
 
-import com.epam.esm.dao.request.CertificateSearchCriteria;
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.web.controller.CertificateController;
+import com.epam.esm.service.search.criteria.CertificateSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
+import com.epam.esm.web.api.CertificateController;
 import com.epam.esm.web.dto.GiftCertificateDto;
 import com.epam.esm.web.dto.TagDto;
 import org.springframework.hateoas.CollectionModel;
@@ -92,7 +92,8 @@ public class CertificateLinkBuilder implements ModelLinkBuilder<GiftCertificateD
 
     private Link getLinkToCertificatesPage(int page, int size, String rel, SortType sortType, SortBy sortBy)
             throws ServiceException {
-        return linkTo(methodOn(CertificateController.class)
-                .getGiftCertificates(defaultRequestBody, page, size, sortType, sortBy)).withRel(rel);
+        return linkTo(
+                methodOn(CertificateController.class).getGiftCertificates(defaultRequestBody, page, size, sortType, sortBy)
+        ).withRel(rel);
     }
 }

@@ -13,7 +13,7 @@ import java.util.Set;
 @Table(name = "GiftCertificates", schema = "GiftShop")
 @Audited
 @Where(clause = "Active = true")
-public class GiftCertificate implements BaseModel {
+public class GiftCertificate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +48,6 @@ public class GiftCertificate implements BaseModel {
     )
     private Set<Tag> tags = new HashSet<>();
 
-    @Override
     public int getId() {
         return id;
     }

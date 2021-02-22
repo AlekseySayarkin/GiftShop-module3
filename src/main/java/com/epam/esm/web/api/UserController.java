@@ -1,14 +1,14 @@
 package com.epam.esm.web.api;
 
-import com.epam.esm.service.AuditedOrderService;
-import com.epam.esm.service.criteria.search.OrderSearchCriteria;
-import com.epam.esm.service.criteria.search.UserSearchCriteria;
-import com.epam.esm.service.criteria.sort.SortBy;
-import com.epam.esm.service.criteria.sort.SortType;
 import com.epam.esm.model.Order;
+import com.epam.esm.service.AuditedOrderService;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.criteria.OrderSearchCriteria;
+import com.epam.esm.service.search.criteria.UserSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.web.dto.OrderDto;
 import com.epam.esm.web.dto.UserDto;

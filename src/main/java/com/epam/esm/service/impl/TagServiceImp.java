@@ -1,14 +1,14 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.repository.TagRepository;
-import com.epam.esm.service.criteria.sort.SortBy;
-import com.epam.esm.service.criteria.sort.SortType;
-import com.epam.esm.service.util.PaginationUtil;
-import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.Tag;
+import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
+import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.service.criteria.search.TagSearchCriteria;
+import com.epam.esm.service.search.criteria.TagSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
+import com.epam.esm.service.util.PaginationUtil;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.service.util.TagValidator;
 import org.apache.log4j.LogManager;

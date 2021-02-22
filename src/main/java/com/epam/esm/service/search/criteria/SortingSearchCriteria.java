@@ -1,7 +1,8 @@
-package com.epam.esm.dao.request;
+package com.epam.esm.service.search.criteria;
 
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
+import org.springframework.data.domain.Sort;
 
 public abstract class SortingSearchCriteria {
 
@@ -22,5 +23,11 @@ public abstract class SortingSearchCriteria {
 
     public void setSortBy(SortBy sortBy) {
         this.sortBy = sortBy;
+    }
+
+    public Sort getSort() {
+        return sortType.equals(SortType.ASC) ?
+                Sort.by(sortBy.getName()).ascending() :
+                Sort.by(sortBy.getName()).descending();
     }
 }

@@ -1,15 +1,15 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.repository.GiftCertificateRepository;
-import com.epam.esm.service.criteria.sort.SortBy;
-import com.epam.esm.service.criteria.sort.SortType;
-import com.epam.esm.service.util.PaginationUtil;
-import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.model.GiftCertificate;
+import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.service.criteria.search.CertificateSearchCriteria;
+import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.criteria.CertificateSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
 import com.epam.esm.service.util.CertificateValidator;
+import com.epam.esm.service.util.PaginationUtil;
 import com.epam.esm.service.util.PaginationValidator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

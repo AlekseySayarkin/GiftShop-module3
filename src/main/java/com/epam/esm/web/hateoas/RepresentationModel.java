@@ -1,7 +1,7 @@
 package com.epam.esm.web.hateoas;
 
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
 import org.springframework.hateoas.PagedModel;
 
 public class RepresentationModel {

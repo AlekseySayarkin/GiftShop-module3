@@ -1,15 +1,15 @@
 package com.epam.esm.web.hateoas.pagination.impl;
 
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.web.hateoas.ModelAssembler;
 import com.epam.esm.web.hateoas.RepresentationModel;
 import com.epam.esm.web.hateoas.pagination.PaginationConfigurer;
 import org.springframework.hateoas.PagedModel;
 
-public class PaginationConfigurerImpl<T> implements PaginationConfigurer<T> {
+public class PaginationConfigurerImpl<T> implements PaginationConfigurer {
 
     private final ModelAssembler<T> modelAssembler;
     private final PaginationValidator paginationValidator;
@@ -24,7 +24,8 @@ public class PaginationConfigurerImpl<T> implements PaginationConfigurer<T> {
             throws ServiceException {
         paginationValidator.validatePagination(page, size);
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
-                size, page, (long) lastPage * size, lastPage);
+                size, page, (long) lastPage * size, lastPage
+        );
         RepresentationModel model = new RepresentationModel(pageMetadata, sortType, sortBy);
         modelAssembler.setRepresentationModel(model);
     }

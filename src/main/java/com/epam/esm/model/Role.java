@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "Roles")
 @Audited
-public class Role implements BaseModel {
+public class Role {
 
     public enum Permission {
         TAGS_READ("tags:read"),
@@ -89,15 +89,6 @@ public class Role implements BaseModel {
         return role;
     }
 
-    public static Role getAdminRole() {
-        Role role = new Role();
-        role.setId(ADMIN_ROLE_ID);
-        role.setRoleType(RoleType.ADMIN);
-
-        return role;
-    }
-
-    @Override
     public int getId() {
         return id;
     }

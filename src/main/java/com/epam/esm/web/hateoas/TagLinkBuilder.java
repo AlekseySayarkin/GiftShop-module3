@@ -1,10 +1,10 @@
 package com.epam.esm.web.hateoas;
 
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.dao.request.TagSearchCriteria;
-import com.epam.esm.web.controller.TagController;
+import com.epam.esm.service.search.criteria.TagSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
+import com.epam.esm.web.api.TagController;
 import com.epam.esm.web.dto.TagDto;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -81,7 +81,8 @@ public class TagLinkBuilder implements ModelLinkBuilder<TagDto> {
 
     private Link getLinkToTagsPage(int page, int size, String rel, SortType sortType, SortBy sortBy)
             throws ServiceException {
-        return linkTo(methodOn(TagController.class).getTags(defaultRequestBody, page, size,
-                sortType, sortBy)).withRel(rel);
+        return linkTo(
+                methodOn(TagController.class).getTags(defaultRequestBody, page, size, sortType, sortBy)
+        ).withRel(rel);
     }
 }

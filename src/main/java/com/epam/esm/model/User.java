@@ -10,7 +10,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Users")
 @Audited
-public class User implements BaseModel {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +47,6 @@ public class User implements BaseModel {
         this.role = role;
     }
 
-    @Override
     public int getId() {
         return id;
     }

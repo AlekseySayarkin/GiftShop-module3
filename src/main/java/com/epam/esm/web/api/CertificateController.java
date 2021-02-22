@@ -1,11 +1,11 @@
 package com.epam.esm.web.api;
 
-import com.epam.esm.service.criteria.sort.SortBy;
-import com.epam.esm.service.criteria.sort.SortType;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.service.criteria.search.CertificateSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.criteria.CertificateSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
 import com.epam.esm.service.util.PaginationValidator;
 import com.epam.esm.web.dto.GiftCertificateDto;
 import com.epam.esm.web.hateoas.CertificateLinkBuilder;

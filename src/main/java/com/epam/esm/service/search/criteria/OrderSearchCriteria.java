@@ -1,7 +1,7 @@
-package com.epam.esm.dao.request;
+package com.epam.esm.service.search.criteria;
 
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
 
 public class OrderSearchCriteria extends SortingSearchCriteria {
 

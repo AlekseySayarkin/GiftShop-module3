@@ -25,11 +25,12 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     public static OrderDto of(Order order) {
         OrderDto orderDto = new OrderDto();
         orderDto.setId(order.getId());
-        orderDto.setTotalCost(order.getCost());
+        orderDto.setTotalCost(order.getTotalCost());
         orderDto.setCreateDate(order.getCreateDate());
         Set<EntityModel<GiftCertificateDto>> giftCertificateDto = new HashSet<>();
         order.getGiftCertificateList().forEach(g ->
-                giftCertificateDto.add(EntityModel.of(GiftCertificateDto.of(g))));
+                giftCertificateDto.add(EntityModel.of(GiftCertificateDto.of(g)))
+        );
         orderDto.setGiftCertificateList(giftCertificateDto);
         orderDto.setUserId(order.getUser().getId());
 

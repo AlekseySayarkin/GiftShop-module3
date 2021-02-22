@@ -13,7 +13,7 @@ import java.util.Set;
 @Table(name = "Orders")
 @Audited
 @Where(clause = "Active = true")
-public class Order implements BaseModel {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +51,6 @@ public class Order implements BaseModel {
         this.giftCertificateList = giftCertificateList;
     }
 
-    @Override
     public int getId() {
         return id;
     }

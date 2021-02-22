@@ -1,10 +1,10 @@
 package com.epam.esm.web.hateoas;
 
-import com.epam.esm.dao.request.OrderSearchCriteria;
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.web.controller.OrderController;
+import com.epam.esm.service.search.criteria.OrderSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
+import com.epam.esm.web.api.OrderController;
 import com.epam.esm.web.dto.GiftCertificateDto;
 import com.epam.esm.web.dto.OrderDto;
 import com.epam.esm.web.dto.TagDto;
@@ -41,8 +41,10 @@ public class OrderLinkBuilder implements ModelLinkBuilder<OrderDto> {
     @Override
     public void linkToModel(EntityModel<OrderDto> modelDto) {
         try {
-            modelDto.add(linkTo(methodOn(OrderController.class).getOrder(
-                    Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_ORDER));
+            modelDto.add(
+                    linkTo(methodOn(OrderController.class)
+                            .getOrder(Objects.requireNonNull(modelDto.getContent()).getId())
+            ).withRel(CURRENT_ORDER));
 
             modelDto.getContent().getGiftCertificateList().forEach(c -> {
                 Objects.requireNonNull(c.getContent()).getTags().forEach(t -> tagLinkBuilder.linkToModel(t));
@@ -98,7 +100,8 @@ public class OrderLinkBuilder implements ModelLinkBuilder<OrderDto> {
 
     private Link getLinkToOrdersPage(int page, int size, String rel, SortType sortType, SortBy sortBy)
             throws ServiceException {
-        return linkTo(methodOn(OrderController.class)
-                .getOrders(defaultRequestBody, page, size, sortType, sortBy)).withRel(rel);
+        return linkTo(
+                methodOn(OrderController.class).getOrders(defaultRequestBody, page, size, sortType, sortBy)
+        ).withRel(rel);
     }
 }
