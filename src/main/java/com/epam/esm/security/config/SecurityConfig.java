@@ -1,5 +1,6 @@
 package com.epam.esm.security.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,11 +15,18 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private JwtConfigurer jwtConfigurer;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                .anyRequest().authenticated()
+                .and().apply(jwtConfigurer);
     }
 
     @Override
@@ -26,8 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web
                 .ignoring()
                 .antMatchers(HttpMethod.GET,"/tags/**")
-                .antMatchers(HttpMethod.GET,"/certificates/**")
-                .antMatchers(HttpMethod.POST, "/auth/signup");
+                .antMatchers(HttpMethod.GET,"/certificates/**");
     }
 
     @Bean

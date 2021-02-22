@@ -1,6 +1,7 @@
 package com.epam.esm.web.api;
 
 import com.epam.esm.model.User;
+import com.epam.esm.security.JwtTokenProvider;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.dto.AuthRequestDto;
@@ -24,10 +25,12 @@ public class AuthController {
 
     private final UserService userService;
     private final ModelAssembler<UserDto> modelAssembler;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(UserService userService, ModelAssembler<UserDto> modelAssembler) {
+    public AuthController(UserService userService, ModelAssembler<UserDto> modelAssembler, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
         this.modelAssembler = modelAssembler;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostConstruct
