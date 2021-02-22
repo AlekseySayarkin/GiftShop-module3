@@ -1,18 +1,22 @@
 package com.epam.esm.security;
 
-import com.epam.esm.web.dto.OrderDto;
-import org.springframework.hateoas.EntityModel;
+import com.epam.esm.service.AuditedOrderService;
+import com.epam.esm.service.exception.ServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Component
 public class UserSecurity {
 
+    private final AuditedOrderService auditedOrderService;
+
+    public UserSecurity(AuditedOrderService auditedOrderService) {
+        this.auditedOrderService = auditedOrderService;
+    }
+
     public boolean hasUserId(Authentication authentication, int userId) {
         try {
-            UserDetailsImpl details = (UserDetailsImpl) authentication.getPrincipal();
+            var details = (UserDetailsImpl) authentication.getPrincipal();
 
             return details != null && details.getId() != 0 && details.getId() == userId;
         } catch (ClassCastException e) {
@@ -20,12 +24,13 @@ public class UserSecurity {
         }
     }
 
-    public boolean hasUserId(Authentication authentication, EntityModel<OrderDto> order) {
+    public boolean orderHasUserId(Authentication authentication, int orderId) {
         try {
-            UserDetailsImpl details = (UserDetailsImpl) authentication.getPrincipal();
+            var details = (UserDetailsImpl) authentication.getPrincipal();
+            var order = auditedOrderService.getAuditedOrderById(orderId);
 
-            return Objects.requireNonNull(order.getContent()).getUserId() == details.getId();
-        } catch (ClassCastException e) {
+            return order.getUser().getId() == details.getId();
+        } catch (ClassCastException | ServiceException e) {
             return false;
         }
     }

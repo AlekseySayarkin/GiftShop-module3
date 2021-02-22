@@ -14,7 +14,6 @@ import com.epam.esm.web.hateoas.pagination.impl.PaginationConfigurerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +41,11 @@ public class OrderController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('orders:read') and #oauth2.hasScope('read')")
+    @PreAuthorize(
+            "hasAuthority('orders:read') and (authentication instanceof " +
+            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
+            "or #oauth2.hasScope('read'))"
+    )
     public CollectionModel<EntityModel<OrderDto>> getOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size,
@@ -55,9 +58,10 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    @PostAuthorize(
-            "(hasAuthority('orders:read') or @userSecurity.hasUserId(authentication, returnObject))" +
-                    " and #oauth2.hasScope('read')"
+    @PreAuthorize(
+            "hasAuthority('orders:read') and (authentication instanceof " +
+            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
+            "or #oauth2.hasScope('read'))"
     )
     public EntityModel<OrderDto> getOrder(@PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(OrderDto.of(auditedOrderService.getAuditedOrderById(id)));

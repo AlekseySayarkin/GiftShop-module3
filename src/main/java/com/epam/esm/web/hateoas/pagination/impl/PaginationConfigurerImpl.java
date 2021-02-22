@@ -23,10 +23,8 @@ public class PaginationConfigurerImpl<T> implements PaginationConfigurer {
     public void configure(int page, int size, int lastPage, SortType sortType, SortBy sortBy)
             throws ServiceException {
         paginationValidator.validatePagination(page, size);
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
-                size, page, (long) lastPage * size, lastPage
-        );
-        RepresentationModel model = new RepresentationModel(pageMetadata, sortType, sortBy);
+        var pageMetadata = new PagedModel.PageMetadata(size, page, (long) lastPage * size, lastPage);
+        var model = new RepresentationModel(pageMetadata, sortType, sortBy);
         modelAssembler.setRepresentationModel(model);
     }
 }

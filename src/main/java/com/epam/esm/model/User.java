@@ -22,8 +22,10 @@ public class User {
     @Column(name = "Password")
     private String password;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToMany(
+            mappedBy = "user", fetch = FetchType.EAGER,
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}
+    )
     private Set<Order> orders = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.MERGE)
@@ -92,7 +94,8 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && login.equals(user.login) && password.equals(user.password) && orders.equals(user.orders) && role.equals(user.role);
+        return id == user.id && login.equals(user.login) &&
+                password.equals(user.password) && orders.equals(user.orders) && role.equals(user.role);
     }
 
     @Override

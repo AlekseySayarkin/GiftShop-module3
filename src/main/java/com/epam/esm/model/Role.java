@@ -79,7 +79,6 @@ public class Role {
     private RoleType role;
 
     private final static int USER_ROLE_ID = 1;
-    public static final int ADMIN_ROLE_ID = 2;
 
     public static Role getUserRole() {
         Role role = new Role();

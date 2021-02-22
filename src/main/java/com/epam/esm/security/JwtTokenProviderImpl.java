@@ -1,10 +1,11 @@
 package com.epam.esm.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
     private String secretKey = "secret";
 
-    private final int expirationInMilliseconds = 3600000 ;
+    private static final int expirationInMilliseconds = 3600000 ;
 
     public JwtTokenProviderImpl(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -36,10 +37,10 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
     @Override
     public String createJwtToken(String username, String role) {
-        Claims claims = Jwts.claims().setSubject(username);
+        var claims = Jwts.claims().setSubject(username);
         claims.put("role", role);
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + expirationInMilliseconds);
+        var now = new Date();
+        var expiration = new Date(now.getTime() + expirationInMilliseconds);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -52,7 +53,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
     @Override
     public boolean validateJwtToken(String token) {
         try {
-            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            var claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return new Date().before(claimsJws.getBody().getExpiration());
         } catch (JwtException | IllegalArgumentException e) {
             return false;
@@ -61,7 +62,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
     @Override
     public Authentication getAuthentication(String token) {
-        UserDetails details = userDetailsService.loadUserByUsername(getUserName(token));
+        var details = userDetailsService.loadUserByUsername(getUserName(token));
         return new UsernamePasswordAuthenticationToken(details, "", details.getAuthorities());
     }
 
@@ -72,6 +73,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
     @Override
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader(authorizationHeader);
+        var token = request.getHeader(authorizationHeader);
+        return token == null ? null : token.substring(6);
     }
 }

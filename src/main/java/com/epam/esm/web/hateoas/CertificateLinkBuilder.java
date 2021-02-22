@@ -40,8 +40,10 @@ public class CertificateLinkBuilder implements ModelLinkBuilder<GiftCertificateD
     public void linkToModel(EntityModel<GiftCertificateDto> modelDto) {
         Objects.requireNonNull(modelDto.getContent()).getTags().forEach(t -> tagLinkBuilder.linkToModel(t));
         try {
-            modelDto.add(linkTo(methodOn(CertificateController.class).getGiftCertificate(
-                    Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_CERTIFICATE));
+            modelDto.add(
+                    linkTo(methodOn(CertificateController.class)
+                                .getGiftCertificate(Objects.requireNonNull(modelDto.getContent()).getId())
+                    ).withRel(CURRENT_CERTIFICATE));
         } catch (ServiceException ignored) {
         }
     }

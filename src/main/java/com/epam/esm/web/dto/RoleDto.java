@@ -9,7 +9,7 @@ public class RoleDto extends RepresentationModel<RoleDto> {
     private Role.RoleType role;
 
     public static RoleDto of(Role role) {
-        RoleDto roleDto = new RoleDto();
+        var roleDto = new RoleDto();
         roleDto.setId(role.getId());
         roleDto.setRole(role.getRoleType());
 

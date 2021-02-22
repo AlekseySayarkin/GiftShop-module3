@@ -104,7 +104,9 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return id == order.id && Double.compare(order.totalCost, totalCost) == 0 && createDate.equals(order.createDate) && user.equals(order.user) && giftCertificateList.equals(order.giftCertificateList);
+        return id == order.id && Double.compare(order.totalCost, totalCost) == 0 &&
+                createDate.equals(order.createDate) && user.equals(order.user) &&
+                giftCertificateList.equals(order.giftCertificateList);
     }
 
     @Override

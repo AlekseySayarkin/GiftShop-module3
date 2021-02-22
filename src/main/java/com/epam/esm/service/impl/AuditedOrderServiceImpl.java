@@ -85,7 +85,7 @@ public class AuditedOrderServiceImpl implements AuditedOrderService {
         orderValidator.validateId(orderId);
 
         try {
-            Order order = orderRepository.findById(orderId).orElseThrow(() -> {
+            var order = orderRepository.findById(orderId).orElseThrow(() -> {
                 log.error("Failed to get order by user id = " + orderId);
                 return new ServiceException(
                         "Failed to get order by user id = " + orderId, ErrorCodeEnum.FAILED_TO_RETRIEVE_ORDER

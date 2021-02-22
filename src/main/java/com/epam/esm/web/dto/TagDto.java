@@ -17,7 +17,7 @@ public class TagDto extends RepresentationModel<TagDto> {
     }
 
     public static TagDto of(Tag tag) {
-        TagDto tagDto = new TagDto();
+        var tagDto = new TagDto();
         tagDto.setId(tag.getId());
         tagDto.setName(tag.getName());
         return tagDto;

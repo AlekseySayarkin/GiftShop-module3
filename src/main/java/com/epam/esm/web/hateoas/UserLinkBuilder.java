@@ -93,7 +93,7 @@ public class UserLinkBuilder implements ModelLinkBuilder<UserDto> {
 
     private Link getLinkToUsersPage(int page, int size, String rel,
                                     SortType sortType, SortBy sortBy) throws ServiceException {
-        return linkTo(methodOn(UserController.class).getUsers(defaultRequestBody, page, size,
-                sortType, sortBy)).withRel(rel);
+        return linkTo(methodOn(UserController.class)
+                .getUsers(defaultRequestBody, page, size, sortType, sortBy)).withRel(rel);
     }
 }

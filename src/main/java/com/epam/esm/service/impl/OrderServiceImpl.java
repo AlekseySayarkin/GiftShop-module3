@@ -1,10 +1,9 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.repository.OrderRepository;
-import com.epam.esm.repository.UserRepository;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
-import com.epam.esm.model.User;
+import com.epam.esm.repository.OrderRepository;
+import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.exception.ErrorCodeEnum;
 import com.epam.esm.service.exception.ServiceException;
@@ -61,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void setUserToTheOrderByUserId(Order order, int userId) throws ServiceException {
-        User user = userRepository.findById(userId).orElseThrow(() -> {
+        var user = userRepository.findById(userId).orElseThrow(() -> {
             log.error("Failed to get user by it id: " + userId);
             return new ServiceException("Failed to get user by it id: " + userId, ErrorCodeEnum.FAILED_TO_RETRIEVE_USER);
         });

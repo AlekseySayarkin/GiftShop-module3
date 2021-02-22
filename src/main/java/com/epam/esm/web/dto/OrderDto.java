@@ -23,7 +23,7 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     private int userId;
 
     public static OrderDto of(Order order) {
-        OrderDto orderDto = new OrderDto();
+        var orderDto = new OrderDto();
         orderDto.setId(order.getId());
         orderDto.setTotalCost(order.getTotalCost());
         orderDto.setCreateDate(order.getCreateDate());

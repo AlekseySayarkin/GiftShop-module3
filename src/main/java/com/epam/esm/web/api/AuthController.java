@@ -10,15 +10,13 @@ import com.epam.esm.web.dto.UserDto;
 import com.epam.esm.web.hateoas.ModelAssembler;
 import com.epam.esm.web.hateoas.UserLinkBuilder;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class AuthController {
@@ -26,11 +24,14 @@ public class AuthController {
     private final UserService userService;
     private final ModelAssembler<UserDto> modelAssembler;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthController(UserService userService, ModelAssembler<UserDto> modelAssembler, JwtTokenProvider jwtTokenProvider) {
+    public AuthController(UserService userService, ModelAssembler<UserDto> modelAssembler,
+                          JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.modelAssembler = modelAssembler;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostConstruct
@@ -39,34 +40,29 @@ public class AuthController {
     }
 
     @PostMapping("/auth/signup")
-    public HttpStatus signup(@RequestBody AuthRequestDto requestDto) throws ServiceException {
+    public EntityModel<JwtTokenResponseObject> signup(@RequestBody AuthRequestDto requestDto) throws ServiceException {
         var user = new User();
         user.setLogin(requestDto.getLogin());
         user.setPassword(requestDto.getPassword());
         userService.addUser(user);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword()));
 
-        return HttpStatus.CREATED;
+        return EntityModel.of(getResponse(user));
     }
 
     @PostMapping("/auth/login")
     public EntityModel<JwtTokenResponseObject> login(@RequestBody AuthRequestDto requestDto) throws ServiceException {
-        User user = userService.getUserByLogin(requestDto.getLogin());
-
-        return EntityModel.of(getResponse(requestDto, user));
-    }
-
-    @PostMapping("/auth/logout")
-    public HttpStatus logout(HttpServletRequest request, HttpServletResponse response) {
-        SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
-        securityContextLogoutHandler.logout(request, response, null);
-
-        return HttpStatus.OK;
-    }
-    private JwtTokenResponseObject getResponse(AuthRequestDto requestDto, User user) {
-        String token = jwtTokenProvider.createJwtToken(
-                requestDto.getLogin(), user.getRole().getRoleType().toString()
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(requestDto.getLogin(), requestDto.getPassword())
         );
+        var user = userService.getUserByLogin(requestDto.getLogin());
 
-        return new JwtTokenResponseObject(token, modelAssembler.toModel(UserDto.of(user)));
+        return EntityModel.of(getResponse(user));
+    }
+
+    private JwtTokenResponseObject getResponse(User user) {
+        return new JwtTokenResponseObject(
+                jwtTokenProvider.createJwtToken(user.getLogin(), user.getRole().getRoleType().toString())
+        );
     }
 }

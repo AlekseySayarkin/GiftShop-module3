@@ -1,11 +1,8 @@
 package com.epam.esm.web.hateoas;
 
-import com.epam.esm.service.search.sort.SortBy;
-import com.epam.esm.service.search.sort.SortType;
 import org.springframework.context.annotation.Scope;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,12 +30,12 @@ public class RepresentationModelAssemblerImpl<T> implements ModelAssembler<T> {
     @Override
     public void addLinks(CollectionModel<EntityModel<T>> resources) {
         if (representationModel != null) {
-            PagedModel.PageMetadata metadata = representationModel.getPageMetadata();
+            var metadata = representationModel.getPageMetadata();
             int size = (int) metadata.getSize();
             int page = (int) metadata.getNumber();
             int lastPage = (int) metadata.getTotalPages();
-            SortType sortType = representationModel.getSortType();
-            SortBy sortBy = representationModel.getSortBy();
+            var sortType = representationModel.getSortType();
+            var sortBy = representationModel.getSortBy();
 
             modelLinkBuilder.linkToModelPage(resources, page, size, sortType, sortBy);
             if (hasPrevious(page)) {

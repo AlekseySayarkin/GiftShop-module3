@@ -60,13 +60,21 @@ public class TagController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('tags:write') and #oauth2.hasScope('write')")
+    @PreAuthorize(
+            "hasAuthority('tags:write') and (authentication instanceof " +
+            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
+            "or #oauth2.hasScope('write'))"
+    )
     public EntityModel<TagDto> addTag(@RequestBody Tag tag) throws ServiceException {
         return modelAssembler.toModel(TagDto.of(tagService.addTag(tag)));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('tags:write') and #oauth2.hasScope('write')")
+    @PreAuthorize(
+            "hasAuthority('tags:write') and (authentication instanceof " +
+            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
+            "or #oauth2.hasScope('write'))"
+    )
     public HttpStatus deleteTag(@PathVariable int id) throws ServiceException {
         tagService.deleteTag(id);
         return HttpStatus.OK;

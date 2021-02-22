@@ -132,7 +132,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional(rollbackFor = ServiceException.class)
     public void deleteGiftCertificate(int certificateId) throws ServiceException {
-        GiftCertificate giftCertificate = getGiftCertificateById(certificateId);
+        var giftCertificate = getGiftCertificateById(certificateId);
         if (giftCertificate == null) {
             log.error("Failed to delete certificate: certificate not found");
             throw new ServiceException(
@@ -161,7 +161,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private GiftCertificate updateExistingCertificate(GiftCertificate updated) throws ServiceException {
-        GiftCertificate existing = getGiftCertificateById(updated.getId());
+        var existing = getGiftCertificateById(updated.getId());
         existing.setName(updated.getName());
         existing.setDescription(updated.getDescription());
         existing.setPrice(updated.getPrice());
