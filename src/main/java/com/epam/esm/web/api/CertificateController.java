@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 
 @RestController
+@RequestMapping("/certificates")
 public class CertificateController {
 
     private final GiftCertificateService giftCertificateService;
@@ -42,7 +43,7 @@ public class CertificateController {
         modelAssembler.setModelLinkBuilder(new CertificateLinkBuilder());
     }
 
-    @GetMapping("/certificates")
+    @GetMapping
     public CollectionModel<EntityModel<GiftCertificateDto>> getGiftCertificates(
             @RequestBody(required = false) CertificateSearchCriteria request,
             @RequestParam int page, @RequestParam int size,
@@ -56,26 +57,26 @@ public class CertificateController {
         );
     }
 
-    @GetMapping("/certificates/{id}")
+    @GetMapping("/{id}")
     public EntityModel<GiftCertificateDto> getGiftCertificate(@PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(GiftCertificateDto.of(giftCertificateService.getGiftCertificateById(id)));
     }
 
-    @PostMapping("/certificates")
+    @PostMapping
     @PreAuthorize("hasAuthority('certificates:write')")
     public EntityModel<GiftCertificateDto> addGiftCertificate(@RequestBody GiftCertificate giftCertificate)
             throws ServiceException {
         return modelAssembler.toModel(GiftCertificateDto.of(giftCertificateService.addGiftCertificate(giftCertificate)));
     }
 
-    @DeleteMapping("/certificates/{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('certificates:write')")
     public HttpStatus deleteGiftCertificate(@PathVariable int id) throws ServiceException {
         giftCertificateService.deleteGiftCertificate(id);
         return HttpStatus.OK;
     }
 
-    @PutMapping("/certificates/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('certificates:write')")
     public EntityModel<GiftCertificateDto> updateGiftCertificate(
             @RequestBody GiftCertificate giftCertificate, @PathVariable int id) throws ServiceException {

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -55,7 +56,7 @@ public class UserController {
         orderModelAssembler.setModelLinkBuilder(new OrderLinkBuilder());
     }
 
-    @GetMapping(value = "/users")
+    @GetMapping
     @PreAuthorize("hasAuthority('users:read')")
     public CollectionModel<EntityModel<UserDto>> getUsers(
             @RequestBody(required = false) UserSearchCriteria request,
@@ -68,13 +69,13 @@ public class UserController {
         );
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     @PostAuthorize("(@userSecurity.hasUserId(authentication, #id) or hasAuthority('users:read'))")
     public EntityModel<UserDto> getUser(@PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(UserDto.of(userService.getUserById(id)));
     }
 
-    @GetMapping("/users/{id}/orders")
+    @GetMapping("/{id}/orders")
     @PreAuthorize("(hasAuthority('orders:read') or @userSecurity.hasUserId(authentication, #id))")
     public CollectionModel<EntityModel<OrderDto>> getUserOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
@@ -85,14 +86,14 @@ public class UserController {
         );
     }
 
-    @PostMapping("/users/{id}/orders")
+    @PostMapping("/{id}/orders")
     @PreAuthorize("hasAuthority('orders:write') and @userSecurity.hasUserId(authentication, #id)")
     public EntityModel<OrderDto> addUserOrder(@RequestBody Order order, @PathVariable int id)
             throws ServiceException {
         return orderModelAssembler.toModel(OrderDto.of(orderService.addUserOrder(order, id)));
     }
 
-    @DeleteMapping("users/{id}/orders/{orderId}")
+    @DeleteMapping("/{id}/orders/{orderId}")
     @PreAuthorize(
             "hasAuthority('orders:write') and @userSecurity.orderHasUserId(authentication, #orderId) " +
                     "and @userSecurity.hasUserId(authentication, #id)"

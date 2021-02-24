@@ -17,7 +17,8 @@ public class UserDetailsImpl implements UserDetails {
     private final List<SimpleGrantedAuthority> authorities;
     private final boolean isActive;
 
-    public UserDetailsImpl(int id, String username, String password, List<SimpleGrantedAuthority> authorities, boolean isActive) {
+    public UserDetailsImpl(int id, String username, String password,
+                           List<SimpleGrantedAuthority> authorities, boolean isActive) {
         this.id = id;
         this.username = username;
         this.password = password;

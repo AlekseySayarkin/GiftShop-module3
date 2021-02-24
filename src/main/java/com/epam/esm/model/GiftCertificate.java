@@ -28,7 +28,7 @@ public class GiftCertificate {
     @Column(name = "Price")
     private double price;
 
-    @Column(name = "CreateDate", updatable=false)
+    @Column(name = "CreateDate", updatable = false)
     private ZonedDateTime createDate;
 
     @Column(name = "LastUpdateDate")

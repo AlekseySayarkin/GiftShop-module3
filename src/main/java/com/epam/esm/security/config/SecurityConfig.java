@@ -1,39 +1,36 @@
 package com.epam.esm.security.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.servlet.http.HttpServletRequest;
 
 @EnableWebSecurity
-@Import(MethodSecurityConfiguration.class)
-@Order(4)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+@Order(2)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtConfigurer jwtConfigurer;
-
-    @Autowired
-    public SecurityConfig(JwtConfigurer jwtConfigurer) {
-        this.jwtConfigurer = jwtConfigurer;
-    }
+    private static final int BCRYPT_ENCODER_STRENGTH = 12;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                .anyRequest().authenticated()
-                .and().apply(jwtConfigurer);
+                .and()
+                .requestMatcher((HttpServletRequest request) -> {
+                    String auth = request.getHeader("Authorization");
+                    return (auth != null && auth.startsWith("Basic"));
+                }).authorizeRequests()
+                .antMatchers("/**").permitAll();
     }
 
     @Bean
@@ -42,21 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Configuration
-    @Order(5)
-    public static class Oauth2Config extends WebSecurityConfigurerAdapter {
-
-        @Override
-        public void configure(HttpSecurity http) throws Exception {
-            http
-                    .csrf().disable()
-                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and().authorizeRequests()
-                    .antMatchers(HttpMethod.GET, "/**").access("#oauth2.hasScope('read')")
-                    .antMatchers(HttpMethod.POST, "/**").access("#oauth2.hasScope('write')")
-                    .antMatchers(HttpMethod.DELETE, "/**").access("#oauth2.hasScope('write')")
-                    .antMatchers(HttpMethod.PUT, "/**").access("#oauth2.hasScope('write')")
-                    .anyRequest().authenticated();
-        }
+    @Bean
+    protected PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(BCRYPT_ENCODER_STRENGTH);
     }
 }

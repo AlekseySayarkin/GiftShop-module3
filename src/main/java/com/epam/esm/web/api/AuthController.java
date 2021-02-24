@@ -14,11 +14,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     private final UserService userService;
@@ -39,7 +41,7 @@ public class AuthController {
         modelAssembler.setModelLinkBuilder(new UserLinkBuilder());
     }
 
-    @PostMapping("/auth/signup")
+    @PostMapping("/signup")
     public EntityModel<JwtTokenResponseObject> signup(@RequestBody AuthRequestDto requestDto) throws ServiceException {
         var user = new User();
         user.setLogin(requestDto.getLogin());
@@ -50,7 +52,7 @@ public class AuthController {
         return EntityModel.of(getResponse(user));
     }
 
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public EntityModel<JwtTokenResponseObject> login(@RequestBody AuthRequestDto requestDto) throws ServiceException {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(requestDto.getLogin(), requestDto.getPassword())

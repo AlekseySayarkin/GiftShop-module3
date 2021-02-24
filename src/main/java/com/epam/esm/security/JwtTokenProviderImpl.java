@@ -26,12 +26,13 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
 
-    private static final String authorizationHeader = "Authorization";
+    private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String AUTHORITIES_KEY = "authorities";
+    private static final String ROLE_KEY = "role";
 
     private String secretKey = "secret";
 
-    private static final int expirationInMilliseconds = 3600000 ;
+    private static final int EXPIRATION_IN_MILLISECONDS = 3600000;
 
     public JwtTokenProviderImpl(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -45,13 +46,12 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
     @Override
     public String createJwtToken(String username, String role) {
         var claims = Jwts.claims().setSubject(username);
-        claims.put("role", role);
-        //claims.put(AUTHORITIES_KEY, getAuthoritiesFromRole(role));
+        claims.put(ROLE_KEY, role);
+        claims.put(AUTHORITIES_KEY, getAuthoritiesFromRole(role));
         var now = new Date();
-        var expiration = new Date(now.getTime() + expirationInMilliseconds);
+        var expiration = new Date(now.getTime() + EXPIRATION_IN_MILLISECONDS);
         return Jwts.builder()
                 .setClaims(claims)
-                .claim(AUTHORITIES_KEY, getAuthoritiesFromRole(role))
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -77,7 +77,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
             var claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return new Date().before(claimsJws.getBody().getExpiration());
         } catch (ExpiredJwtException e) {
-            log.trace("Failed to validate jwt token jwt token is expired");
+            log.trace("Failed to validate jwt token: jwt token expired");
             return false;
         } catch (JwtException | IllegalArgumentException e) {
             log.trace("Failed to validate jwt token");
@@ -131,7 +131,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
     @Override
     public String resolveToken(HttpServletRequest request) {
         try {
-            var token = request.getHeader(authorizationHeader);
+            var token = request.getHeader(AUTHORIZATION_HEADER);
             return token == null ? null : token.substring(6);
         } catch (IndexOutOfBoundsException e) {
             log.trace("Jwt token should start with 'Basic'");
