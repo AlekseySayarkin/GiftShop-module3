@@ -62,33 +62,21 @@ public class CertificateController {
     }
 
     @PostMapping("/certificates")
-    @PreAuthorize(
-            "hasAuthority('certificates:write') and (authentication instanceof " +
-            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
-            "or #oauth2.hasScope('write'))"
-    )
+    @PreAuthorize("hasAuthority('certificates:write')")
     public EntityModel<GiftCertificateDto> addGiftCertificate(@RequestBody GiftCertificate giftCertificate)
             throws ServiceException {
         return modelAssembler.toModel(GiftCertificateDto.of(giftCertificateService.addGiftCertificate(giftCertificate)));
     }
 
     @DeleteMapping("/certificates/{id}")
-    @PreAuthorize(
-            "hasAuthority('certificates:write') and (authentication instanceof " +
-            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
-            "or #oauth2.hasScope('write'))"
-    )
+    @PreAuthorize("hasAuthority('certificates:write')")
     public HttpStatus deleteGiftCertificate(@PathVariable int id) throws ServiceException {
         giftCertificateService.deleteGiftCertificate(id);
         return HttpStatus.OK;
     }
 
     @PutMapping("/certificates/{id}")
-    @PreAuthorize(
-            "hasAuthority('certificates:write') and (authentication instanceof " +
-            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
-            "or #oauth2.hasScope('write'))"
-    )
+    @PreAuthorize("hasAuthority('certificates:write')")
     public EntityModel<GiftCertificateDto> updateGiftCertificate(
             @RequestBody GiftCertificate giftCertificate, @PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(

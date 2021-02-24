@@ -56,11 +56,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/users")
-    @PreAuthorize(
-            "hasAuthority('users:read') and (authentication instanceof " +
-            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
-            "or #oauth2.hasScope('read'))"
-    )
+    @PreAuthorize("hasAuthority('users:read')")
     public CollectionModel<EntityModel<UserDto>> getUsers(
             @RequestBody(required = false) UserSearchCriteria request,
             @RequestParam int page, @RequestParam int size,
@@ -73,23 +69,13 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    @PostAuthorize(
-            "(@userSecurity.hasUserId(authentication, #id) or hasAuthority('orders:read')) " +
-            "and (authentication instanceof " +
-            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
-            "or #oauth2.hasScope('read'))"
-    )
+    @PostAuthorize("(@userSecurity.hasUserId(authentication, #id) or hasAuthority('users:read'))")
     public EntityModel<UserDto> getUser(@PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(UserDto.of(userService.getUserById(id)));
     }
 
     @GetMapping("/users/{id}/orders")
-    @PreAuthorize(
-            "(hasAuthority('orders:read') or @userSecurity.hasUserId(authentication, #id))" +
-            "and (authentication instanceof " +
-            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
-            "or #oauth2.hasScope('read'))"
-    )
+    @PreAuthorize("(hasAuthority('orders:read') or @userSecurity.hasUserId(authentication, #id))")
     public CollectionModel<EntityModel<OrderDto>> getUserOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size, @PathVariable int id,
@@ -100,12 +86,7 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}/orders")
-    @PreAuthorize(
-            "hasAuthority('orders:write') and @userSecurity.hasUserId(authentication, #id) " +
-            "and (authentication instanceof " +
-            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
-            "or #oauth2.hasScope('write'))"
-    )
+    @PreAuthorize("hasAuthority('orders:write') and @userSecurity.hasUserId(authentication, #id)")
     public EntityModel<OrderDto> addUserOrder(@RequestBody Order order, @PathVariable int id)
             throws ServiceException {
         return orderModelAssembler.toModel(OrderDto.of(orderService.addUserOrder(order, id)));
@@ -114,9 +95,7 @@ public class UserController {
     @DeleteMapping("users/{id}/orders/{orderId}")
     @PreAuthorize(
             "hasAuthority('orders:write') and @userSecurity.orderHasUserId(authentication, #orderId) " +
-            "and @userSecurity.hasUserId(authentication, #id) and (authentication instanceof " +
-            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
-            "or #oauth2.hasScope('write'))"
+                    "and @userSecurity.hasUserId(authentication, #id)"
     )
     public HttpStatus deleteOrder(@PathVariable int id, @PathVariable int orderId) throws ServiceException {
         orderService.deleteOrder(orderId);

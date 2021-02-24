@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -36,7 +37,21 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .withClient(CLIENT_ID)
                 .secret(SECRET)
                 .scopes("read", "write")
-                .authorizedGrantTypes("authorization_code", "password", "refresh_token");
+                .authorizedGrantTypes("password");
+    }
+
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        endpoints
+                .authenticationManager(authenticationManager)
+                .tokenStore(tokenStore())
+                .accessTokenConverter(jwtAccessTokenConverter());
+    }
+
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        security
+                .allowFormAuthenticationForClients();
     }
 
     @Bean
@@ -58,13 +73,5 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         ((DefaultAccessTokenConverter) jwtAccessTokenConverter.getAccessTokenConverter())
                 .setUserTokenConverter(userAuthenticationConverter());
         return jwtAccessTokenConverter;
-    }
-
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints
-                .authenticationManager(authenticationManager)
-                .tokenStore(tokenStore())
-                .accessTokenConverter(jwtAccessTokenConverter());
     }
 }

@@ -41,11 +41,7 @@ public class OrderController {
     }
 
     @GetMapping
-    @PreAuthorize(
-            "hasAuthority('orders:read') and (authentication instanceof " +
-            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
-            "or #oauth2.hasScope('read'))"
-    )
+    @PreAuthorize("hasAuthority('orders:read')")
     public CollectionModel<EntityModel<OrderDto>> getOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size,
@@ -58,11 +54,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize(
-            "hasAuthority('orders:read') and (authentication instanceof " +
-            "T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken) " +
-            "or #oauth2.hasScope('read'))"
-    )
+    @PreAuthorize("hasAuthority('orders:read')")
     public EntityModel<OrderDto> getOrder(@PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(OrderDto.of(auditedOrderService.getAuditedOrderById(id)));
     }
