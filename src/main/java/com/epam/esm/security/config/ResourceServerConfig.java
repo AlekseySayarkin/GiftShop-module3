@@ -32,10 +32,16 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/**").access("#oauth2.hasScope('read')")
-                .antMatchers(HttpMethod.POST, "/**").access("#oauth2.hasScope('write')")
-                .antMatchers(HttpMethod.DELETE, "/**").access("#oauth2.hasScope('write')")
-                .antMatchers(HttpMethod.PUT, "/**").access("#oauth2.hasScope('write')")
+                .antMatchers("/auth/login/**").anonymous()
+                .antMatchers("/auth/signup/**").anonymous()
+                .antMatchers(HttpMethod.GET, "/**")
+                .access("#oauth2.hasScope('read') or !#oauth2.isUser()")
+                .antMatchers(HttpMethod.POST, "/**")
+                .access("#oauth2.hasScope('write') or !#oauth2.isUser()")
+                .antMatchers(HttpMethod.DELETE, "/**")
+                .access("#oauth2.hasScope('write') or !#oauth2.isUser()")
+                .antMatchers(HttpMethod.PUT, "/**")
+                .access("#oauth2.hasScope('write') or !#oauth2.isUser()")
                 .anyRequest().authenticated();
     }
 }
