@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,13 +69,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PostAuthorize("(@userSecurity.hasUserId(authentication, #id) or hasAuthority('users:read'))")
+    @PreAuthorize("(@userSecurityUtil.authenticateUserId(authentication, #id) or hasAuthority('users:read'))")
     public EntityModel<UserDto> getUser(@PathVariable int id) throws ServiceException {
         return modelAssembler.toModel(UserDto.of(userService.getUserById(id)));
     }
 
     @GetMapping("/{id}/orders")
-    @PreAuthorize("(hasAuthority('orders:read') or @userSecurity.hasUserId(authentication, #id))")
+    @PreAuthorize("(hasAuthority('orders:read') or @userSecurityUtil.authenticateUserId(authentication, #id))")
     public CollectionModel<EntityModel<OrderDto>> getUserOrders(
             @RequestBody(required = false) OrderSearchCriteria requestBody,
             @RequestParam int page, @RequestParam int size, @PathVariable int id,
@@ -87,7 +86,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/orders")
-    @PreAuthorize("hasAuthority('orders:write') and @userSecurity.hasUserId(authentication, #id)")
+    @PreAuthorize("hasAuthority('orders:write') and @userSecurityUtil.authenticateUserId(authentication, #id)")
     public EntityModel<OrderDto> addUserOrder(@RequestBody Order order, @PathVariable int id)
             throws ServiceException {
         return orderModelAssembler.toModel(OrderDto.of(orderService.addUserOrder(order, id)));
@@ -95,8 +94,8 @@ public class UserController {
 
     @DeleteMapping("/{id}/orders/{orderId}")
     @PreAuthorize(
-            "hasAuthority('orders:write') and @userSecurity.orderHasUserId(authentication, #orderId) " +
-                    "and @userSecurity.hasUserId(authentication, #id)"
+            "hasAuthority('orders:write') and @userSecurityUtil.authenticateOrderId(authentication, #orderId) " +
+                    "and @userSecurityUtil.authenticateUserId(authentication, #id)"
     )
     public HttpStatus deleteOrder(@PathVariable int id, @PathVariable int orderId) throws ServiceException {
         orderService.deleteOrder(orderId);

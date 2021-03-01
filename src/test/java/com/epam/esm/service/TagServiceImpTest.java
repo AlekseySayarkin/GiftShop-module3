@@ -1,8 +1,7 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.TagRepository;
-import com.epam.esm.dao.impl.CustomizedTagRepositoryImpl;
 import com.epam.esm.model.Tag;
+import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.impl.TagServiceImp;
 import com.epam.esm.service.util.impl.PaginationValidatorImpl;
@@ -10,39 +9,39 @@ import com.epam.esm.service.util.impl.TagValidatorImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Optional;
+
+@SpringBootTest
 class TagServiceImpTest {
 
+    @InjectMocks
+    private TagServiceImp tagService;
+
+    @Mock
     private TagRepository tagDao;
-    private TagService tagService;
 
     @BeforeEach
     public void init() {
-        tagDao = Mockito.mock(CustomizedTagRepositoryImpl.class);
-        tagService = new TagServiceImp(tagDao, new TagValidatorImpl(), new PaginationValidatorImpl());
+        var tagValidator = new TagValidatorImpl();
+        var paginationValidator = new PaginationValidatorImpl();
+
+        tagService = new TagServiceImp(tagDao, tagValidator, paginationValidator);
     }
 
     @Test
     void whenGetTag_thenCorrectlyReturnItById() throws ServiceException {
-        Tag given = new Tag(1, "spa");
+        var given = new Tag(1, "spa");
 
-        Mockito.when(tagDao.getTagById(given.getId())).thenReturn(given);
+        Mockito.when(tagDao.findById(given.getId())).thenReturn(Optional.of(given));
 
         Tag actual = tagService.getTagById(given.getId());
         Assertions.assertEquals(given, actual);
-        Mockito.verify(tagDao).getTagById(given.getId());
-    }
-
-    @Test
-    void whenGetTag_thenCorrectlyReturnItByName() throws ServiceException {
-        Tag given = new Tag(1, "spa");
-
-        Mockito.when(tagDao.getTagByName(given.getName())).thenReturn(given);
-
-        Tag actual = tagService.getTagByName(given.getName());
-        Assertions.assertEquals(given, actual);
-        Mockito.verify(tagDao).getTagByName(given.getName());
+        Mockito.verify(tagDao).findById(given.getId());
     }
 
     @Test
@@ -63,9 +62,10 @@ class TagServiceImpTest {
         try {
             tagService.deleteTag(tag.getId());
         } catch (ServiceException e) {
-            Assertions.assertEquals("Failed to delete tag because it id ("
-                    + tag.getId() +") is not found", e.getMessage());
+            Assertions.assertEquals(
+                    "Failed to delete tag because it id (" + tag.getId() +") is not found", e.getMessage()
+            );
         }
-        Mockito.verify(tagDao).deleteTagById(tag.getId());
+        Mockito.verify(tagDao).deleteById(tag.getId());
     }
 }

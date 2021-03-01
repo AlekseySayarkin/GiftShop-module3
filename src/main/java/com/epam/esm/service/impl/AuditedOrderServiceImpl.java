@@ -105,17 +105,19 @@ public class AuditedOrderServiceImpl implements AuditedOrderService {
 
     private void setRevisedCertificatesToOrder(Order order) {
         var certificates = new HashSet<GiftCertificate>();
-        order.getGiftCertificateList().forEach(c ->
-            certificates.add(
-                    certificateRepository
-                            .findRevisions(c.getId())
-                            .getContent()
-                            .stream().findFirst()
-                            .orElseThrow()
-                            .getEntity()
-            )
 
-        );
+        order.getGiftCertificateList().forEach(c -> {
+            var revisions = certificateRepository.findRevisions(c.getId());
+            if (revisions.getContent().stream().findFirst().isPresent()) {
+                certificates.add(
+                        revisions
+                        .getContent()
+                        .stream().findFirst()
+                        .get()
+                        .getEntity()
+                );
+            }
+        });
         order.setGiftCertificateList(certificates);
     }
 

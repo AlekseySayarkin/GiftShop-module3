@@ -1,31 +1,52 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.UserDao;
-import com.epam.esm.dao.impl.HibernateUserDaoImpl;
-import com.epam.esm.dao.request.UserSearchCriteria;
 import com.epam.esm.model.User;
+import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.OrderRepository;
+import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.impl.AuditedOrderServiceImpl;
 import com.epam.esm.service.impl.UserServiceImpl;
+import com.epam.esm.service.search.criteria.UserSearchCriteria;
+import com.epam.esm.service.util.impl.OrderValidatorImpl;
 import com.epam.esm.service.util.impl.PaginationValidatorImpl;
 import com.epam.esm.service.util.impl.UserValidatorImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
+@SpringBootTest
 public class UserServiceImplTest {
 
-    private UserDao userDao;
-    private UserService userService;
-    private int page;
-    private int size;
+    @InjectMocks
+    private UserServiceImpl userService;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private OrderRepository orderRepository;
+
+    @Mock
+    private GiftCertificateRepository certificateRepository;
+
+    private final static int PAGE = 1;
+    private final static int SIZE = 10;
 
     private User initUser() {
-        User user = new User();
+        var user = new User();
         user.setId(1);
         user.setLogin("login");
         user.setPassword("password");
@@ -34,7 +55,7 @@ public class UserServiceImplTest {
     }
 
     private User initUser(int id) {
-        User user = new User();
+        var user = new User();
         user.setId(id);
         user.setLogin("login");
         user.setPassword("password");
@@ -43,51 +64,70 @@ public class UserServiceImplTest {
     }
 
     @BeforeEach
-    public void init() {
-        page = 1;
-        size = 10;
-        userDao = Mockito.mock(HibernateUserDaoImpl.class);
+    public void setUp() {
+        var userValidation = new UserValidatorImpl();
+        var orderValidator =  new OrderValidatorImpl();
+        var paginationValidator = new PaginationValidatorImpl();
+        var bcryptEncoder = new BCryptPasswordEncoder(12);
+        var auditOrderService = new AuditedOrderServiceImpl(
+                orderRepository, certificateRepository, orderValidator, paginationValidator
+        );
 
-        userService = new UserServiceImpl(userDao,
-                new UserValidatorImpl(), new PaginationValidatorImpl(), new BCryptPasswordEncoder(12));
+        userService = new UserServiceImpl(
+                userRepository, userValidation, paginationValidator,
+                bcryptEncoder, auditOrderService
+        );
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void whenGetUser_thenCorrectlyReturnsItById() throws ServiceException {
-        User given = initUser();
+        var given = initUser();
 
-        Mockito.when(userDao.getUserById(given.getId())).thenReturn(given);
+        Mockito.when(userRepository.findById(given.getId())).thenReturn(Optional.of(given));
+        Mockito.when(
+                orderRepository.findAll(Mockito.isA(Specification.class), Mockito.isA(Pageable.class))
+        ).thenReturn(new PageImpl<>(new ArrayList<>()));
 
-        User actual = userService.getUserById(given.getId());
+        var actual = userService.getUserById(given.getId());
         Assertions.assertEquals(given, actual);
-        Mockito.verify(userDao).getUserById(given.getId());
+        Mockito.verify(userRepository).findById(given.getId());
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void whenGetUser_thenCorrectlyReturnsItByName() throws ServiceException {
-        User given = initUser();
+        var given = initUser();
 
-        Mockito.when(userDao.getUserByLogin(given.getLogin())).thenReturn(given);
+        Mockito.when(userRepository.getUserByLogin(given.getLogin())).thenReturn(given);
+        Mockito.when(
+                orderRepository.findAll(Mockito.isA(Specification.class), Mockito.isA(Pageable.class))
+        ).thenReturn(new PageImpl<>(new ArrayList<>()));
 
-        User actual = userService.getUserByLogin(given.getLogin());
+        var actual = userService.getUserByLogin(given.getLogin());
         Assertions.assertEquals(given, actual);
-        Mockito.verify(userDao).getUserByLogin(given.getLogin());
+        Mockito.verify(userRepository).getUserByLogin(given.getLogin());
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void whenAddUser_thenCorrectlyReturnThem() throws ServiceException {
-        List<User> given = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            given.add(initUser(i));
-        }
-        UserSearchCriteria givenSearchCriteria = UserSearchCriteria.getDefaultUserRequestBody();
+        var given = new ArrayList<User>();
+        IntStream.rangeClosed(1, 10).forEach(i -> given.add(initUser(i)));
 
-        Mockito.when(userDao.getAllUsersByPage(givenSearchCriteria, size, page))
-                .thenReturn(given);
+        var givenSearchCriteria = UserSearchCriteria.getDefaultUserRequestBody();
 
-        List<User> actual = userService.getAllUsersByPage(givenSearchCriteria, size, page,
-                givenSearchCriteria.getSortType(), givenSearchCriteria.getSortBy());
+        Mockito.when(
+                orderRepository.findAll(Mockito.isA(Specification.class), Mockito.isA(Pageable.class))
+        ).thenReturn(new PageImpl<>(new ArrayList<>()));
+        Mockito.when(
+                userRepository.findAll(Mockito.isA(Pageable.class))
+        ).thenReturn(new PageImpl<>(given));
+
+       var actual = userService.getAllUsersByPage(
+               givenSearchCriteria, SIZE, PAGE, givenSearchCriteria.getSortType(), givenSearchCriteria.getSortBy()
+       );
         Assertions.assertEquals(given, actual);
-        Mockito.verify(userDao).getAllUsersByPage(givenSearchCriteria, size, page);
+        Mockito.verify(userRepository).findAll(Mockito.isA(Pageable.class));
     }
 }

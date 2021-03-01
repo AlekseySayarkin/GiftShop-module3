@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -72,35 +73,27 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
     }
 
     @Override
-    public boolean validateJwtToken(String token) {
+    public boolean validateJwtToken(String token) throws AuthenticationServiceException {
         try {
             var claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return new Date().before(claimsJws.getBody().getExpiration());
         } catch (ExpiredJwtException e) {
-            log.trace("Failed to validate jwt token: jwt token expired");
-            return false;
+            log.error("Failed to validate jwt token: jwt token expired");
+            throw new AuthenticationServiceException("Failed to validate jwt token: jwt token expired");
         } catch (JwtException | IllegalArgumentException e) {
-            log.trace("Failed to validate jwt token");
-            return false;
+            log.error("Failed to validate jwt token");
+            throw new AuthenticationServiceException("Failed to validate jwt token");
         }
     }
 
     @Override
-    public Authentication getAuthentication(String token) {
-        try {
-            var details = userDetailsService.loadUserByUsername(getUserName(token));
-            return new UsernamePasswordAuthenticationToken(details, "", getAuthoritiesFromToken(token));
-        } catch (ExpiredJwtException e) {
-            log.trace("Failed to validate jwt token jwt token is expired");
-            return null;
-        } catch (JwtException | IllegalArgumentException e) {
-            log.trace("Failed to get authentication from jwt token");
-            return null;
-        }
+    public Authentication getAuthentication(String token) throws AuthenticationServiceException {
+        var details = userDetailsService.loadUserByUsername(getUserName(token));
+        return new UsernamePasswordAuthenticationToken(details, "", getAuthoritiesFromToken(token));
     }
 
     @SuppressWarnings("unchecked")
-    private List<SimpleGrantedAuthority> getAuthoritiesFromToken(String token) {
+    private List<SimpleGrantedAuthority> getAuthoritiesFromToken(String token) throws AuthenticationServiceException {
         try {
             var stringAuthorities = (List<String>) Jwts.parser()
                     .setSigningKey(secretKey)
@@ -113,29 +106,29 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
             return authorities;
         } catch (JwtException | IllegalArgumentException e) {
-            log.trace("Failed to get authorities from jwt token");
-            return null;
+            log.error("Failed to get authorities from jwt token");
+            throw new AuthenticationServiceException("Failed to get authorities from jwt token");
         }
     }
 
     @Override
-    public String getUserName(String token) {
+    public String getUserName(String token) throws AuthenticationServiceException {
         try {
             return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
         } catch (JwtException | IllegalArgumentException e) {
-            log.trace("Failed to get username from jwt token");
-            return null;
+            log.error("Failed to get username from jwt token");
+            throw new AuthenticationServiceException("Failed to get username from jwt token");
         }
     }
 
     @Override
-    public String resolveToken(HttpServletRequest request) {
+    public String resolveToken(HttpServletRequest request) throws AuthenticationServiceException {
         try {
             var token = request.getHeader(AUTHORIZATION_HEADER);
-            return token == null ? null : token.substring(6);
+            return token == null || token.isEmpty() ? null : token.substring(6);
         } catch (IndexOutOfBoundsException e) {
-            log.trace("Jwt token should start with 'Basic'");
-            return null;
+            log.error("Jwt token should start with 'Basic'");
+            throw new AuthenticationServiceException("Jwt token should start with 'Basic'");
         }
     }
 }

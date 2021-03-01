@@ -6,15 +6,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserSecurity {
+public class UserSecurityUtil {
 
     private final AuditedOrderService auditedOrderService;
 
-    public UserSecurity(AuditedOrderService auditedOrderService) {
+    public UserSecurityUtil(AuditedOrderService auditedOrderService) {
         this.auditedOrderService = auditedOrderService;
     }
 
-    public boolean hasUserId(Authentication authentication, int userId) {
+    public boolean authenticateUserId(Authentication authentication, int userId) {
         try {
             var details = (UserDetailsImpl) authentication.getPrincipal();
 
@@ -24,12 +24,13 @@ public class UserSecurity {
         }
     }
 
-    public boolean orderHasUserId(Authentication authentication, int orderId) {
+    public boolean authenticateOrderId(Authentication authentication, int orderId) {
         try {
             var details = (UserDetailsImpl) authentication.getPrincipal();
             var order = auditedOrderService.getAuditedOrderById(orderId);
+            var user = order.getUser();
 
-            return order.getUser().getId() == details.getId();
+            return user != null && user.getId() == details.getId();
         } catch (ClassCastException | ServiceException e) {
             return false;
         }
