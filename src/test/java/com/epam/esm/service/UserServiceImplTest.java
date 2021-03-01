@@ -11,7 +11,6 @@ import com.epam.esm.service.search.criteria.UserSearchCriteria;
 import com.epam.esm.service.util.impl.OrderValidatorImpl;
 import com.epam.esm.service.util.impl.PaginationValidatorImpl;
 import com.epam.esm.service.util.impl.UserValidatorImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,6 +25,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class UserServiceImplTest {
@@ -74,8 +77,7 @@ public class UserServiceImplTest {
         );
 
         userService = new UserServiceImpl(
-                userRepository, userValidation, paginationValidator,
-                bcryptEncoder, auditOrderService
+                userRepository, userValidation, paginationValidator, bcryptEncoder, auditOrderService
         );
     }
 
@@ -84,14 +86,14 @@ public class UserServiceImplTest {
     void whenGetUser_thenCorrectlyReturnsItById() throws ServiceException {
         var given = initUser();
 
-        Mockito.when(userRepository.findById(given.getId())).thenReturn(Optional.of(given));
-        Mockito.when(
+        when(userRepository.findById(given.getId())).thenReturn(Optional.of(given));
+        when(
                 orderRepository.findAll(Mockito.isA(Specification.class), Mockito.isA(Pageable.class))
         ).thenReturn(new PageImpl<>(new ArrayList<>()));
 
         var actual = userService.getUserById(given.getId());
-        Assertions.assertEquals(given, actual);
-        Mockito.verify(userRepository).findById(given.getId());
+        assertEquals(given, actual);
+        verify(userRepository).findById(given.getId());
     }
 
     @Test
@@ -99,14 +101,14 @@ public class UserServiceImplTest {
     void whenGetUser_thenCorrectlyReturnsItByName() throws ServiceException {
         var given = initUser();
 
-        Mockito.when(userRepository.getUserByLogin(given.getLogin())).thenReturn(given);
-        Mockito.when(
+        when(userRepository.getUserByLogin(given.getLogin())).thenReturn(given);
+        when(
                 orderRepository.findAll(Mockito.isA(Specification.class), Mockito.isA(Pageable.class))
         ).thenReturn(new PageImpl<>(new ArrayList<>()));
 
         var actual = userService.getUserByLogin(given.getLogin());
-        Assertions.assertEquals(given, actual);
-        Mockito.verify(userRepository).getUserByLogin(given.getLogin());
+        assertEquals(given, actual);
+        verify(userRepository).getUserByLogin(given.getLogin());
     }
 
     @Test
@@ -117,17 +119,15 @@ public class UserServiceImplTest {
 
         var givenSearchCriteria = UserSearchCriteria.getDefaultUserRequestBody();
 
-        Mockito.when(
+        when(
                 orderRepository.findAll(Mockito.isA(Specification.class), Mockito.isA(Pageable.class))
         ).thenReturn(new PageImpl<>(new ArrayList<>()));
-        Mockito.when(
-                userRepository.findAll(Mockito.isA(Pageable.class))
-        ).thenReturn(new PageImpl<>(given));
+        when(userRepository.findAll(Mockito.isA(Pageable.class))).thenReturn(new PageImpl<>(given));
 
-       var actual = userService.getAllUsersByPage(
-               givenSearchCriteria, SIZE, PAGE, givenSearchCriteria.getSortType(), givenSearchCriteria.getSortBy()
-       );
-        Assertions.assertEquals(given, actual);
-        Mockito.verify(userRepository).findAll(Mockito.isA(Pageable.class));
+        var actual = userService.getAllUsersByPage(
+                givenSearchCriteria, SIZE, PAGE, givenSearchCriteria.getSortType(), givenSearchCriteria.getSortBy()
+        );
+        assertEquals(given, actual);
+        verify(userRepository).findAll(Mockito.isA(Pageable.class));
     }
 }

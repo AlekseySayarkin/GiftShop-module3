@@ -12,7 +12,6 @@ import com.epam.esm.service.impl.OrderServiceImpl;
 import com.epam.esm.service.search.criteria.OrderSearchCriteria;
 import com.epam.esm.service.util.impl.OrderValidatorImpl;
 import com.epam.esm.service.util.impl.PaginationValidatorImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,9 +23,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revisions;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class OrderServiceImplTest {
@@ -89,12 +91,12 @@ public class OrderServiceImplTest {
     void whenGetOrder_thenCorrectlyReturnsItById() throws ServiceException {
         var givenOrder = initOrder();
 
-        Mockito.when(orderRepository.findById(givenOrder.getId())).thenReturn(java.util.Optional.of(givenOrder));
-        Mockito.when(certificateRepository.findRevisions(Mockito.isA(Integer.class))).thenReturn(Revisions.none());
+        when(orderRepository.findById(givenOrder.getId())).thenReturn(java.util.Optional.of(givenOrder));
+        when(certificateRepository.findRevisions(Mockito.isA(Integer.class))).thenReturn(Revisions.none());
 
         Order actual = auditedOrderService.getAuditedOrderById(givenOrder.getId());
-        Assertions.assertEquals(givenOrder, actual);
-        Mockito.verify(orderRepository).findById(givenOrder.getId());
+        assertEquals(givenOrder, actual);
+        verify(orderRepository).findById(givenOrder.getId());
     }
 
     @Test
@@ -103,48 +105,47 @@ public class OrderServiceImplTest {
         IntStream.rangeClosed(1, 10).forEach(i -> given.add(initOrder(i)));
         var givenSearchCriteria = OrderSearchCriteria.getDefaultOrderRequestBody();
 
-        Mockito.when(
-                orderRepository.findAll(Mockito.isA(Pageable.class))
-        ).thenReturn(new PageImpl<>(given));
-        Mockito.when(certificateRepository.findRevisions(Mockito.isA(Integer.class))).thenReturn(Revisions.none());
+        when(orderRepository.findAll(Mockito.isA(Pageable.class))).thenReturn(new PageImpl<>(given));
+        when(certificateRepository.findRevisions(Mockito.isA(Integer.class))).thenReturn(Revisions.none());
 
-        List<Order> actual = auditedOrderService.getAuditedOrdersByPage(givenSearchCriteria, SIZE, PAGE,
-                givenSearchCriteria.getSortType(), givenSearchCriteria.getSortBy());
-        Assertions.assertEquals(given, actual);
-        Mockito.verify(orderRepository).findAll(Mockito.isA(Pageable.class));
+        var actual = auditedOrderService.getAuditedOrdersByPage(
+                givenSearchCriteria, SIZE, PAGE, givenSearchCriteria.getSortType(), givenSearchCriteria.getSortBy()
+        );
+        assertEquals(given, actual);
+        verify(orderRepository).findAll(Mockito.isA(Pageable.class));
     }
 
     @Test
     void whenAddOrder_thenReturnItId() throws ServiceException {
         var given = initOrder();
 
-        Mockito.when(orderRepository.save(given)).thenReturn(given);
-        Mockito.when(userRepository.findById(given.getUser().getId())).thenReturn(Optional.of(given.getUser()));
+        when(orderRepository.save(given)).thenReturn(given);
+        when(userRepository.findById(given.getUser().getId())).thenReturn(Optional.of(given.getUser()));
 
         var actual = orderService.addUserOrder(given, 1);
-        Assertions.assertEquals(actual, given);
-        Mockito.verify(orderRepository).save(given);
+        assertEquals(actual, given);
+        verify(orderRepository).save(given);
     }
 
     @Test
     void whenTryAddEmptyOrder_thenThrowException() {
-        Order order = new Order();
+        var order = new Order();
 
         try {
             orderService.addUserOrder(order, 1);
         } catch (ServiceException e) {
-            Assertions.assertEquals("Failed to validate: cost must be positive", e.getMessage());
+            assertEquals("Failed to validate: cost must be positive", e.getMessage());
         }
     }
 
     @Test
     void whenTryDeleteOrder_thenThrowException() {
-        Order given = initOrder();
+        var given = initOrder();
 
         try {
             orderService.deleteOrder(given.getId());
         } catch (ServiceException e) {
-            Assertions.assertEquals("Failed to get certificate by it id: " + given.getId(), e.getMessage());
+            assertEquals("Failed to get certificate by it id: " + given.getId(), e.getMessage());
         }
     }
 }

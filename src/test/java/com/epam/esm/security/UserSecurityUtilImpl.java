@@ -4,7 +4,6 @@ import com.epam.esm.model.Order;
 import com.epam.esm.model.Role;
 import com.epam.esm.model.User;
 import com.epam.esm.service.AuditedOrderService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,6 +17,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class UserSecurityUtilImpl {
@@ -52,14 +55,14 @@ public class UserSecurityUtilImpl {
     void givenUserAuthentication_ReturnTrue() {
         var userId = 1;
         var auth = userSecurityUtil.authenticateUserId(authentication, userId);
-        Assertions.assertTrue(auth);
+        assertTrue(auth);
     }
 
     @Test
     void givenUserAuthentication_ReturnFalse() {
         var userId = 2;
         var auth = userSecurityUtil.authenticateUserId(authentication, userId);
-        Assertions.assertFalse(auth);
+        assertFalse(auth);
     }
 
     @Test
@@ -71,10 +74,10 @@ public class UserSecurityUtilImpl {
         user.setId(1);
         order.setUser(user);
 
-        Mockito.when(auditedOrderService.getAuditedOrderById(orderId)).thenReturn(order);
+        when(auditedOrderService.getAuditedOrderById(orderId)).thenReturn(order);
         var auth = userSecurityUtil.authenticateOrderId(authentication, orderId);
 
-        Assertions.assertTrue(auth);
+        assertTrue(auth);
     }
 
     @Test
@@ -89,6 +92,6 @@ public class UserSecurityUtilImpl {
         Mockito.when(auditedOrderService.getAuditedOrderById(orderId)).thenReturn(order);
         var auth = userSecurityUtil.authenticateOrderId(authentication, orderId);
 
-        Assertions.assertTrue(auth);
+        assertTrue(auth);
     }
 }

@@ -8,7 +8,6 @@ import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import com.epam.esm.service.search.criteria.CertificateSearchCriteria;
 import com.epam.esm.service.util.impl.CertificateValidatorImpl;
 import com.epam.esm.service.util.impl.PaginationValidatorImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,6 +22,10 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class GiftCertificateServiceImplTest {
@@ -75,11 +78,11 @@ class GiftCertificateServiceImplTest {
     void whenGetCertificate_thenCorrectlyReturnsItById() throws ServiceException {
         var given = initCertificate();
 
-        Mockito.when(certificateRepository.findById(given.getId())).thenReturn(java.util.Optional.of(given));
+        when(certificateRepository.findById(given.getId())).thenReturn(java.util.Optional.of(given));
 
         var actual = giftCertificateService.getGiftCertificateById(given.getId());
-        Assertions.assertEquals(given, actual);
-        Mockito.verify(certificateRepository).findById(given.getId());
+        assertEquals(given, actual);
+        verify(certificateRepository).findById(given.getId());
     }
 
     @Test
@@ -89,26 +92,26 @@ class GiftCertificateServiceImplTest {
         var givenSearchCriteria = CertificateSearchCriteria.getDefaultCertificateRequestBody();
         givenSearchCriteria.setContent("content");
 
-        Mockito.when(
+        when(
                 certificateRepository.findAll(Mockito.isA(Specification.class), Mockito.isA(Pageable.class))
         ).thenReturn(new PageImpl<>(given));
 
         var actual = giftCertificateService.getGiftCertificatesByPage(
                 givenSearchCriteria, PAGE, SIZE, givenSearchCriteria.getSortType(), givenSearchCriteria.getSortBy()
         );
-        Assertions.assertEquals(given, actual);
-        Mockito.verify(certificateRepository).findAll(Mockito.isA(Specification.class), Mockito.isA(Pageable.class));
+        assertEquals(given, actual);
+        verify(certificateRepository).findAll(Mockito.isA(Specification.class), Mockito.isA(Pageable.class));
     }
 
     @Test
     void whenAddCertificate_thenReturnItId() throws ServiceException {
         var givenCertificate = initCertificate();
 
-        Mockito.when(certificateRepository.save(givenCertificate)).thenReturn(givenCertificate);
+        when(certificateRepository.save(givenCertificate)).thenReturn(givenCertificate);
 
         var actual = giftCertificateService.addGiftCertificate(givenCertificate);
-        Assertions.assertEquals(actual, givenCertificate);
-        Mockito.verify(certificateRepository).save(givenCertificate);
+        assertEquals(actual, givenCertificate);
+        verify(certificateRepository).save(givenCertificate);
     }
 
     @Test
@@ -118,7 +121,7 @@ class GiftCertificateServiceImplTest {
         try {
             giftCertificateService.addGiftCertificate(giftCertificate);
         } catch (ServiceException e) {
-            Assertions.assertEquals("Failed to validate: certificate name is empty", e.getMessage());
+            assertEquals("Failed to validate: certificate name is empty", e.getMessage());
         }
     }
 
@@ -129,9 +132,7 @@ class GiftCertificateServiceImplTest {
         try {
             giftCertificateService.deleteGiftCertificate(givenCertificate.getId());
         } catch (ServiceException e) {
-            Assertions.assertEquals(
-                    "Failed to get certificate by it id: " + givenCertificate.getId(), e.getMessage()
-            );
+            assertEquals("Failed to get certificate by it id: " + givenCertificate.getId(), e.getMessage());
         }
     }
 }

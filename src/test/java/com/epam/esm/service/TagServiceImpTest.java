@@ -6,15 +6,17 @@ import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.impl.TagServiceImp;
 import com.epam.esm.service.util.impl.PaginationValidatorImpl;
 import com.epam.esm.service.util.impl.TagValidatorImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class TagServiceImpTest {
@@ -37,35 +39,33 @@ class TagServiceImpTest {
     void whenGetTag_thenCorrectlyReturnItById() throws ServiceException {
         var given = new Tag(1, "spa");
 
-        Mockito.when(tagDao.findById(given.getId())).thenReturn(Optional.of(given));
+        when(tagDao.findById(given.getId())).thenReturn(Optional.of(given));
 
-        Tag actual = tagService.getTagById(given.getId());
-        Assertions.assertEquals(given, actual);
-        Mockito.verify(tagDao).findById(given.getId());
+        var actual = tagService.getTagById(given.getId());
+        assertEquals(given, actual);
+        verify(tagDao).findById(given.getId());
     }
 
     @Test
     void whenTryAddVoidTag_thenThrowException() {
-        Tag tag = new Tag();
+        var tag = new Tag();
 
         try {
             tagService.addTag(tag);
         } catch (ServiceException e) {
-            Assertions.assertEquals("Failed to validate: tag name is empty", e.getMessage());
+            assertEquals("Failed to validate: tag name is empty", e.getMessage());
         }
     }
 
     @Test
     void whenTryDeleteNonExistingTag_thenThrowException() {
-        Tag tag = new Tag(1, "spa");
+        var tag = new Tag(1, "spa");
 
         try {
             tagService.deleteTag(tag.getId());
         } catch (ServiceException e) {
-            Assertions.assertEquals(
-                    "Failed to delete tag because it id (" + tag.getId() +") is not found", e.getMessage()
-            );
+            assertEquals("Failed to delete tag because it id (" + tag.getId() +") is not found", e.getMessage());
         }
-        Mockito.verify(tagDao).deleteById(tag.getId());
+        verify(tagDao).deleteById(tag.getId());
     }
 }

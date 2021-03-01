@@ -1,14 +1,15 @@
 package com.epam.esm.security;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class UserSecurityUtilTest {
@@ -31,7 +32,7 @@ public class UserSecurityUtilTest {
         var token = jwtTokenProvider.createJwtToken(username, role);
         var validation = jwtTokenProvider.validateJwtToken(token);
 
-        Assertions.assertTrue(validation);
+        assertTrue(validation);
     }
 
     @Test
@@ -41,7 +42,7 @@ public class UserSecurityUtilTest {
         try {
             jwtTokenProvider.validateJwtToken(token);
         } catch (AuthenticationServiceException e) {
-            Assertions.assertEquals(e.getMessage(), "Failed to validate jwt token");
+            assertEquals(e.getMessage(), "Failed to validate jwt token");
         }
     }
 
@@ -52,7 +53,7 @@ public class UserSecurityUtilTest {
         var token = jwtTokenProvider.createJwtToken(username, role);
         var retrievedUsername = jwtTokenProvider.getUserName(token);
 
-        Assertions.assertEquals(username, retrievedUsername);
+        assertEquals(username, retrievedUsername);
     }
 
     @Test
@@ -62,7 +63,7 @@ public class UserSecurityUtilTest {
         try {
             jwtTokenProvider.getUserName(token);
         } catch (AuthenticationServiceException e) {
-            Assertions.assertEquals(e.getMessage(), "Failed to get username from jwt token");
+            assertEquals(e.getMessage(), "Failed to get username from jwt token");
         }
     }
 
@@ -72,14 +73,14 @@ public class UserSecurityUtilTest {
         var role = "USER";
         var token = jwtTokenProvider.createJwtToken(username, role);
 
-        Mockito.when(userDetailsService.loadUserByUsername(username))
+        when(userDetailsService.loadUserByUsername(username))
                 .thenReturn(new UserDetailsImpl(1, username, "password", null, true));
 
         var auth = jwtTokenProvider.getAuthentication(token);
         var userDetails = (UserDetailsImpl) auth.getPrincipal();
-        Assertions.assertNotNull(auth);
-        Assertions.assertEquals(auth.getCredentials(), "");
-        Assertions.assertEquals(username, userDetails.getUsername());
+        assertNotNull(auth);
+        assertEquals(auth.getCredentials(), "");
+        assertEquals(username, userDetails.getUsername());
     }
 
     @Test
@@ -89,7 +90,7 @@ public class UserSecurityUtilTest {
         try {
             jwtTokenProvider.getAuthentication(token);
         } catch (AuthenticationServiceException e) {
-            Assertions.assertEquals(e.getMessage(), "Failed to get username from jwt token");
+            assertEquals(e.getMessage(), "Failed to get username from jwt token");
         }
     }
 }
