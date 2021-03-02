@@ -14,10 +14,9 @@ import com.epam.esm.service.util.impl.OrderValidatorImpl;
 import com.epam.esm.service.util.impl.PaginationValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revisions;
@@ -30,13 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class OrderServiceImplTest {
 
-    @InjectMocks
     private AuditedOrderServiceImpl auditedOrderService;
 
-    @InjectMocks
     private OrderServiceImpl orderService;
 
     @Mock
@@ -53,6 +49,8 @@ public class OrderServiceImplTest {
 
     @BeforeEach
     public void setUp() {
+        MockitoAnnotations.openMocks(this);
+
         var orderValidator =  new OrderValidatorImpl();
         var paginationValidator = new PaginationValidatorImpl();
         orderService = new OrderServiceImpl(orderRepository, orderValidator, userRepository);

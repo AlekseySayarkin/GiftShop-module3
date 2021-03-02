@@ -2,19 +2,16 @@ package com.epam.esm.security;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class UserSecurityUtilTest {
 
-    @InjectMocks
     private JwtTokenProviderImpl jwtTokenProvider;
 
     @Mock
@@ -22,6 +19,8 @@ public class UserSecurityUtilTest {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
+
         jwtTokenProvider = new JwtTokenProviderImpl(userDetailsService);
     }
 

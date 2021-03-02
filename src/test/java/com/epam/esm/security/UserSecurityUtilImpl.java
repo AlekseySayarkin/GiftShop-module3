@@ -6,10 +6,9 @@ import com.epam.esm.model.User;
 import com.epam.esm.service.AuditedOrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,10 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class UserSecurityUtilImpl {
 
-    @InjectMocks
     private UserSecurityUtil userSecurityUtil;
 
     @Mock
@@ -35,6 +32,8 @@ public class UserSecurityUtilImpl {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
+
         var orders = new HashSet<Order>();
         var order = new Order();
         order.setId(2);
