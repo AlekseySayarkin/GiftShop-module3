@@ -8,8 +8,9 @@ import com.epam.esm.service.util.impl.PaginationValidatorImpl;
 import com.epam.esm.service.util.impl.TagValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(SpringExtension.class)
 class TagServiceImpTest {
 
     private TagServiceImp tagService;
@@ -26,8 +28,6 @@ class TagServiceImpTest {
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.openMocks(this);
-
         var tagValidator = new TagValidatorImpl();
         var paginationValidator = new PaginationValidatorImpl();
 

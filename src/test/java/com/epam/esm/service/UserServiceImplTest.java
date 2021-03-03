@@ -13,13 +13,14 @@ import com.epam.esm.service.util.impl.PaginationValidatorImpl;
 import com.epam.esm.service.util.impl.UserValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -29,9 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(SpringExtension.class)
 public class UserServiceImplTest {
-
-    private UserServiceImpl userService;
 
     @Mock
     private UserRepository userRepository;
@@ -41,6 +41,8 @@ public class UserServiceImplTest {
 
     @Mock
     private GiftCertificateRepository certificateRepository;
+
+    private UserServiceImpl userService;
 
     private final static int PAGE = 1;
     private final static int SIZE = 10;
@@ -65,8 +67,6 @@ public class UserServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         var userValidation = new UserValidatorImpl();
         var orderValidator =  new OrderValidatorImpl();
         var paginationValidator = new PaginationValidatorImpl();

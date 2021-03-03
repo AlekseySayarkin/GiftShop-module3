@@ -10,12 +10,13 @@ import com.epam.esm.service.util.impl.CertificateValidatorImpl;
 import com.epam.esm.service.util.impl.PaginationValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(SpringExtension.class)
 class GiftCertificateServiceImplTest {
 
     private GiftCertificateServiceImpl giftCertificateService;
@@ -38,8 +40,6 @@ class GiftCertificateServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         var certificateValidator = new CertificateValidatorImpl();
         var paginationValidator = new PaginationValidatorImpl();
         giftCertificateService = new GiftCertificateServiceImpl(

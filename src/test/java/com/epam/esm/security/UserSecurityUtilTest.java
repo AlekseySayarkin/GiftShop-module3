@@ -1,95 +1,99 @@
 package com.epam.esm.security;
 
+import com.epam.esm.model.Order;
+import com.epam.esm.model.Role;
+import com.epam.esm.model.User;
+import com.epam.esm.service.AuditedOrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.mockito.Mockito;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(SpringExtension.class)
 public class UserSecurityUtilTest {
 
-    private JwtTokenProviderImpl jwtTokenProvider;
+    private UserSecurityUtil userSecurityUtil;
 
     @Mock
-    private UserDetailsService userDetailsService;
+    private AuditedOrderService auditedOrderService;
+
+    private Authentication authentication;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        var orders = new HashSet<Order>();
+        var order = new Order();
+        order.setId(2);
+        orders.add(order);
+        var details = UserDetailsImpl.of(new User(
+                1, "login", "password", orders, Role.getUserRole())
+        );
 
-        jwtTokenProvider = new JwtTokenProviderImpl(userDetailsService);
+        var authorities = new ArrayList<SimpleGrantedAuthority>();
+        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Role.RoleType.USER.getAuthorities();
+        simpleGrantedAuthorities.forEach(a -> authorities.add(new SimpleGrantedAuthority(a.getAuthority())));
+        authentication = new UsernamePasswordAuthenticationToken(details, "", authorities);
+
+        userSecurityUtil = new UserSecurityUtil(auditedOrderService);
     }
 
     @Test
-    void whenCreateToken_thenCorrectlyValidateIt(){
-        var username = "username";
-        var role = "USER";
-        var token = jwtTokenProvider.createJwtToken(username, role);
-        var validation = jwtTokenProvider.validateJwtToken(token);
-
-        assertTrue(validation);
+    void givenUserAuthentication_ReturnTrue() {
+        var userId = 1;
+        var auth = userSecurityUtil.authenticateUserId(authentication, userId);
+        assertTrue(auth);
     }
 
     @Test
-    void givenIncorrectToken_throwException() {
-        var token = "incorrect token";
-
-        try {
-            jwtTokenProvider.validateJwtToken(token);
-        } catch (AuthenticationServiceException e) {
-            assertEquals(e.getMessage(), "Failed to validate jwt token");
-        }
+    void givenUserAuthentication_ReturnFalse() {
+        var userId = 2;
+        var auth = userSecurityUtil.authenticateUserId(authentication, userId);
+        assertFalse(auth);
     }
 
     @Test
-    void whenCreateToken_CorrectlyRetrieveUsername(){
-        var username = "username";
-        var role = "USER";
-        var token = jwtTokenProvider.createJwtToken(username, role);
-        var retrievedUsername = jwtTokenProvider.getUserName(token);
+    void givenOrderAuthentication_ReturnTrue() {
+        var orderId = 1;
+        var order = new Order();
+        order.setId(1);
+        var user = new User();
+        user.setId(1);
+        order.setUser(user);
 
-        assertEquals(username, retrievedUsername);
+        when(auditedOrderService.getAuditedOrderById(orderId)).thenReturn(order);
+        var auth = userSecurityUtil.authenticateOrderId(authentication, orderId);
+
+        assertTrue(auth);
+        verify(auditedOrderService).getAuditedOrderById(orderId);
     }
 
     @Test
-    void givenIncorrectToken_throwExceptionWhileRetrievingUsername() {
-        var token = "incorrect token";
+    void givenOrderAuthentication_ReturnFalse() {
+        var orderId = 2;
+        var order = new Order();
+        order.setId(1);
+        var user = new User();
+        user.setId(1);
+        order.setUser(user);
 
-        try {
-            jwtTokenProvider.getUserName(token);
-        } catch (AuthenticationServiceException e) {
-            assertEquals(e.getMessage(), "Failed to get username from jwt token");
-        }
-    }
+        Mockito.when(auditedOrderService.getAuditedOrderById(orderId)).thenReturn(order);
+        var auth = userSecurityUtil.authenticateOrderId(authentication, orderId);
 
-    @Test
-    void givenToken_RetrieveAuthentication() {
-        var username = "username";
-        var role = "USER";
-        var token = jwtTokenProvider.createJwtToken(username, role);
-
-        when(userDetailsService.loadUserByUsername(username))
-                .thenReturn(new UserDetailsImpl(1, username, "password", null, true));
-
-        var auth = jwtTokenProvider.getAuthentication(token);
-        var userDetails = (UserDetailsImpl) auth.getPrincipal();
-        assertNotNull(auth);
-        assertEquals(auth.getCredentials(), "");
-        assertEquals(username, userDetails.getUsername());
-    }
-
-    @Test
-    void givenInvalidToken_thenThrowExceptionWhileGettingAuthentication() {
-        var token = "Invalid token";
-
-        try {
-            jwtTokenProvider.getAuthentication(token);
-        } catch (AuthenticationServiceException e) {
-            assertEquals(e.getMessage(), "Failed to get username from jwt token");
-        }
+        assertTrue(auth);
+        verify(auditedOrderService).getAuditedOrderById(orderId);
     }
 }
