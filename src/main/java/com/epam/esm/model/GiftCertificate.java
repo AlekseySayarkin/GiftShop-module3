@@ -13,7 +13,7 @@ import java.util.Set;
 @Table(name = "GiftCertificates", schema = "GiftShop")
 @Audited
 @Where(clause = "Active = true")
-public class GiftCertificate implements BaseModel {
+public class GiftCertificate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class GiftCertificate implements BaseModel {
     @Column(name = "Price")
     private double price;
 
-    @Column(name = "CreateDate", updatable=false)
+    @Column(name = "CreateDate", updatable = false)
     private ZonedDateTime createDate;
 
     @Column(name = "LastUpdateDate")

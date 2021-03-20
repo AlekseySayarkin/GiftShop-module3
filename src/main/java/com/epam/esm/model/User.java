@@ -10,7 +10,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Users")
 @Audited
-public class User implements BaseModel {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +22,15 @@ public class User implements BaseModel {
     @Column(name = "Password")
     private String password;
 
-    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER,
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToMany(
+            mappedBy = "user", fetch = FetchType.EAGER,
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}
+    )
     private Set<Order> orders = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "RoleId", referencedColumnName = "ID")
+    private Role role;
 
     public User() {
     }
@@ -33,6 +39,14 @@ public class User implements BaseModel {
         this.id = id;
         this.login = login;
         this.password = password;
+    }
+
+    public User(int id, String login, String password, Set<Order> orders, Role role) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.orders = orders;
+        this.role = role;
     }
 
     public int getId() {
@@ -67,25 +81,36 @@ public class User implements BaseModel {
         this.orders = orders;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && login.equals(user.login) && password.equals(user.password);
+        return id == user.id && login.equals(user.login) &&
+                password.equals(user.password) && orders.equals(user.orders) && role.equals(user.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, password);
+        return Objects.hash(id, login, password, orders, role);
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + login + '\'' +
-                ", login='" + password + '\'' +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", orders=" + orders +
+                ", role=" + role +
                 '}';
     }
 }

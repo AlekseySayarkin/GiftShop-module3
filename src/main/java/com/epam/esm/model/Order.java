@@ -13,7 +13,7 @@ import java.util.Set;
 @Table(name = "Orders")
 @Audited
 @Where(clause = "Active = true")
-public class Order implements BaseModel {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Order implements BaseModel {
     private ZonedDateTime createDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "UserId")
     private User user;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -104,7 +104,9 @@ public class Order implements BaseModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return id == order.id && Double.compare(order.totalCost, totalCost) == 0 && createDate.equals(order.createDate) && user.equals(order.user) && giftCertificateList.equals(order.giftCertificateList);
+        return id == order.id && Double.compare(order.totalCost, totalCost) == 0 &&
+                createDate.equals(order.createDate) && user.equals(order.user) &&
+                giftCertificateList.equals(order.giftCertificateList);
     }
 
     @Override

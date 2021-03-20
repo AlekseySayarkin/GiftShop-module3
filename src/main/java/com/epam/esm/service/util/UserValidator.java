@@ -1,8 +1,8 @@
 package com.epam.esm.service.util;
 
-import com.epam.esm.dao.request.UserSearchCriteria;
 import com.epam.esm.model.User;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.criteria.UserSearchCriteria;
 
 /**
  * This interface provides with ability to validate

@@ -1,10 +1,10 @@
 package com.epam.esm.web.hateoas;
 
-import com.epam.esm.dao.request.UserSearchCriteria;
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.web.controller.UserController;
+import com.epam.esm.service.search.criteria.UserSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
+import com.epam.esm.web.api.UserController;
 import com.epam.esm.web.dto.OrderDto;
 import com.epam.esm.web.dto.UserDto;
 import org.springframework.hateoas.CollectionModel;
@@ -38,8 +38,10 @@ public class UserLinkBuilder implements ModelLinkBuilder<UserDto> {
     @Override
     public void linkToModel(EntityModel<UserDto> modelDto) {
         try {
-            modelDto.add(linkTo(methodOn(UserController.class).getUser(
-                    Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_USERS));
+            modelDto.add(
+                    linkTo(methodOn(UserController.class)
+                            .getUser(Objects.requireNonNull(modelDto.getContent()).getId())).withRel(CURRENT_USERS)
+            );
             modelDto.getContent().getOrders().forEach(o -> orderLinkBuilder.linkToModel(o));
         } catch (ServiceException ignored) {
         }
@@ -91,7 +93,7 @@ public class UserLinkBuilder implements ModelLinkBuilder<UserDto> {
 
     private Link getLinkToUsersPage(int page, int size, String rel,
                                     SortType sortType, SortBy sortBy) throws ServiceException {
-        return linkTo(methodOn(UserController.class).getUsers(defaultRequestBody, page, size,
-                sortType, sortBy)).withRel(rel);
+        return linkTo(methodOn(UserController.class)
+                .getUsers(defaultRequestBody, page, size, sortType, sortBy)).withRel(rel);
     }
 }

@@ -1,10 +1,10 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.GiftCertificate;
-import com.epam.esm.dao.request.CertificateSearchCriteria;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.criteria.CertificateSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
 
 import java.util.List;
 
@@ -16,17 +16,6 @@ import java.util.List;
  * @author Aleksey Sayarkin
  */
 public interface GiftCertificateService {
-
-    /**
-     * Retrieves data of {@code GiftCertificate} from
-     * persistence layer by it name
-     * which equals to {@code String name}.
-     *
-     * @param name certificate name.
-     * @throws ServiceException when failed to get {@code GiftCertificate}.
-     * @return {@code GiftCertificate}.
-     */
-    GiftCertificate getGiftCertificateByName(String name) throws ServiceException;
 
     /**
      * Retrieves data of {@code GiftCertificate} from

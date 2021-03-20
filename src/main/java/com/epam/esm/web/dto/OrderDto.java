@@ -1,6 +1,7 @@
 package com.epam.esm.web.dto;
 
 import com.epam.esm.model.Order;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -18,15 +19,20 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     private ZonedDateTime createDate;
     private Set<EntityModel<GiftCertificateDto>> giftCertificateList = new HashSet<>();
 
+    @JsonIgnore
+    private int userId;
+
     public static OrderDto of(Order order) {
-        OrderDto orderDto = new OrderDto();
+        var orderDto = new OrderDto();
         orderDto.setId(order.getId());
         orderDto.setTotalCost(order.getTotalCost());
         orderDto.setCreateDate(order.getCreateDate());
         Set<EntityModel<GiftCertificateDto>> giftCertificateDto = new HashSet<>();
         order.getGiftCertificateList().forEach(g ->
-                giftCertificateDto.add(EntityModel.of(GiftCertificateDto.of(g))));
+                giftCertificateDto.add(EntityModel.of(GiftCertificateDto.of(g)))
+        );
         orderDto.setGiftCertificateList(giftCertificateDto);
+        orderDto.setUserId(order.getUser().getId());
 
         return orderDto;
     }
@@ -65,6 +71,14 @@ public class OrderDto extends RepresentationModel<OrderDto> {
 
     public void setGiftCertificateList(Set<EntityModel<GiftCertificateDto>> giftCertificateList) {
         this.giftCertificateList = giftCertificateList;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     @Override

@@ -14,19 +14,20 @@ public class UserDto extends RepresentationModel<UserDto> {
     private int id;
     private String login;
     private Set<EntityModel<OrderDto>> orders;
+    private RoleDto roleDto;
 
     public static List<UserDto> of(List<User> users) {
         return users.stream().map(UserDto::of).collect(Collectors.toList());
     }
 
     public static UserDto of(User user) {
-        UserDto userDto = new UserDto();
+        var userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setLogin(user.getLogin());
         Set<EntityModel<OrderDto>> orderDto = new HashSet<>();
-        user.getOrders().forEach(o ->
-                orderDto.add(EntityModel.of(OrderDto.of(o))));
+        user.getOrders().forEach(o -> orderDto.add(EntityModel.of(OrderDto.of(o))));
         userDto.setOrders(orderDto);
+        userDto.setRoleDto(RoleDto.of(user.getRole()));
 
         return userDto;
     }
@@ -53,5 +54,13 @@ public class UserDto extends RepresentationModel<UserDto> {
 
     public void setOrders(Set<EntityModel<OrderDto>> orders) {
         this.orders = orders;
+    }
+
+    public RoleDto getRoleDto() {
+        return roleDto;
+    }
+
+    public void setRoleDto(RoleDto roleDto) {
+        this.roleDto = roleDto;
     }
 }

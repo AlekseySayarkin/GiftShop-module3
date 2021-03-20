@@ -1,8 +1,8 @@
 package com.epam.esm.service.util;
 
-import com.epam.esm.dao.request.TagSearchCriteria;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.criteria.TagSearchCriteria;
 
 /**
  * This interface provides with ability to validate

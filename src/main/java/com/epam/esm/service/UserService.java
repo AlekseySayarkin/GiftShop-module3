@@ -1,10 +1,10 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.request.UserSearchCriteria;
-import com.epam.esm.dao.sort.SortBy;
-import com.epam.esm.dao.sort.SortType;
 import com.epam.esm.model.User;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.criteria.UserSearchCriteria;
+import com.epam.esm.service.search.sort.SortBy;
+import com.epam.esm.service.search.sort.SortType;
 
 import java.util.List;
 
@@ -61,4 +61,13 @@ public interface UserService {
      * @return number of pages.
      */
     int getLastPage(int size) throws ServiceException;
+
+    /**
+     * Adds new {@code User} to data source.
+     *
+     * @param user {@code User} which to be added to data source.
+     * @throws ServiceException when failed to add {@code User}.
+     * @return added {@code User} from data source.
+     */
+    User addUser(User user)throws ServiceException;
 }

@@ -10,7 +10,7 @@ import java.util.Objects;
 @Table(name = "tags", schema = "GiftShop")
 @Audited
 @Where(clause = "Active = true")
-public class Tag implements BaseModel {
+public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

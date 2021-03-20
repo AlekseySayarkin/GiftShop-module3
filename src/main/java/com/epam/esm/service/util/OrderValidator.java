@@ -1,8 +1,8 @@
 package com.epam.esm.service.util;
 
-import com.epam.esm.dao.request.OrderSearchCriteria;
 import com.epam.esm.model.Order;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.search.criteria.OrderSearchCriteria;
 
 /**
  * This interface provides with ability to validate

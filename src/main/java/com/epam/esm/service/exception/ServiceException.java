@@ -3,7 +3,7 @@ package com.epam.esm.service.exception;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(value = {"stackTrace", "cause", "suppressed", "localizedMessage"}, allowSetters = true)
-public class ServiceException extends Exception {
+public class ServiceException extends RuntimeException {
 
     private final ErrorCodeEnum errorCode;
 

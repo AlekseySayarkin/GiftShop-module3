@@ -23,7 +23,7 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     private Set<EntityModel<TagDto>> tags = new HashSet<>();
 
     public static GiftCertificateDto of(GiftCertificate giftCertificate) {
-        GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
+        var giftCertificateDto = new GiftCertificateDto();
         giftCertificateDto.setId(giftCertificate.getId());
         giftCertificateDto.setName(giftCertificate.getName());
         giftCertificateDto.setDescription(giftCertificate.getDescription());
